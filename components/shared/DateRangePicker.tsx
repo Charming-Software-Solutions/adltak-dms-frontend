@@ -4,30 +4,29 @@ import * as React from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
 import { DateRange } from "react-day-picker";
-
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
 
-interface CalendarDateRangePickerProps
-  extends React.HTMLAttributes<HTMLDivElement> {
-  onChange: (range: DateRange | undefined) => void; // Correctly define onChange prop
+// Create a separate interface without extending HTMLAttributes
+interface CalendarDateRangePickerProps {
+  className?: string;
+  onChange: (range: DateRange | undefined) => void;
 }
 
 export function CalendarDateRangePicker({
   className,
-  onChange, // Destructure onChange from props
+  onChange,
 }: CalendarDateRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(2023, 0, 20),
     to: addDays(new Date(2023, 0, 20), 20),
   });
 
-  // Handle date change
   const handleDateChange = (range: DateRange | undefined) => {
-    setDate(range); // Update local state
-    onChange(range); // Call the onChange prop
+    setDate(range);
+    onChange(range);
   };
 
   return (
@@ -43,19 +42,18 @@ export function CalendarDateRangePicker({
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            <span>Pick a date range</span>
-            {/* {date?.from ? ( */}
-            {/*   date.to ? ( */}
-            {/*     <> */}
-            {/*       {format(date.from, "LLL dd, y")} -{" "} */}
-            {/*       {format(date.to, "LLL dd, y")} */}
-            {/*     </> */}
-            {/*   ) : ( */}
-            {/*     format(date.from, "LLL dd, y") */}
-            {/*   ) */}
-            {/* ) : ( */}
-            {/*   <span>Pick a date</span> */}
-            {/* )} */}
+            {date?.from ? (
+              date.to ? (
+                <>
+                  {format(date.from, "LLL dd, y")} -{" "}
+                  {format(date.to, "LLL dd, y")}
+                </>
+              ) : (
+                format(date.from, "LLL dd, y")
+              )
+            ) : (
+              <span>Pick a date range</span>
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="end">

@@ -1,4 +1,3 @@
-import { getUserRole } from "@/lib/utils";
 import { User } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -31,9 +30,9 @@ export const UserColumns: ColumnDef<User>[] = [
     header: "Job Role",
     cell: ({ row }) => {
       const user = row.original;
-      const userRolc = getUserRole(user);
+      const userRole = user.role;
 
-      return <div>{userRolc}</div>;
+      return <div>{userRole}</div>;
     },
   },
 ];
