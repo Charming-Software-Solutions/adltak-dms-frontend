@@ -8,7 +8,7 @@ import { User } from "@/types/user";
 
 const authUrl = `${process.env.DOMAIN}/auth`;
 
-async function login(formData: FormData): Promise<ErrorResponse> {
+async function login(formData: FormData): Promise<ErrorResponse | null> {
   const response = await fetchAndHandleResponse<User>({
     url: `${authUrl}/login/`,
     method: "POST",
@@ -24,6 +24,7 @@ async function login(formData: FormData): Promise<ErrorResponse> {
   }
 
   await createSession(response.data);
+  return null;
 }
 
 async function logout() {
