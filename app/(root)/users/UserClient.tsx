@@ -30,6 +30,7 @@ type Props = {
 
 const UserClient = ({ user, users }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
   const userForm = useUserForm();
   const router = useRouter();
@@ -59,8 +60,10 @@ const UserClient = ({ user, users }: Props) => {
 
   return (
     <React.Fragment>
-      <Header user={user}>
+      <Header>
         <ResponsiveDialog
+          open={openDialog}
+          setOpen={setOpenDialog}
           title="Create User"
           description="Add users"
           trigger={
@@ -95,7 +98,6 @@ const UserClient = ({ user, users }: Props) => {
           <DataTable
             columns={UserColumns}
             data={users}
-            selectedRow={undefined}
             visibleColumns={
               isDesktop
                 ? visibileUserColumns.desktop
