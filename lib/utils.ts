@@ -1,8 +1,6 @@
-import { TaskStatusEnum } from "@/enums";
-import { ErrorResponse } from "@/types/api";
-import { ApiResponse } from "@/types/api";
-import { Product, ProductSKU } from "@/types/product";
-import { User, UserRoleBooleans } from "@/types/user";
+import { ApiResponse, ErrorResponse } from "@/types/api";
+import { ProductSKU } from "@/types/product";
+import { UserRoleBooleans } from "@/types/user";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -127,17 +125,6 @@ export function formatUserRole(rawRole: string): string {
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
-}
-
-export function formatTaskStatus(status: TaskStatusEnum): string {
-  return status
-    .replace(/_/g, " ") // Replace underscores with spaces
-    .split(" ") // Split the string into words
-    .map(
-      (word: string) =>
-        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-    ) // Capitalize the first letter of each word
-    .join(" "); // Join the words back together
 }
 
 export function formatDateTime(
