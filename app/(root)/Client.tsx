@@ -42,7 +42,7 @@ type Props = {
 const HomeClient = ({ user }: Props) => {
   return (
     <React.Fragment>
-      <Header user={user}>
+      <Header>
         <h1>test</h1>
       </Header>
       <main className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 p-4">
