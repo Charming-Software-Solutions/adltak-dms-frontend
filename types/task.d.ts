@@ -1,0 +1,14 @@
+import { Employee } from "./user";
+import { Distribution, DistributionType } from "./distribution";
+import { TaskStatusImportEnum, TaskStatusExportEnum } from "@/enums";
+
+export type TaskStatus = TaskStatusImportEnum | TaskStatusExportEnum;
+
+export type Task = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  employee: string;
+  distribution: Distribution;
+  status: TaskStatus;
+};
