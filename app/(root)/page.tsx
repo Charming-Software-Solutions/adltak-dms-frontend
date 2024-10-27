@@ -1,8 +1,8 @@
-import { getSession } from "@/lib/auth";
 import HomeClient from "./Client";
+import { getDistributions } from "@/lib/actions/distribution.actions";
 
 export default async function Home() {
-  const user = (await getSession()).user;
+  const distributions = await getDistributions();
 
-  return <HomeClient user={user} />;
+  return <HomeClient distributions={distributions} />;
 }
