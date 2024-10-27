@@ -11,6 +11,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { logout } from "@/lib/actions/auth.actions";
+import { formatUserRole } from "@/lib/utils";
+import { UserLogin as Session } from "@/types/user";
 import {
   Archive,
   ArrowDownUp,
@@ -21,7 +24,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -30,9 +33,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import ThemeToggle from "./ThemeToggle";
-import { User } from "@/types/user";
-import { logout } from "@/lib/actions/auth.actions";
-import { formatUserRole } from "@/lib/utils";
 
 const data = {
   navLinks: [
@@ -66,11 +66,15 @@ const data = {
 };
 
 type Props = {
-  user: User;
+  session: Session | null;
 };
 
-const AppSidebar = ({ user }: Props) => {
+const AppSidebar = ({ session }: Props) => {
   const pathname = usePathname();
+
+  if (!session) {
+    throw new Error("Session in invalid.");
+  }
 
   return (
     <Sidebar>
@@ -126,9 +130,11 @@ const AppSidebar = ({ user }: Props) => {
                     <AvatarFallback>LG</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{user.email}</span>
+                    <span className="truncate font-semibold">
+                      {session.user.email}
+                    </span>
                     <span className="truncate text-xs">
-                      {formatUserRole(user.role)}
+                      {formatUserRole(session.user.role)}
                     </span>
                   </div>
                   <ChevronUp className="ml-auto" />
@@ -140,7 +146,7 @@ const AppSidebar = ({ user }: Props) => {
               >
                 <DropdownMenuItem
                   onClick={() => {
-                    logout();
+                    logout(session.refresh);
                   }}
                 >
                   <span>Sign out</span>

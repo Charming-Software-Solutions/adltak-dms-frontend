@@ -21,15 +21,6 @@ export default async function RootLayout({
 }>) {
   const session = await getSession();
 
-  if (!session) {
-    redirect("/login");
-  }
-  const user = await getUserById(session.userId, session.access);
-
-  if (!user.data) {
-    throw Error("User not found");
-  }
-
   return (
     <Providers>
       <ThemeProvider
@@ -40,7 +31,7 @@ export default async function RootLayout({
       >
         <div vaul-drawer-wrapper="">
           <SidebarProvider>
-            <AppSidebar user={user.data} />
+            <AppSidebar session={session} />
             <SidebarInset>
               <Suspense
                 fallback={

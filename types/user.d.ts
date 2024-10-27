@@ -2,17 +2,15 @@ import { UserRoleEnum } from "@/enums";
 
 export type User = {
   id: string;
-  last_login: null;
+  id: string;
   email: string;
-  is_active: boolean;
-  is_staff: boolean;
   role: UserRoleEnum;
 };
 
 export type UserLogin = {
   refresh: string;
   access: string;
-  user: string;
+  user: User;
 };
 
 export type UserRoleBooleans = {
