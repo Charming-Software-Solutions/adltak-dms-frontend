@@ -43,7 +43,6 @@ async function logout(refresh: string) {
     }
 
     await deleteSession();
-    redirect("/login");
   } catch (error) {
     console.error("Error during logout:", error);
   }

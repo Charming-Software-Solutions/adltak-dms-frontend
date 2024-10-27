@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -73,7 +73,7 @@ const AppSidebar = ({ session }: Props) => {
   const pathname = usePathname();
 
   if (!session) {
-    throw new Error("Session in invalid.");
+    redirect("/login");
   }
 
   return (
