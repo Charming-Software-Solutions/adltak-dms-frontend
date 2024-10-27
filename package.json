@@ -2,6 +2,9 @@
   "name": "adtalk-dashboard-mockup",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
     "dev": "next dev",
     "fast": "next dev --turbo",
