@@ -22,7 +22,6 @@ import { distributionFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Distribution, DistributionType } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
-import { User } from "@/types/user";
 import { ListFilter, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -39,7 +38,6 @@ type Props = {
   distributions: Distribution[];
   brands: Brand[];
   products: Product[];
-  user: User;
 };
 
 type AppliedFilters = {
@@ -49,12 +47,7 @@ type AppliedFilters = {
   endDate?: Date;
 };
 
-const DistributionClient = ({
-  distributions,
-  brands,
-  products,
-  user,
-}: Props) => {
+const DistributionClient = ({ distributions, brands, products }: Props) => {
   const [openDistributionDialog, setOpenDistributionDialog] = useState(false);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
   const [isMounted, setIsMounted] = useState(false);

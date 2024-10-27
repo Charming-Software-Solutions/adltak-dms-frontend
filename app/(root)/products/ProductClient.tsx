@@ -18,7 +18,6 @@ import { generateProductSKU } from "@/lib/utils";
 import { productFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
-import { User } from "@/types/user";
 import { File as FileIcon, ListFilter, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -33,16 +32,9 @@ type Props = {
   brands: Brand[];
   categories: Category[];
   types: Type[];
-  user: User;
 };
 
-const ProductClient = ({
-  products,
-  brands,
-  categories,
-  types,
-  user,
-}: Props) => {
+const ProductClient = ({ products, brands, categories, types }: Props) => {
   const [formReset, setFormReset] = useState(false);
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -183,7 +175,7 @@ const ProductClient = ({
           </ResponsiveDialog>
         </div>
       </Header>
-      <main className="grid flex-1 items-start px-4 lg:px-6 h-[200px]">
+      <main className="main-container">
         {isMounted ? (
           <DataTable
             columns={ProductColumns}
