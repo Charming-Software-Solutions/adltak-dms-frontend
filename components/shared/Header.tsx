@@ -16,7 +16,7 @@ const Header = ({ children }: Props) => {
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-6">
-      <SidebarTrigger className="-ml-1 size-5" />
+      <SidebarTrigger className="ml-1 size-5" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="w-full flex items-center justify-between">
         <h1 className="text-2xl font-bold">{displayLink}</h1>

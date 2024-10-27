@@ -1,13 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DistributionProduct } from "@/types/distribution";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Eye } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import ItemCard from "../card/ItemCard";
 import ResponsiveDialog from "../ResponsiveDialog";
 

@@ -1,28 +1,25 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { deleteTask } from "@/lib/actions/task.actions";
 import { cn, formatDateTime } from "@/lib/utils";
+import { DistributionType } from "@/types/distribution";
 import { Task } from "@/types/task";
-import { ColumnDef } from "@tanstack/react-table";
-import { Eye, Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import ItemCard from "../../card/ItemCard";
-import ResponsiveDialog from "../../ResponsiveDialog";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import StatusDropdown from "../../StatusDropdown";
 import {
   BackpackIcon,
   DownloadIcon,
   PersonIcon,
   UploadIcon,
 } from "@radix-ui/react-icons";
-import { deleteTask } from "@/lib/actions/task.actions";
-import { Badge } from "@/components/ui/badge";
-import { DistributionType } from "@/types/distribution";
+import { ColumnDef } from "@tanstack/react-table";
+import { Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
+import ResponsiveDialog from "../../ResponsiveDialog";
+import StatusDropdown from "../../StatusDropdown";
+import { DataTableColumnHeader } from "../data-table-column-header";
 
 export const visibleTaskColumns = {
   desktop: {
@@ -175,8 +172,8 @@ export const TaskColumns: ColumnDef<Task>[] = [
         <ResponsiveDialog
           open={openDialog}
           setOpen={setOpenDialog}
-          title={"Delete Product"}
-          description="Product deletion action"
+          title={"Delete Task"}
+          description="Task deletion action"
           trigger={
             <Button size={"icon"} variant={"outline"} className="w-10">
               <Trash className="h-4 w-4" />
@@ -206,7 +203,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
           }
         >
           <p className="p-medium-16 md:p-medium-14 text-gray-500 px-4 md:px-0">
-            Are you sure you want to delete the product?
+            Are you sure you want to delete the task?
           </p>
         </ResponsiveDialog>
       );

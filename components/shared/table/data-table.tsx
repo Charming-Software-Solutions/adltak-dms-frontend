@@ -27,12 +27,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   visibleColumns?: VisibilityState;
+  showPagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   visibleColumns = {},
+  showPagination = true,
 }: DataTableProps<TData, TValue> & {
   visibleColumns?: Record<string, boolean>;
 }) {
@@ -123,7 +125,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {table.getRowModel().rows.length > 0 && (
+      {table.getRowModel().rows.length > 0 && showPagination && (
         <DataTablePagination table={table} />
       )}
     </div>

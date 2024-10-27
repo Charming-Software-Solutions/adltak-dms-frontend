@@ -34,9 +34,7 @@ import { User } from "@/types/user";
 import { logout } from "@/lib/actions/auth.actions";
 import { formatUserRole } from "@/lib/utils";
 
-// This is sample data.
 const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navLinks: [
     {
       label: "Insights",
@@ -73,7 +71,6 @@ type Props = {
 
 const AppSidebar = ({ user }: Props) => {
   const pathname = usePathname();
-  const router = useRouter();
 
   return (
     <Sidebar>
@@ -104,10 +101,10 @@ const AppSidebar = ({ user }: Props) => {
                     isActive={pathname == link.route}
                     className="h-10"
                   >
-                    <a href={link.route}>
+                    <Link href={link.route}>
                       {link.icon}
                       <span>{link.label}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -144,7 +141,6 @@ const AppSidebar = ({ user }: Props) => {
                 <DropdownMenuItem
                   onClick={() => {
                     logout();
-                    router.push("/login");
                   }}
                 >
                   <span>Sign out</span>
