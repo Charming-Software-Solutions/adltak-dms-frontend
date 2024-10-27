@@ -101,7 +101,7 @@ const TasksClient = ({ tasks, distributions }: Props) => {
         </div>
       </Header>
 
-      <main className="grid flex-1 items-start px-4 lg:px-6 h-[200px]">
+      <main className="main-container">
         {isMounted ? (
           <DataTable
             columns={TaskColumns}
