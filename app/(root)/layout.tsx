@@ -1,7 +1,6 @@
 import Providers from "@/components/Providers";
 import AppSidebar from "@/components/shared/AppSidebar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getUserById } from "@/lib/actions/user.actions";
 import { getSession } from "@/lib/session";
