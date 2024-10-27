@@ -11,11 +11,6 @@ export default async function UsersPage() {
   if (!session) {
     redirect("/login");
   }
-  const user = await getUserById(session.userId, session.access);
 
-  if (!user.data) {
-    throw Error("User not found");
-  }
-
-  return <UserClient user={user.data} users={users} />;
+  return <UserClient user={session.user} users={users} />;
 }
