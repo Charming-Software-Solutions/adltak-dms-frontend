@@ -1,3 +1,4 @@
+import { User, UserLogin } from "@/types/user";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import "server-only";
@@ -5,7 +6,7 @@ import "server-only";
 type SessionPayload = {
   access: string;
   refresh: string;
-  userId: string;
+  user: User;
   expiresAt: Date;
 };
 
@@ -13,13 +14,13 @@ const secret = new TextEncoder().encode(process.env.SECRET);
 
 const REFRESH_TOKEN_DURATION = 7 * 24 * 60 * 60 * 1000;
 
-export async function createSession(
-  access: string,
-  refresh: string,
-  userId: string,
-) {
+export async function createSession(userLogin: UserLogin) {
+  const access = userLogin.access;
+  const refresh = userLogin.refresh;
+  const user = userLogin.user;
+
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_DURATION);
-  const session = await encrypt({ access, refresh, userId, expiresAt });
+  const session = await encrypt({ access, refresh, user, expiresAt });
 
   cookies().set("session", session, {
     httpOnly: true,
@@ -35,11 +36,7 @@ export async function getSession(): Promise<SessionPayload | null> {
     return null;
   }
   const payload = await decrypt(cookie);
-  if (
-    !payload ||
-    typeof payload.userId !== "string" ||
-    typeof payload.expiresAt !== "string"
-  ) {
+  if (!payload) {
     console.error(
       "Failed to decrypt session cookie or invalid payload format.",
     );
@@ -49,7 +46,7 @@ export async function getSession(): Promise<SessionPayload | null> {
   return {
     access: payload.access,
     refresh: payload.refresh,
-    userId: payload.userId,
+    user: payload.user,
     expiresAt: new Date(payload.expiresAt),
   };
 }

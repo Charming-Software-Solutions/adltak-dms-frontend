@@ -1,72 +1,45 @@
 "use server";
 
-import { ErrorResponse } from "@/types/api";
 import { UserLogin } from "@/types/user";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createSession, decrypt, deleteSession } from "../session";
+import { createSession, deleteSession } from "../session";
 import { fetchAndHandleResponse } from "../utils";
 
 const authUrl = `${process.env.DOMAIN}/auth`;
 
-async function login(formData: FormData): Promise<ErrorResponse | null> {
+async function login(email: string, password: string): Promise<UserLogin> {
   const response = await fetchAndHandleResponse<UserLogin>({
     url: `${authUrl}/login/`,
     method: "POST",
-    body: formData,
+    contentType: "application/json",
+    body: JSON.stringify({
+      email,
+      password,
+    }),
   });
 
-  const refresh = response.data?.refresh;
-  const access = response.data?.access;
-  const userId = response.data?.user;
-
-  // Check if any required values are null
-  if (response.data) {
-    if (!access || !refresh || !userId) {
-      // Handle the case where one of the values is null
-      throw new Error(
-        "Missing session data: access, refresh, or userId is null.",
-      );
-    }
-
-    await createSession(access, refresh, userId);
-    redirect("/");
-  } else {
-    return response.errors;
+  if (!response || !response.data) {
+    throw new Error("Login failed: no response or invalid data");
   }
+  const userData = response.data as UserLogin;
+  await createSession(userData);
+
+  return userData;
 }
 
-async function logout() {
-  const encryptedSession = cookies().get("session")?.value;
-
-  if (!encryptedSession) {
-    // Handle case where session cookie is missing or empty
-    console.error("Session cookie not found or empty.");
-    return;
-  }
-
-  const session = await decrypt(encryptedSession);
-
-  if (!session) {
-    // Handle case where decryption fails
-    console.error("Failed to decrypt session cookie.");
-    return;
-  }
-
-  const refreshToken = session.refresh;
-
+async function logout(refresh: string) {
   try {
     const response = await fetchAndHandleResponse<string>({
       url: `${authUrl}/logout/`,
       method: "POST",
       contentType: "application/json",
       body: JSON.stringify({
-        refresh: refreshToken,
+        refresh: refresh,
       }),
     });
 
     if (response.errors) {
-      return response.errors;
+      throw new Error("Logout failed.");
     }
 
     await deleteSession();

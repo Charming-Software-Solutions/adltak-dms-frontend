@@ -116,7 +116,7 @@ export function getUserRoleBooleans(selectedRole: string): UserRoleBooleans {
 }
 
 export function formatUserRole(rawRole: string): string {
-  if (rawRole == "") {
+  if (rawRole === "admin") {
     return "Admin";
   }
 

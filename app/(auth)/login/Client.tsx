@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,16 +13,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login } from "@/lib/actions/auth.actions";
+import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 
 const LoginClient = () => {
   const { pending } = useFormStatus();
+  const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
-    const errors = await login(formData);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    if (errors) {
-      console.log(errors);
+    try {
+      await login(email, password);
+      router.push("/");
+    } catch (error) {
+      console.error("Login failed:", error);
     }
   };
 

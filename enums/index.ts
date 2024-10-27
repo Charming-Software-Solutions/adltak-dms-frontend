@@ -1,4 +1,5 @@
 export enum UserRoleEnum {
+  AMDMIN = "admin",
   LOGISTICS = "logistics_specialist",
   WAREHOUSE = "warehouse_worker",
   PROJECT = "project_handler",
