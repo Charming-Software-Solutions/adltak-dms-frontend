@@ -7,10 +7,12 @@ export type User = {
   is_active: boolean;
   is_staff: boolean;
   role: UserRoleEnum;
-  groups: any[];
-  user_permissions: any[];
+};
+
+export type UserLogin = {
   refresh: string;
   access: string;
+  user: string;
 };
 
 export type UserRoleBooleans = {
