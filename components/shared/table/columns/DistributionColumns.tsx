@@ -254,9 +254,6 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
       const distribution = row.original;
       const router = useRouter();
       const [openDialog, setOpenDialog] = useState(false);
-      const [openViewItemsDialog, setOpenViewItemsDialog] = useState(false);
-
-      const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
 
       return (
         <div className="flex items-center gap-2">
@@ -268,8 +265,8 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
           <ResponsiveDialog
             open={openDialog}
             setOpen={setOpenDialog}
-            title={"Delete Product"}
-            description="Product deletion action"
+            title={"Delete Distribution"}
+            description="Distribution deletion action"
             trigger={
               <Button size={"icon"} variant={"outline"} className="w-10">
                 <Trash className="h-4 w-4" />
@@ -299,7 +296,7 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
             }
           >
             <p className="p-medium-16 md:p-medium-14 text-gray-500 px-4 md:px-0">
-              Are you sure you want to delete the product?
+              Are you sure you want to delete the distribution?
             </p>
           </ResponsiveDialog>
         </div>
