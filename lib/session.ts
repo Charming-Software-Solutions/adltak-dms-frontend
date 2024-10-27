@@ -1,6 +1,5 @@
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import "server-only";
 
 type SessionPayload = {
@@ -24,7 +23,7 @@ export async function createSession(
 
   cookies().set("session", session, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     expires: expiresAt,
   });
 }
