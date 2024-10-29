@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import ResponsiveDialog from "../../ResponsiveDialog";
-import StatusDropdown from "../../StatusDropdown";
+import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { DataTableColumnHeader } from "../data-table-column-header";
 
 export const visibleTaskColumns = {
@@ -139,7 +139,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
       const status = row.original.status;
 
       return (
-        <StatusDropdown
+        <TaskStatusDropdown
           id={row.original.id}
           currentStatus={status} // Ensure status matches one of the enum types
           type={type}

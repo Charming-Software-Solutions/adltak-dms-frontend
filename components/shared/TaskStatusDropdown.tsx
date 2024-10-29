@@ -25,7 +25,7 @@ type Props = {
   type: "IMPORT" | "EXPORT";
 };
 
-const StatusDropdown = ({ id, currentStatus, type }: Props) => {
+const TaskStatusDropdown = ({ id, currentStatus, type }: Props) => {
   const router = useRouter();
 
   const { mutate } = useMutation({
@@ -74,4 +74,4 @@ const StatusDropdown = ({ id, currentStatus, type }: Props) => {
   );
 };
 
-export default StatusDropdown;
+export default TaskStatusDropdown;
