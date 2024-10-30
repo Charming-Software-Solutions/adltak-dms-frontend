@@ -20,3 +20,18 @@ export enum TaskStatusExportEnum {
   SHIPPED = "SHIPPED",
   DELIVERED = "DELIVERED",
 }
+
+export enum AssetStatusEnum {
+  AVAILABLE = "AVAILABLE",
+  IN_USE = "IN_USE",
+  MAINTENANCE = "MAINTENANCE",
+  LOST = "LOST",
+}
+
+export enum AssetConditionEnum {
+  NEW = "NEW",
+  GOOD = "GOOD",
+  FAIR = "FAIR",
+  POOR = "POOR",
+  DAMAGED = "DAMAGED",
+}

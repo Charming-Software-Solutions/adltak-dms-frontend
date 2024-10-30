@@ -69,6 +69,18 @@ export const taskFormSchema = z.object({
   }),
 });
 
+export const assetFormSchema = z.object({
+  name: z.string().min(1, {
+    message: "Name is required.",
+  }),
+  code: z.string().min(1, {
+    message: "Code is required.",
+  }),
+  type: z.string().uuid({
+    message: "Type is required.",
+  }),
+});
+
 export type ProductFormData = z.infer<typeof productFormSchema>;
 export type UserFormData = z.infer<typeof userFormSchema>;
 export type DistributionFormData = z.infer<typeof distributionFormSchema>;
@@ -76,3 +88,4 @@ export type DistributionProductFormData = z.infer<
   typeof distributionProductSchema
 >;
 export type TaskFormData = z.infer<typeof taskFormSchema>;
+export type AssetFormData = z.infer<typeof assetFormSchema>;

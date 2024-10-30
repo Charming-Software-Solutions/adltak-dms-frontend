@@ -105,7 +105,7 @@ const AppSidebar = ({ session }: Props) => {
                     isActive={pathname == link.route}
                     className="h-10"
                   >
-                    <Link href={link.route}>
+                    <Link href={link.route} prefetch={true}>
                       {link.icon}
                       <span>{link.label}</span>
                     </Link>
