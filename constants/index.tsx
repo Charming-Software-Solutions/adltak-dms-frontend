@@ -1,4 +1,8 @@
-import { TaskStatusExportEnum, TaskStatusImportEnum } from "@/enums";
+import {
+  AssetStatusEnum,
+  TaskStatusExportEnum,
+  TaskStatusImportEnum,
+} from "@/enums";
 import { DistributionStatus } from "@/types/distribution";
 import { SelectItemType } from "@/types/primitives";
 
@@ -51,3 +55,10 @@ export const TASK_STATUS: Record<string, string> = {
   ...TASK_STATUS_IMPORT,
   ...TASK_STATUS_EXPORT,
 };
+
+export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
+  [AssetStatusEnum.AVAILABLE]: "Available",
+  [AssetStatusEnum.IN_USE]: "In Use",
+  [AssetStatusEnum.MAINTENANCE]: "Maintenance",
+  [AssetStatusEnum.LOST]: "Lost",
+} as const;
