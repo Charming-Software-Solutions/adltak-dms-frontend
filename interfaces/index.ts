@@ -34,3 +34,9 @@ export interface ICreateTask {
   employee: string;
   distribution: string;
 }
+
+export interface ICreateAsset {
+  name: string;
+  code: string;
+  type: string;
+}
