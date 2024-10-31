@@ -1,7 +1,6 @@
 "use client";
 
 import Header from "@/components/shared/Header";
-import ResponsiveDialog from "@/components/shared/ResponsiveDialog";
 import { Button } from "@/components/ui/button";
 import { useUserForm } from "@/hooks";
 import { User } from "@/types/user";
@@ -61,36 +60,36 @@ const UserClient = ({ user, users }: Props) => {
   return (
     <React.Fragment>
       <Header>
-        <ResponsiveDialog
-          open={openDialog}
-          setOpen={setOpenDialog}
-          title="Create User"
-          description="Add users"
-          trigger={
-            <Button className="h-8">
-              <PlusCircle className="mr-9 md:mr-2 size-4" />
-              <span className="hidden sm:inline">Add User</span>
-            </Button>
-          }
-          footer={
-            <div className="flex flex-row flex-grow w-full gap-2">
-              <DrawerClose asChild className="flex-grow w-full">
-                <Button variant={"outline"}>Cancel</Button>
-              </DrawerClose>
-              <Button
-                className="flex-grow w-full"
-                onClick={() => userForm.handleSubmit(onSubmit)()}
-                disabled={
-                  !userForm.formState.isValid || userForm.formState.isSubmitting
-                }
-              >
-                Add User
-              </Button>
-            </div>
-          }
-        >
-          <UserForm form={userForm} />
-        </ResponsiveDialog>
+        {/* <ResponsiveDialog */}
+        {/*   open={openDialog} */}
+        {/*   setOpen={setOpenDialog} */}
+        {/*   title="Create User" */}
+        {/*   description="Add users" */}
+        {/*   trigger={ */}
+        {/*     <Button className="h-8"> */}
+        {/*       <PlusCircle className="mr-9 md:mr-2 size-4" /> */}
+        {/*       <span className="hidden sm:inline">Add User</span> */}
+        {/*     </Button> */}
+        {/*   } */}
+        {/*   footer={ */}
+        {/*     <div className="flex flex-row flex-grow w-full gap-2"> */}
+        {/*       <DrawerClose asChild className="flex-grow w-full"> */}
+        {/*         <Button variant={"outline"}>Cancel</Button> */}
+        {/*       </DrawerClose> */}
+        {/*       <Button */}
+        {/*         className="flex-grow w-full" */}
+        {/*         onClick={() => userForm.handleSubmit(onSubmit)()} */}
+        {/*         disabled={ */}
+        {/*           !userForm.formState.isValid || userForm.formState.isSubmitting */}
+        {/*         } */}
+        {/*       > */}
+        {/*         Add User */}
+        {/*       </Button> */}
+        {/*     </div> */}
+        {/*   } */}
+        {/* > */}
+        {/*   <UserForm form={userForm} /> */}
+        {/* </ResponsiveDialog> */}
       </Header>
 
       <main className="grid flex-1 items-start px-4 lg:px-6 h-[200px]">

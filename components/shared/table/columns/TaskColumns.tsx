@@ -17,9 +17,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
-import ResponsiveDialog from "../../ResponsiveDialog";
 import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import DeleteDialog from "../../dialogs/DeleteDialog";
 
 export const visibleTaskColumns = {
   desktop: {
@@ -102,12 +102,6 @@ export const TaskColumns: ColumnDef<Task>[] = [
           <UploadIcon className={cn("size-4", className)} />
         );
       };
-      // return (
-      //   <Badge variant={"outline"} className="rounded-lg items-center">
-      //     <TypeIcon type={distributionType} className="mr-1" />
-      //     {distributionType}
-      //   </Badge>
-      // );
       return (
         <div className="flex items-center space-x-1">
           <TypeIcon type={distributionType} className="mr-1" />
@@ -141,7 +135,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
       return (
         <TaskStatusDropdown
           id={row.original.id}
-          currentStatus={status} // Ensure status matches one of the enum types
+          currentStatus={status}
           type={type}
         />
       );
@@ -165,47 +159,13 @@ export const TaskColumns: ColumnDef<Task>[] = [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const router = useRouter();
-      const [openDialog, setOpenDialog] = useState(false);
-
+      const task = row.original;
       return (
-        <ResponsiveDialog
-          open={openDialog}
-          setOpen={setOpenDialog}
-          title={"Delete Task"}
-          description="Task deletion action"
-          trigger={
-            <Button size={"icon"} variant={"outline"} className="w-10">
-              <Trash className="h-4 w-4" />
-            </Button>
-          }
-          footer={
-            <div className="flex flex-row flex-grow w-full gap-2">
-              <Button
-                className="flex-grow w-full"
-                variant={"outline"}
-                onClick={() => setOpenDialog(false)}
-              >
-                <span>Cancel</span>
-              </Button>
-              <Button
-                className="flex-grow w-full"
-                variant={"destructive"}
-                onClick={async () => {
-                  await deleteTask(row.original.id);
-                  setOpenDialog(false);
-                  router.refresh();
-                }}
-              >
-                Delete
-              </Button>
-            </div>
-          }
-        >
-          <p className="p-medium-16 md:p-medium-14 text-gray-500 px-4 md:px-0">
-            Are you sure you want to delete the task?
-          </p>
-        </ResponsiveDialog>
+        <DeleteDialog
+          title="Delete Task"
+          deleteAction={async () => await deleteTask(task.id)}
+          placeholder="Are you sure you want to delete the task?"
+        />
       );
     },
   },

@@ -8,8 +8,9 @@ import { Pen, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import ResponsiveDialog from "../../ResponsiveDialog";
 import { deleteProduct } from "@/lib/actions/product.actions";
+import DeleteDialog from "../../dialogs/DeleteDialog";
+import { ApiResponse } from "@/types/api";
 
 export const visibleProductColumns = {
   desktop: {
@@ -87,51 +88,17 @@ export const ProductColumns: ColumnDef<Product>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const product = row.original;
-      const router = useRouter();
-      const [openDialog, setOpenDialog] = useState(false);
 
       return (
         <div className="flex items-center gap-2">
           <Button size={"icon"} variant={"outline"}>
             <Pen className="size-4" />
           </Button>
-          <ResponsiveDialog
-            open={openDialog}
-            setOpen={setOpenDialog}
+          <DeleteDialog
             title={"Delete Product"}
-            description="Product deletion action"
-            trigger={
-              <Button size={"icon"} variant={"outline"} className="w-10">
-                <Trash className="h-4 w-4" />
-              </Button>
-            }
-            footer={
-              <div className="flex flex-row flex-grow w-full gap-2">
-                <Button
-                  className="flex-grow w-full"
-                  variant={"outline"}
-                  onClick={() => setOpenDialog(false)}
-                >
-                  <span>Cancel</span>
-                </Button>
-                <Button
-                  className="flex-grow w-full"
-                  variant={"destructive"}
-                  onClick={async () => {
-                    await deleteProduct(product.id);
-                    setOpenDialog(false);
-                    router.refresh();
-                  }}
-                >
-                  Delete
-                </Button>
-              </div>
-            }
-          >
-            <p className="p-medium-16 md:p-medium-14 text-gray-500 px-4 md:px-0">
-              Are you sure you want to delete the product?
-            </p>
-          </ResponsiveDialog>
+            deleteAction={async () => await deleteProduct(product.id)}
+            placeholder={" Are you sure you want to delete the product?"}
+          />
         </div>
       );
     },

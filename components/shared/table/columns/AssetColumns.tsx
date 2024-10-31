@@ -105,6 +105,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
 
       return (
         <DeleteDialog
+          title="Delete Asset"
           deleteAction={async () => await deleteAsset(asset.id)}
           placeholder="Are you sure you want to delete the asset?"
         />
