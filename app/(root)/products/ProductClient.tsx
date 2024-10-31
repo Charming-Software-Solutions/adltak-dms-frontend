@@ -1,7 +1,6 @@
 "use client";
 
 import Header from "@/components/shared/Header";
-import ResponsiveDialog from "@/components/shared/ResponsiveDialog";
 import {
   ProductColumns,
   visibleProductColumns,
@@ -25,6 +24,15 @@ import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import { z } from "zod";
 import ProductForm from "./components/ProductForm";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/shared/ResponsiveDialog";
 
 type Props = {
   products: Product[];
@@ -107,71 +115,74 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
             </Button>
           </CSVLink>
 
-          <ResponsiveDialog
-            open={open}
-            setOpen={setOpen}
-            title="Add Product"
-            description="Add products that you want to keep track of"
-            trigger={
+          <ResponsiveDialog open={open} setOpen={setOpen}>
+            <ResponsiveDialogTrigger>
               <Button className="h-8">
                 <PlusCircle className="mr-9 md:mr-2 size-4" />
                 <span className="hidden sm:inline">Add Product</span>
               </Button>
-            }
-            footer={
-              <div className="flex flex-row flex-grow w-full gap-2">
-                <Button variant={"outline"} onClick={() => setOpen(false)}>
-                  <span>Cancel</span>
-                </Button>
-                <Button
-                  variant={"outline"}
-                  onClick={async () => {
-                    // Only fetch and set values when sku is initially null
-                    // to avoid overload fetching
-                    if (!createForm.getValues("sku")) {
-                      const category = await getCategoryById(productCategory);
-                      const type = await getTypeById(productType);
+            </ResponsiveDialogTrigger>
+            <ResponsiveDialogContent>
+              <ResponsiveDialogHeader>
+                <ResponsiveDialogTitle>Add Product</ResponsiveDialogTitle>
+                <ResponsiveDialogDescription>
+                  Add products that you want to keep track of
+                </ResponsiveDialogDescription>
+              </ResponsiveDialogHeader>
+              <ProductForm
+                className="px-4 md:px-0"
+                form={createForm}
+                brands={brands}
+                categories={categories}
+                types={types}
+                formReset={formReset}
+              />
+              <ResponsiveDialogFooter>
+                <div className="flex flex-row flex-grow w-full gap-2">
+                  <Button variant={"outline"} onClick={() => setOpen(false)}>
+                    <span>Cancel</span>
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    onClick={async () => {
+                      // Only fetch and set values when sku is initially null
+                      // to avoid overload fetching
+                      if (!createForm.getValues("sku")) {
+                        const category = await getCategoryById(productCategory);
+                        const type = await getTypeById(productType);
 
-                      if (category.data && type.data) {
-                        const productSKUFormat: ProductSKU = {
-                          name: productName,
-                          category: category.data.name,
-                          type: type.data.name,
-                        };
-                        const productSKU = generateProductSKU(productSKUFormat);
-                        createForm.setValue("sku", productSKU);
+                        if (category.data && type.data) {
+                          const productSKUFormat: ProductSKU = {
+                            name: productName,
+                            category: category.data.name,
+                            type: type.data.name,
+                          };
+                          const productSKU =
+                            generateProductSKU(productSKUFormat);
+                          createForm.setValue("sku", productSKU);
+                        }
                       }
+                    }}
+                    disabled={
+                      createForm.formState.isSubmitting ||
+                      !(productName && productCategory && productType)
                     }
-                  }}
-                  disabled={
-                    createForm.formState.isSubmitting ||
-                    !(productName && productCategory && productType)
-                  }
-                >
-                  <span>Generate SKU</span>
-                </Button>
-                <Button
-                  className="flex-grow w-full"
-                  onClick={() => createForm.handleSubmit(onSubmit)()}
-                  disabled={
-                    !createForm.formState.isValid ||
-                    createForm.formState.isSubmitting
-                  }
-                >
-                  Add Product
-                </Button>
-              </div>
-            }
-          >
-            {/* Form when creating a product*/}
-            <ProductForm
-              className="px-0"
-              form={createForm}
-              brands={brands}
-              categories={categories}
-              types={types}
-              formReset={formReset}
-            />
+                  >
+                    <span>Generate SKU</span>
+                  </Button>
+                  <Button
+                    className="flex-grow w-full"
+                    onClick={() => createForm.handleSubmit(onSubmit)()}
+                    disabled={
+                      !createForm.formState.isValid ||
+                      createForm.formState.isSubmitting
+                    }
+                  >
+                    Add Product
+                  </Button>
+                </div>
+              </ResponsiveDialogFooter>
+            </ResponsiveDialogContent>
           </ResponsiveDialog>
         </div>
       </Header>

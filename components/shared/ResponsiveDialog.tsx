@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import React from "react";
 import { useMediaQuery } from "react-responsive";
 import {
@@ -21,62 +22,137 @@ import {
   DrawerTrigger,
 } from "../ui/drawer";
 import { ScrollArea } from "../ui/scroll-area";
-import { cn } from "@/lib/utils";
 
-type Props = {
-  title: string;
-  description: string;
+type ResponsiveDialogBaseProps = {
   children: React.ReactNode;
-  trigger: React.ReactNode;
-  footer?: React.ReactNode;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
 };
 
-const ResponsiveDialog = ({
-  title,
-  description,
+const ResponsiveDialogTrigger = ({
   children,
-  trigger,
-  footer,
+  className,
+}: ResponsiveDialogBaseProps) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
+  return isDesktop ? (
+    <DialogTrigger asChild className={className}>
+      {children}
+    </DialogTrigger>
+  ) : (
+    <DrawerTrigger asChild className={className}>
+      {children}
+    </DrawerTrigger>
+  );
+};
+
+const ResponsiveDialogHeader = ({
+  className,
+  children,
+}: ResponsiveDialogBaseProps) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
+  return isDesktop ? (
+    <DialogHeader className={className}>{children}</DialogHeader>
+  ) : (
+    <DrawerHeader className={cn("text-left", className)}>
+      {children}
+    </DrawerHeader>
+  );
+};
+
+const ResponsiveDialogTitle = ({
+  children,
+  className,
+}: ResponsiveDialogBaseProps) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
+  return isDesktop ? (
+    <DialogTitle className={className}>{children}</DialogTitle>
+  ) : (
+    <DrawerTitle className={className}>{children}</DrawerTitle>
+  );
+};
+
+const ResponsiveDialogDescription = ({
+  children,
+  className,
+}: ResponsiveDialogBaseProps) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
+  return isDesktop ? (
+    <DialogDescription className={className}>{children}</DialogDescription>
+  ) : (
+    <DrawerDescription className={className}>{children}</DrawerDescription>
+  );
+};
+
+const ResponsiveDialogContent = ({
+  children,
+  className,
+}: ResponsiveDialogBaseProps) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
+  return isDesktop ? (
+    <DialogContent className={cn("max-w-lg", className)}>
+      {children}
+    </DialogContent>
+  ) : (
+    <DrawerContent>{children}</DrawerContent>
+  );
+};
+
+const ResponsiveDialogFooter = ({
+  children,
+  className,
+}: ResponsiveDialogBaseProps) => {
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
+  return isDesktop ? (
+    <DialogFooter className={className}>{children}</DialogFooter>
+  ) : (
+    <DrawerFooter className={className}>{children}</DrawerFooter>
+  );
+};
+
+type ResponsiveDialogProps = {
+  children: React.ReactNode;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+/* Structure
+ *
+ * <ResponsiveDialog>
+ *  <ResponsiveDialogTrigger>{trigger}</ResponsiveDialogTrigger>
+ *  <ResponsiveDialogContent>
+ *    <ResponsiveDialogHeader>
+ *      <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
+ *      <ResponsiveDialogDescription>{description}</ResponsiveDialogDescription>
+ *    <ResponsiveDialogHeader>
+ *    {content}
+ *    <ResponsiveDialogFooter>{footer}</ResponsiveDialogFooter>
+ *  </ResponsiveDialogContent
+ * </ResponsiveDialog>
+ * */
+
+const ResponsiveDialog = ({
+  children,
   open,
   setOpen,
-  className,
-}: Props) => {
+}: ResponsiveDialogProps) => {
   const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
 
-  if (isDesktop) {
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>{trigger}</DialogTrigger>
-        <DialogContent className={cn("max-w-lg", className)}>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {children}
-          {footer && <DialogFooter className="px-1">{footer}</DialogFooter>}
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return (
+  return isDesktop ? (
+    <Dialog open={open} onOpenChange={setOpen}>
+      {children}
+    </Dialog>
+  ) : (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>{title}</DrawerTitle>
-          <DrawerDescription>{description}</DrawerDescription>
-        </DrawerHeader>
-        <ScrollArea className="px-4 overflow-y-auto h-[30rem]">
-          {children}
-        </ScrollArea>
-        {footer && <DrawerFooter>{footer}</DrawerFooter>}
-      </DrawerContent>
+      {children}
     </Drawer>
   );
 };
 
-export default ResponsiveDialog;
+export {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+};

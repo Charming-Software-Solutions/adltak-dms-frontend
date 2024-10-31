@@ -1,7 +1,6 @@
 "use client";
 
 import Header from "@/components/shared/Header";
-import ResponsiveDialog from "@/components/shared/ResponsiveDialog";
 import {
   AssetColumns,
   visibleAssetColumns,
@@ -21,6 +20,14 @@ import { ApiResponse } from "@/types/api";
 import { createAsset } from "@/lib/actions/asset.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/shared/ResponsiveDialog";
 
 type Props = {
   assets: Asset[];
@@ -63,39 +70,39 @@ const AssetsClient = ({ assets, assetTypes }: Props) => {
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
-          <ResponsiveDialog
-            open={openDialog}
-            setOpen={setOpenDialog}
-            title="Add Asset"
-            description=""
-            trigger={
+          <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+            <ResponsiveDialogTrigger>
               <Button className="h-8">
                 <PlusCircle className="mr-9 md:mr-2 size-4" />
                 <span className="hidden sm:inline">Add Asset</span>
               </Button>
-            }
-            footer={
-              <div className="flex flex-row w-full gap-2">
-                <Button
-                  className="flex-grow w-full"
-                  variant={"outline"}
-                  onClick={() => setOpenDialog(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex-grow w-full"
-                  disabled={
-                    !form.formState.isValid || form.formState.isSubmitting
-                  }
-                  onClick={() => form.handleSubmit(onSubmit)()}
-                >
-                  Add Asset
-                </Button>
-              </div>
-            }
-          >
-            <AssetForm form={form} assetTypes={assetTypes} />
+            </ResponsiveDialogTrigger>
+            <ResponsiveDialogContent>
+              <ResponsiveDialogHeader>
+                <ResponsiveDialogTitle>Add Asset</ResponsiveDialogTitle>
+              </ResponsiveDialogHeader>
+              <AssetForm form={form} assetTypes={assetTypes} />
+              <ResponsiveDialogFooter>
+                <div className="flex flex-row w-full gap-2">
+                  <Button
+                    className="flex-grow w-full"
+                    variant={"outline"}
+                    onClick={() => setOpenDialog(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="flex-grow w-full"
+                    disabled={
+                      !form.formState.isValid || form.formState.isSubmitting
+                    }
+                    onClick={() => form.handleSubmit(onSubmit)()}
+                  >
+                    Add Asset
+                  </Button>
+                </div>
+              </ResponsiveDialogFooter>
+            </ResponsiveDialogContent>
           </ResponsiveDialog>
         </div>
       </Header>
