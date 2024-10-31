@@ -21,6 +21,14 @@ import { ApiResponse } from "@/types/api";
 import { createTask } from "@/lib/actions/task.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "@/components/shared/ResponsiveDialog";
 
 type Props = {
   tasks: Task[];
@@ -62,41 +70,41 @@ const TasksClient = ({ tasks, distributions }: Props) => {
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
-          {/* <ResponsiveDialog */}
-          {/*   open={openDialog} */}
-          {/*   setOpen={setOpenDialog} */}
-          {/*   title="Create Task" */}
-          {/*   description="" */}
-          {/*   trigger={ */}
-          {/*     <Button className="h-8"> */}
-          {/*       <PlusCircle className="mr-9 md:mr-2 size-4" /> */}
-          {/*       <span className="hidden sm:inline">Create Task</span> */}
-          {/*     </Button> */}
-          {/*   } */}
-          {/*   footer={ */}
-          {/*     <div className="flex flex-row w-full gap-2"> */}
-          {/*       <Button */}
-          {/*         className="flex-grow w-full" */}
-          {/*         variant={"outline"} */}
-          {/*         onClick={() => setOpenDialog(false)} */}
-          {/*       > */}
-          {/*         Cancel */}
-          {/*       </Button> */}
-          {/*       <Button */}
-          {/*         className="flex-grow w-full" */}
-          {/*         disabled={ */}
-          {/*           !taskForm.formState.isValid || */}
-          {/*           taskForm.formState.isSubmitting */}
-          {/*         } */}
-          {/*         onClick={() => taskForm.handleSubmit(onSubmit)()} */}
-          {/*       > */}
-          {/*         Create Task */}
-          {/*       </Button> */}
-          {/*     </div> */}
-          {/*   } */}
-          {/* > */}
-          {/*   <TaskForm form={taskForm} distributions={distributions} /> */}
-          {/* </ResponsiveDialog> */}
+          <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+            <ResponsiveDialogTrigger>
+              <Button className="h-8">
+                <PlusCircle className="mr-9 md:mr-2 size-4" />
+                <span className="hidden sm:inline">Create Task</span>
+              </Button>
+            </ResponsiveDialogTrigger>
+            <ResponsiveDialogContent>
+              <ResponsiveDialogHeader>
+                <ResponsiveDialogTitle>Create Task</ResponsiveDialogTitle>
+              </ResponsiveDialogHeader>
+              <TaskForm form={taskForm} distributions={distributions} />
+              <ResponsiveDialogFooter>
+                <div className="flex flex-row w-full gap-2">
+                  <Button
+                    className="flex-grow w-full"
+                    variant={"outline"}
+                    onClick={() => setOpenDialog(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="flex-grow w-full"
+                    disabled={
+                      !taskForm.formState.isValid ||
+                      taskForm.formState.isSubmitting
+                    }
+                    onClick={() => taskForm.handleSubmit(onSubmit)()}
+                  >
+                    Create Task
+                  </Button>
+                </div>
+              </ResponsiveDialogFooter>
+            </ResponsiveDialogContent>
+          </ResponsiveDialog>
         </div>
       </Header>
 
