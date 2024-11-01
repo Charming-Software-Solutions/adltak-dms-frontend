@@ -4,6 +4,7 @@ import CustomFormField, {
   FormFieldType,
   InputType,
 } from "@/components/shared/CustomFormField";
+import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
@@ -17,42 +18,30 @@ type Props = {
   categories: Category[];
   types: Type[];
   className?: string;
-  formReset: boolean;
 };
 
-const ProductForm = ({
-  form,
-  brands,
-  categories,
-  types,
-  className,
-  formReset,
-}: Props) => {
+const ProductForm = ({ form, brands, categories, types, className }: Props) => {
   return (
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 px-1", className)}>
-        <CustomFormField
-          fieldType={FormFieldType.IMAGE}
-          control={form.control}
-          name="thumbnail"
-          formReset={formReset}
-          disabled={form.formState.isSubmitting}
-        />
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="name"
-          label="Product Name"
-          placeholder="Piattos"
-        />
-        <div className="flex gap-2 items-end">
-          <CustomFormField
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name="sku"
-            label="Product SKU"
-            placeholder="SKU-123"
-          />
+        <div className="flex flex-row gap-2 items-start">
+          <ImageDropzone control={form.control} name="thumbnail" />
+          <div className="space-y-2 w-full">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="name"
+              label="Product Name"
+              placeholder="Piattos"
+            />
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="sku"
+              label="Product SKU"
+              placeholder="SKU-123"
+            />
+          </div>
         </div>
         <CustomFormField
           fieldType={FormFieldType.SELECT}

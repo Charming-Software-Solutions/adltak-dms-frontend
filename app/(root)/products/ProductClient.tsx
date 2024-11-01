@@ -36,14 +36,12 @@ import {
 
 type Props = {
   products: Product[];
-  // currentProduct: Product;
   brands: Brand[];
   categories: Category[];
   types: Type[];
 };
 
 const ProductClient = ({ products, brands, categories, types }: Props) => {
-  const [formReset, setFormReset] = useState(false);
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
@@ -75,6 +73,8 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
     formData.append("type", values.type);
     formData.append("stock", values.stock.toString());
 
+    console.log("productFormValues: ", values);
+
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
     }
@@ -88,7 +88,6 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
         router.refresh();
         createForm.reset();
         createForm.setValue("sku", "");
-        setFormReset(true);
         setOpen(false);
       }
     } catch (error) {
@@ -135,7 +134,6 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
                 brands={brands}
                 categories={categories}
                 types={types}
-                formReset={formReset}
               />
               <ResponsiveDialogFooter>
                 <div className="flex flex-row flex-grow w-full gap-2">
