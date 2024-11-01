@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
-import ImageInput from "./image/ImageInput";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -49,18 +48,13 @@ interface BaseCustomProps {
   inputType?: InputType;
 }
 
-// Additional props for ImageField that require `formReset`
-interface ImageFieldProps extends BaseCustomProps {
-  fieldType: FormFieldType.IMAGE; // Ensure it's specifically for IMAGE
-  formReset: boolean; // Required
-  disabled: boolean;
-  size: string;
-}
-
-// Union type for custom props
-type CustomProps = BaseCustomProps | ImageFieldProps;
-
-const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
+const RenderInput = ({
+  field,
+  props,
+}: {
+  field: any;
+  props: BaseCustomProps;
+}) => {
   switch (props.fieldType) {
     case FormFieldType.INPUT:
       return (
@@ -105,25 +99,12 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
       );
     case FormFieldType.SKELETON:
       return props.renderSkeleton ? props.renderSkeleton(field) : null;
-    case FormFieldType.IMAGE:
-      const imageProps = props as ImageFieldProps;
-      return (
-        <FormControl>
-          <ImageInput
-            mode={"create"}
-            value={field.value}
-            disabled={imageProps.disabled}
-            formReset={imageProps.formReset}
-            onChange={field.onChange}
-          />
-        </FormControl>
-      );
     default:
       return null;
   }
 };
 
-const CustomFormField = (props: CustomProps) => {
+const CustomFormField = (props: BaseCustomProps) => {
   const { control, name, label } = props;
 
   return (
