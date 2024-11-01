@@ -125,4 +125,11 @@ body {
   .form-container {
     @apply flex flex-col gap-4 px-1;
   }
+  .dropzone[data-focus-visible],
+  .dropzone[data-drop-target] {
+    @apply outline outline-2 outline-offset-[-1px] outline-red-500 transition duration-300 ease-in-out; /* Apply Tailwind for outline styles */
+  }
+  .dropzone[data-drop-target] {
+    @apply bg-red-100;
+  }
 }
