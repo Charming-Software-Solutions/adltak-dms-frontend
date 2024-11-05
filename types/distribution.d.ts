@@ -1,6 +1,7 @@
 import { DistributionStatusesEnum } from "@/enums";
 import { Product } from "./product";
 import { Employee } from "./user";
+import { DISTRIBUTION_STATUSES } from "@/constants";
 
 export type DistributionProduct = {
   id: string;
@@ -23,3 +24,5 @@ export type Distribution = {
   client: string;
   employee: string;
 };
+
+export type DistributionStatus = keyof typeof DISTRIBUTION_STATUSES;
