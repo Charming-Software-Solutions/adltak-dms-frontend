@@ -127,9 +127,12 @@ body {
   }
   .dropzone[data-focus-visible],
   .dropzone[data-drop-target] {
-    @apply outline outline-2 outline-offset-[-1px] outline-red-500 transition duration-300 ease-in-out; /* Apply Tailwind for outline styles */
+    @apply outline outline-2 outline-offset-[-1px] outline-red-500 transition duration-300 ease-in-out;
   }
   .dropzone[data-drop-target] {
     @apply bg-red-100;
+  }
+  .dialog-footer {
+    @apply flex flex-row w-full gap-2;
   }
 }

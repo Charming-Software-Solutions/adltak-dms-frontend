@@ -29,6 +29,17 @@ async function getProductById(id: string): Promise<ApiResponse<Product>> {
   });
 }
 
+async function updateProduct(
+  id: string,
+  formData: FormData,
+): Promise<ApiResponse<Product>> {
+  return fetchAndHandleResponse({
+    url: `${PRODUCT_URL}${id}/`,
+    method: "PATCH",
+    body: formData,
+  });
+}
+
 async function deleteProduct(id: string): Promise<ApiResponse<string>> {
   return fetchAndHandleResponse({
     url: `${PRODUCT_URL}${id}/`,
@@ -36,4 +47,10 @@ async function deleteProduct(id: string): Promise<ApiResponse<string>> {
   });
 }
 
-export { createProduct, getProducts, getProductById, deleteProduct };
+export {
+  createProduct,
+  updateProduct,
+  getProducts,
+  getProductById,
+  deleteProduct,
+};

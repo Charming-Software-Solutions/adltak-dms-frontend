@@ -7,10 +7,17 @@ import CustomFormField, {
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
+import { createProduct, updateProduct } from "@/lib/actions/product.actions";
+import { formatErrorResponse } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
-import { ProductFormData } from "@/schemas";
-import { Brand, Category, Type } from "@/types/product";
-import { UseFormReturn } from "react-hook-form";
+import { ProductFormData, productFormSchema } from "@/schemas";
+import { ApiResponse } from "@/types/api";
+import { Brand, Category, Product, Type } from "@/types/product";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm, UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<ProductFormData>;
@@ -20,11 +27,72 @@ type Props = {
   className?: string;
 };
 
+export const useProductForm = ({
+  product,
+  mode,
+}: {
+  product?: Product;
+  mode: "create" | "edit";
+}) => {
+  const router = useRouter();
+
+  const form = useForm<ProductFormData>({
+    resolver: zodResolver(productFormSchema),
+    defaultValues: {
+      sku: product?.sku,
+      name: product?.name,
+      brand: product?.brand.id,
+      category: product?.category.id,
+      type: product?.type.id,
+      thumbnail: product?.thumbnail,
+      stock: product?.stock,
+    },
+  });
+
+  const onSubmit = async (
+    values: z.infer<typeof productFormSchema>,
+    setOpen: (value: boolean) => void,
+  ) => {
+    const formData = new FormData();
+    formData.append("sku", values.sku);
+    formData.append("name", values.name);
+    formData.append("brand", values.brand);
+    formData.append("category", values.category);
+    formData.append("type", values.type);
+    formData.append("stock", values.stock.toString());
+
+    if (values.thumbnail instanceof File) {
+      formData.append("thumbnail", values.thumbnail);
+    }
+
+    try {
+      const result: ApiResponse<Product> =
+        mode === "create"
+          ? await createProduct(formData)
+          : await updateProduct(product.id, formData);
+
+      if (result.errors) {
+        toast.error(formatErrorResponse(result.errors), {
+          position: "top-center",
+        });
+      } else {
+        form.reset();
+        setOpen(false);
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+    }
+  };
+
+  return { form, onSubmit };
+};
+
 const ProductForm = ({ form, brands, categories, types, className }: Props) => {
   return (
     <Form {...form}>
-      <div className={cn("flex flex-col gap-4 px-1", className)}>
-        <div className="flex flex-row gap-2 items-start">
+      <div className={cn("flex flex-col gap-4 h-full", className)}>
+        <div className="flex flex-row gap-2 items-start ">
           <ImageDropzone control={form.control} name="thumbnail" />
           <div className="space-y-2 w-full">
             <CustomFormField
@@ -89,6 +157,13 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="stock"
           label="Product stock"
           placeholder="10"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.DATE}
+          control={form.control}
+          name="expiration-date"
+          label="Product Expiration"
+          placeholder="Select date"
         />
       </div>
     </Form>

@@ -1,3 +1,4 @@
+import { DistributionStatusesEnum } from "@/enums";
 import { Product } from "./product";
 import { Employee } from "./user";
 
@@ -9,17 +10,6 @@ export type DistributionProduct = {
   quantity: number;
 };
 
-export type DistributionStatus =
-  | "Pending"
-  | "In Transit"
-  | "Delivered"
-  | "Cancelled"
-  | "Returned"
-  | "On Hold"
-  | "Completed"
-  | "Failed"
-  | "Scheduled";
-
 export type DistributionType = "IMPORT" | "EXPORT";
 
 export type Distribution = {
@@ -29,7 +19,7 @@ export type Distribution = {
   updated_at: string;
   products: DistributionProduct[];
   type: DistributionType;
-  status: DistributionStatus;
+  status: DistributionStatusesEnum;
   client: string;
   employee: string;
 };

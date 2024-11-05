@@ -16,6 +16,12 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { Button } from "../ui/button";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -24,6 +30,7 @@ export enum FormFieldType {
   SELECT = "select",
   SKELETON = "skeleton",
   IMAGE = "image",
+  DATE = "date",
 }
 
 export enum InputType {
@@ -32,7 +39,6 @@ export enum InputType {
   EMAIL = "email",
 }
 
-// Main interface for form field props
 interface BaseCustomProps {
   control: Control<any>;
   name: string;
@@ -99,13 +105,54 @@ const RenderInput = ({
       );
     case FormFieldType.SKELETON:
       return props.renderSkeleton ? props.renderSkeleton(field) : null;
+    case FormFieldType.DATE:
+      return (
+        <div className="flex flex-col gap-2">
+          <FormLabel>{props.label}</FormLabel>
+          <Popover>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "pl-3 text-left font-normal",
+                    !field.value && "text-muted-foreground",
+                  )}
+                >
+                  {field.value ? (
+                    format(field.value, "PPP")
+                  ) : (
+                    <span>{props.placeholder}</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={field.value}
+                onSelect={field.onChange}
+                disabled={(date) =>
+                  date < new Date() ||
+                  date >
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() + 10),
+                    )
+                }
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      );
     default:
       return null;
   }
 };
 
 const CustomFormField = (props: BaseCustomProps) => {
-  const { control, name, label } = props;
+  const { control, name } = props;
 
   return (
     <FormField
@@ -113,10 +160,10 @@ const CustomFormField = (props: BaseCustomProps) => {
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex-1">
-          {props.fieldType !== FormFieldType.CHECKBOX && label && (
-            <FormLabel>{label}</FormLabel>
-          )}
+        <FormItem>
+          {props.fieldType !== FormFieldType.DATE &&
+            props.fieldType !== FormFieldType.CHECKBOX &&
+            props.label && <FormLabel>{props.label}</FormLabel>}
           <RenderInput field={field} props={props} />
           <FormMessage />
         </FormItem>

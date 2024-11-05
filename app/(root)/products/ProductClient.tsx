@@ -2,29 +2,6 @@
 
 import Header from "@/components/shared/Header";
 import {
-  ProductColumns,
-  visibleProductColumns,
-} from "@/components/shared/table/columns/ProductColumns";
-import { DataTable } from "@/components/shared/table/data-table";
-import { Button } from "@/components/ui/button";
-import { useProductForm } from "@/hooks";
-import { createProduct } from "@/lib/actions/product.actions";
-import {
-  getCategoryById,
-  getTypeById,
-} from "@/lib/actions/product.classications.actions";
-import { generateProductSKU } from "@/lib/utils";
-import { productFormSchema } from "@/schemas";
-import { ApiResponse } from "@/types/api";
-import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
-import { File as FileIcon, ListFilter, PlusCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { CSVLink } from "react-csv";
-import { useMediaQuery } from "react-responsive";
-import { z } from "zod";
-import ProductForm from "./components/ProductForm";
-import {
   ResponsiveDialog,
   ResponsiveDialogContent,
   ResponsiveDialogDescription,
@@ -33,6 +10,23 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
+import {
+  ProductColumns,
+  visibleProductColumns,
+} from "@/components/shared/table/columns/ProductColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { Button } from "@/components/ui/button";
+import {
+  getCategoryById,
+  getTypeById,
+} from "@/lib/actions/product.classications.actions";
+import { generateProductSKU } from "@/lib/utils";
+import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
+import { File as FileIcon, ListFilter, PlusCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { CSVLink } from "react-csv";
+import { useMediaQuery } from "react-responsive";
+import ProductForm, { useProductForm } from "./components/ProductForm";
 
 type Props = {
   products: Product[];
@@ -45,13 +39,12 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-  const createForm = useProductForm({ mode: "create" });
-  const router = useRouter();
+  const { form, onSubmit } = useProductForm({ mode: "create" });
 
   // Form values to watch for SKU generation
-  const productName = createForm.watch("name");
-  const productCategory = createForm.watch("category");
-  const productType = createForm.watch("type");
+  const productName = form.watch("name");
+  const productCategory = form.watch("category");
+  const productType = form.watch("type");
 
   const productsToExport = products.map((product) => ({
     ...product,
@@ -64,40 +57,9 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
     setIsMounted(true);
   }, []);
 
-  const onSubmit = async (values: z.infer<typeof productFormSchema>) => {
-    const formData = new FormData();
-    formData.append("sku", values.sku);
-    formData.append("name", values.name);
-    formData.append("brand", values.brand);
-    formData.append("category", values.category);
-    formData.append("type", values.type);
-    formData.append("stock", values.stock.toString());
-
-    console.log("productFormValues: ", values);
-
-    if (values.thumbnail instanceof File) {
-      formData.append("thumbnail", values.thumbnail);
-    }
-
-    try {
-      const result: ApiResponse<Product> = await createProduct(formData);
-
-      if (result.errors) {
-        console.log(result.errors);
-      } else {
-        router.refresh();
-        createForm.reset();
-        createForm.setValue("sku", "");
-        setOpen(false);
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
-    }
-  };
-
   return (
     <React.Fragment>
-      <Header>
+      <Header overrideHeaderTitle="Products">
         <div className="flex items-center justify-end gap-2">
           <Button variant="outline" size="sm" className="h-8 gap-1">
             <ListFilter className="h-3.5 w-3.5" />
@@ -129,8 +91,8 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
                 </ResponsiveDialogDescription>
               </ResponsiveDialogHeader>
               <ProductForm
+                form={form}
                 className="px-4 md:px-0"
-                form={createForm}
                 brands={brands}
                 categories={categories}
                 types={types}
@@ -145,7 +107,7 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
                     onClick={async () => {
                       // Only fetch and set values when sku is initially null
                       // to avoid overload fetching
-                      if (!createForm.getValues("sku")) {
+                      if (!form.getValues("sku")) {
                         const category = await getCategoryById(productCategory);
                         const type = await getTypeById(productType);
 
@@ -157,12 +119,12 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
                           };
                           const productSKU =
                             generateProductSKU(productSKUFormat);
-                          createForm.setValue("sku", productSKU);
+                          form.setValue("sku", productSKU);
                         }
                       }
                     }}
                     disabled={
-                      createForm.formState.isSubmitting ||
+                      form.formState.isSubmitting ||
                       !(productName && productCategory && productType)
                     }
                   >
@@ -170,10 +132,11 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
                   </Button>
                   <Button
                     className="flex-grow w-full"
-                    onClick={() => createForm.handleSubmit(onSubmit)()}
+                    onClick={form.handleSubmit((values) =>
+                      onSubmit(values, setOpen),
+                    )}
                     disabled={
-                      !createForm.formState.isValid ||
-                      createForm.formState.isSubmitting
+                      !form.formState.isValid || form.formState.isSubmitting
                     }
                   >
                     Add Product

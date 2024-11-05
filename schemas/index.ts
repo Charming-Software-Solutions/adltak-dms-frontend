@@ -55,6 +55,9 @@ export const distributionFormSchema = z.object({
   client: z.string().min(1, {
     message: "Client name is required.",
   }),
+  status: z.string().min(1, {
+    message: "Status is required.",
+  }),
   // logisticsPerson: z.string().min(1, {
   //   message: "Logitics person is required.",
   // }),
@@ -73,11 +76,15 @@ export const assetFormSchema = z.object({
   name: z.string().min(1, {
     message: "Name is required.",
   }),
+  thumbnail: z.union([z.instanceof(File), z.string()]).optional(),
   code: z.string().min(1, {
     message: "Code is required.",
   }),
   type: z.string().uuid({
     message: "Type is required.",
+  }),
+  status: z.string().min(1, {
+    message: "Status is required.",
   }),
 });
 

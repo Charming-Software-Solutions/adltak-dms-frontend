@@ -7,12 +7,11 @@ import { ICreateAsset } from "@/interfaces";
 
 const ASSET_URL = `${process.env.DOMAIN}/asset/`;
 
-async function createAsset(body: ICreateAsset): Promise<ApiResponse<Asset>> {
+async function createAsset(body: FormData): Promise<ApiResponse<Asset>> {
   return fetchAndHandleResponse({
     url: ASSET_URL,
     method: "POST",
-    contentType: "application/json",
-    body: JSON.stringify(body),
+    body: body,
   });
 }
 
@@ -22,6 +21,17 @@ async function getAssets(): Promise<Asset[]> {
     method: "GET",
   });
   return response.data ?? [];
+}
+
+async function updateAsset(
+  id: string,
+  body: FormData,
+): Promise<ApiResponse<Asset>> {
+  return fetchAndHandleResponse({
+    url: `${ASSET_URL}${id}/`,
+    method: "PATCH",
+    body: body,
+  });
 }
 
 async function updateAssetStatus({
@@ -48,4 +58,4 @@ async function deleteAsset(id: string): Promise<ApiResponse<string>> {
   });
 }
 
-export { createAsset, getAssets, updateAssetStatus, deleteAsset };
+export { createAsset, getAssets, updateAsset, updateAssetStatus, deleteAsset };

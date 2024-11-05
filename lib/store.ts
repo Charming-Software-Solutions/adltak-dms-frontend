@@ -7,7 +7,7 @@ type BaseItem = {
   [key: string]: any;
 };
 
-type QuantityItem<T extends BaseItem> = {
+export type QuantityItem<T extends BaseItem> = {
   id: string;
   item: T;
   quantity: number;
