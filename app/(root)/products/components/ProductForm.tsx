@@ -28,7 +28,7 @@ type Props = {
 };
 
 export const useProductForm = ({
-  product,
+  product = undefined,
   mode,
 }: {
   product?: Product;
@@ -69,7 +69,7 @@ export const useProductForm = ({
       const result: ApiResponse<Product> =
         mode === "create"
           ? await createProduct(formData)
-          : await updateProduct(product.id, formData);
+          : await updateProduct(product!.id, formData);
 
       if (result.errors) {
         toast.error(formatErrorResponse(result.errors), {
