@@ -26,6 +26,17 @@ async function getDistributions(): Promise<Distribution[]> {
   return response.data ?? [];
 }
 
+async function updateDistribution(
+  id: string,
+  body: FormData,
+): Promise<ApiResponse<Distribution>> {
+  return fetchAndHandleResponse({
+    url: `${DISTRIBUTION_URL}${id}/`,
+    method: "PATCH",
+    body: body,
+  });
+}
+
 async function deleteDistribution(id: string): Promise<ApiResponse<string>> {
   return fetchAndHandleResponse({
     url: `${DISTRIBUTION_URL}${id}/`,
@@ -33,4 +44,9 @@ async function deleteDistribution(id: string): Promise<ApiResponse<string>> {
   });
 }
 
-export { createDistribution, getDistributions, deleteDistribution };
+export {
+  createDistribution,
+  getDistributions,
+  updateDistribution,
+  deleteDistribution,
+};

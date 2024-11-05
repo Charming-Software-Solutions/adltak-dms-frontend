@@ -7,12 +7,11 @@ import { ICreateTask } from "@/interfaces";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
 
-async function createTask(body: ICreateTask): Promise<ApiResponse<Task>> {
+async function createTask(body: FormData): Promise<ApiResponse<Task>> {
   return fetchAndHandleResponse({
     url: TASK_URL,
-    contentType: "application/json",
     method: "POST",
-    body: JSON.stringify(body),
+    body: body,
   });
 }
 
@@ -22,6 +21,17 @@ async function getTasks(): Promise<Task[]> {
     method: "GET",
   });
   return response.data ?? [];
+}
+
+async function updateTask(
+  id: string,
+  body: FormData,
+): Promise<ApiResponse<Task>> {
+  return fetchAndHandleResponse({
+    url: `${TASK_URL}${id}/`,
+    method: "PATCH",
+    body: body,
+  });
 }
 
 async function updateTaskStatus({
@@ -48,4 +58,4 @@ async function deleteTask(id: string): Promise<ApiResponse<string>> {
   });
 }
 
-export { createTask, getTasks, updateTaskStatus, deleteTask };
+export { createTask, getTasks, updateTask, updateTaskStatus, deleteTask };

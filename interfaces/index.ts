@@ -1,4 +1,4 @@
-import { DistributionStatus } from "@/types/distribution";
+import { DistributionStatusesEnum } from "@/enums";
 
 export interface ICreateProduct {
   sku: string;
@@ -26,7 +26,7 @@ export interface ICreateDistribution {
     quantity: number;
   }[];
   type: string;
-  status: DistributionStatus;
+  status: string;
   client: string;
 }
 

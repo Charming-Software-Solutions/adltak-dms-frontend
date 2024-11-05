@@ -4,7 +4,6 @@ import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
-  ResponsiveDialogDescription,
   ResponsiveDialogFooter,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
@@ -18,23 +17,17 @@ import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDistributionForm } from "@/hooks";
-import { ICreateDistribution } from "@/interfaces";
-import { createDistribution } from "@/lib/actions/distribution.actions";
 import { useDistributionStore } from "@/lib/store";
-import { distributionFormSchema } from "@/schemas";
-import { ApiResponse } from "@/types/api";
 import { Distribution, DistributionType } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
 import { PlusCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { toast } from "sonner";
-import { z } from "zod";
 import { useShallow } from "zustand/shallow";
 import DistributionAddProduct from "./components/DistributionAddProduct";
-import DistributionForm from "./components/DistributionForm";
+import DistributionForm, {
+  useDistributionForm,
+} from "./components/DistributionForm";
 import FilterDialog from "./components/FilterDialog";
 
 type Props = {
@@ -48,14 +41,13 @@ const DistributionClient = ({ distributions, brands, products }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
 
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-  const distributionForm = useDistributionForm();
   const { items, clearItems } = useDistributionStore(
     useShallow((state) => ({
       items: state.items,
       clearItems: state.clearItems,
     })),
   );
-  const router = useRouter();
+  const { form, onSubmit } = useDistributionForm({ mode: "create" });
 
   const getFilteredDistributions = (type: DistributionType) => {
     const filtered = distributions.filter((distribution) => {
@@ -74,13 +66,7 @@ const DistributionClient = ({ distributions, brands, products }: Props) => {
         data={getFilteredDistributions(type)}
         visibleColumns={
           isDesktop
-            ? {
-                ...visibleDistributionColumns.desktop,
-                client:
-                  type === "IMPORT"
-                    ? false
-                    : visibleDistributionColumns.desktop.client,
-              }
+            ? visibleDistributionColumns.desktop
             : visibleDistributionColumns.mobile
         }
       />
@@ -90,33 +76,6 @@ const DistributionClient = ({ distributions, brands, products }: Props) => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const onSubmit = async (values: z.infer<typeof distributionFormSchema>) => {
-    const distribution: ICreateDistribution = {
-      employee: "Jonny English",
-      products: items.map((item) => ({
-        product: item.id,
-        quantity: item.quantity,
-      })),
-      type: values.type,
-      status: "Pending",
-      client: values.client,
-    };
-
-    const result: ApiResponse<Distribution> =
-      await createDistribution(distribution);
-
-    if (result.errors) {
-      toast.error(`${result.errors}`, {
-        position: "top-center",
-      });
-    } else {
-      setOpenDistributionDialog(false);
-      router.refresh();
-      distributionForm.reset();
-      clearItems();
-    }
-  };
 
   return (
     <React.Fragment>
@@ -147,7 +106,7 @@ const DistributionClient = ({ distributions, brands, products }: Props) => {
                   </TabsList>
                   <TabsContent value="details">
                     <Card className="p-4">
-                      <DistributionForm form={distributionForm} />
+                      <DistributionForm form={form} />
                     </Card>
                   </TabsContent>
                   <TabsContent value="products">
@@ -168,13 +127,19 @@ const DistributionClient = ({ distributions, brands, products }: Props) => {
                   </Button>
                   <Button
                     className="flex-grow w-full"
-                    onClick={() => distributionForm.handleSubmit(onSubmit)()}
+                    onClick={form.handleSubmit((values) =>
+                      onSubmit(
+                        values,
+                        setOpenDistributionDialog,
+                        items,
+                        clearItems,
+                      ),
+                    )}
                     disabled={
                       // disabled only when form is not valid, isSubmitting, or
                       // product list is empty
-                      !(
-                        distributionForm.formState.isValid && items.length > 0
-                      ) || distributionForm.formState.isSubmitting
+                      !(form.formState.isValid && items.length > 0) ||
+                      form.formState.isSubmitting
                     }
                   >
                     Add Product

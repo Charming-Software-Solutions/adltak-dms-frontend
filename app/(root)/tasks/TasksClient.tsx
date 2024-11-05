@@ -2,26 +2,6 @@
 
 import Header from "@/components/shared/Header";
 import {
-  TaskColumns,
-  visibleTaskColumns,
-} from "@/components/shared/table/columns/TaskColumns";
-import { DataTable } from "@/components/shared/table/data-table";
-import { Button } from "@/components/ui/button";
-import { Task } from "@/types/task";
-import { PlusCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useMediaQuery } from "react-responsive";
-import TaskForm from "./components/TaskForm";
-import { Distribution } from "@/types/distribution";
-import { useTaskForm } from "@/hooks";
-import { taskFormSchema } from "@/schemas";
-import { z } from "zod";
-import { ICreateTask } from "@/interfaces";
-import { ApiResponse } from "@/types/api";
-import { createTask } from "@/lib/actions/task.actions";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import {
   ResponsiveDialog,
   ResponsiveDialogContent,
   ResponsiveDialogFooter,
@@ -29,6 +9,18 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
+import {
+  TaskColumns,
+  visibleTaskColumns,
+} from "@/components/shared/table/columns/TaskColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { Button } from "@/components/ui/button";
+import { Distribution } from "@/types/distribution";
+import { Task } from "@/types/task";
+import { PlusCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import TaskForm, { useTaskForm } from "./components/TaskForm";
 
 type Props = {
   tasks: Task[];
@@ -40,31 +32,11 @@ const TasksClient = ({ tasks, distributions }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-  const taskForm = useTaskForm();
-  const router = useRouter();
+  const { form, onSubmit } = useTaskForm({ mode: "create" });
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const onSubmit = async (values: z.infer<typeof taskFormSchema>) => {
-    const task: ICreateTask = {
-      employee: values.employee,
-      distribution: values.distribution,
-    };
-
-    const result: ApiResponse<Task> = await createTask(task);
-
-    if (result.errors) {
-      toast.error(`${result.errors}`, {
-        position: "top-center",
-      });
-    } else {
-      setOpenDialog(false);
-      router.refresh();
-      taskForm.reset();
-    }
-  };
 
   return (
     <React.Fragment>
@@ -81,7 +53,7 @@ const TasksClient = ({ tasks, distributions }: Props) => {
               <ResponsiveDialogHeader>
                 <ResponsiveDialogTitle>Create Task</ResponsiveDialogTitle>
               </ResponsiveDialogHeader>
-              <TaskForm form={taskForm} distributions={distributions} />
+              <TaskForm form={form} distributions={distributions} />
               <ResponsiveDialogFooter>
                 <div className="flex flex-row w-full gap-2">
                   <Button
@@ -94,10 +66,11 @@ const TasksClient = ({ tasks, distributions }: Props) => {
                   <Button
                     className="flex-grow w-full"
                     disabled={
-                      !taskForm.formState.isValid ||
-                      taskForm.formState.isSubmitting
+                      !form.formState.isValid || form.formState.isSubmitting
                     }
-                    onClick={() => taskForm.handleSubmit(onSubmit)()}
+                    onClick={form.handleSubmit((values) =>
+                      onSubmit(values, setOpenDialog),
+                    )}
                   >
                     Create Task
                   </Button>

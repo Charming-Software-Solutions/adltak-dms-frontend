@@ -1,16 +1,24 @@
 "use client";
 
+import ProductForm, {
+  useProductForm,
+} from "@/app/(root)/products/components/ProductForm";
 import { Button } from "@/components/ui/button";
 import { imagePlaceholder } from "@/constants";
-import { Product } from "@/types/product";
-import { ColumnDef } from "@tanstack/react-table";
-import { Pen, Trash } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { deleteProduct } from "@/lib/actions/product.actions";
+import {
+  getBrands,
+  getCategories,
+  getTypes,
+} from "@/lib/actions/product.classications.actions";
+import { Product } from "@/types/product";
+import { useQuery } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
+import React, { useState } from "react";
 import DeleteDialog from "../../dialogs/DeleteDialog";
-import { ApiResponse } from "@/types/api";
+import EditDialog from "../../dialogs/EditDialog";
+import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 
 export const visibleProductColumns = {
   desktop: {
@@ -25,11 +33,70 @@ export const visibleProductColumns = {
   },
   mobile: {
     name: true,
-    sku: true,
     brand: true,
     stock: true,
+    actions: true,
   },
 };
+
+const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const { form, onSubmit } = useProductForm({ product, mode: "edit" });
+
+  const { data } = useQuery({
+    queryKey: ["edit-product"],
+    queryFn: async () => {
+      const [brands, categories, productTypes] = await Promise.all([
+        getBrands(),
+        getCategories(),
+        getTypes(),
+      ]);
+      return { brands, categories, productTypes };
+    },
+  });
+
+  return (
+    <div className="flex items-center gap-2">
+      <EditDialog
+        title="Edit Products"
+        open={openDialog}
+        setOpen={setOpenDialog}
+      >
+        <ProductForm
+          form={form}
+          brands={data?.brands ?? []}
+          categories={data?.categories ?? []}
+          types={data?.productTypes ?? []}
+        />
+        <ResponsiveDialogFooter>
+          <div className="flex flex-row w-full gap-2">
+            <Button
+              className="w-full"
+              variant={"outline"}
+              onClick={() => setOpenDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="w-full"
+              onClick={form.handleSubmit((values) =>
+                onSubmit(values, setOpenDialog),
+              )}
+              disabled={!form.formState.isValid || form.formState.isSubmitting}
+            >
+              Save Changes
+            </Button>
+          </div>
+        </ResponsiveDialogFooter>
+      </EditDialog>
+      <DeleteDialog
+        title={"Delete Product"}
+        deleteAction={async () => await deleteProduct(product.id)}
+        placeholder={"Are you sure you want to delete the product?"}
+      />
+    </div>
+  );
+});
 
 export const ProductColumns: ColumnDef<Product>[] = [
   {
@@ -79,28 +146,15 @@ export const ProductColumns: ColumnDef<Product>[] = [
     accessorFn: (row) => row.type.name,
     header: "Type",
   },
-  {
-    accessorKey: "stock",
-    header: "Stock",
-  },
+  { accessorKey: "stock", header: "Stock" },
   {
     accessorKey: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const product = row.original;
-
-      return (
-        <div className="flex items-center gap-2">
-          <Button size={"icon"} variant={"outline"}>
-            <Pen className="size-4" />
-          </Button>
-          <DeleteDialog
-            title={"Delete Product"}
-            deleteAction={async () => await deleteProduct(product.id)}
-            placeholder={" Are you sure you want to delete the product?"}
-          />
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <ProductActionsCell
+        key={`actions-${row.original.id}`}
+        product={row.original}
+      />
+    ),
   },
 ];

@@ -1,6 +1,8 @@
 "use client";
 
+import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
 import { Button } from "@/components/ui/button";
+import { getDistributions } from "@/lib/actions/distribution.actions";
 import { deleteTask } from "@/lib/actions/task.actions";
 import { cn, formatDateTime } from "@/lib/utils";
 import { DistributionType } from "@/types/distribution";
@@ -11,15 +13,16 @@ import {
   PersonIcon,
   UploadIcon,
 } from "@radix-ui/react-icons";
+import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import DeleteDialog from "../../dialogs/DeleteDialog";
+import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
+import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import DeleteDialog from "../../dialogs/DeleteDialog";
 
 export const visibleTaskColumns = {
   desktop: {
@@ -160,12 +163,51 @@ export const TaskColumns: ColumnDef<Task>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const task = row.original;
+      const [openDialog, setOpenDialog] = useState(false);
+      const { form, onSubmit } = useTaskForm({ task, mode: "edit" });
+
+      const { data } = useQuery({
+        queryKey: ["edit-task"],
+        queryFn: async () => {
+          const distributions = await getDistributions();
+          return { distributions };
+        },
+      });
+
       return (
-        <DeleteDialog
-          title="Delete Task"
-          deleteAction={async () => await deleteTask(task.id)}
-          placeholder="Are you sure you want to delete the task?"
-        />
+        <div className="flex items-center gap-2">
+          <EditDialog
+            title="Edit Task"
+            open={openDialog}
+            setOpen={setOpenDialog}
+          >
+            <TaskForm form={form} distributions={data?.distributions ?? []} />
+            <ResponsiveDialogFooter>
+              <div className="dialog-footer">
+                <Button
+                  variant={"outline"}
+                  onClick={() => setOpenDialog(false)}
+                  className="w-full"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={form.handleSubmit((values) =>
+                    onSubmit(values, setOpenDialog),
+                  )}
+                >
+                  Save Changes
+                </Button>
+              </div>
+            </ResponsiveDialogFooter>
+          </EditDialog>
+          <DeleteDialog
+            title="Delete Task"
+            deleteAction={async () => await deleteTask(task.id)}
+            placeholder="Are you sure you want to delete the task?"
+          />
+        </div>
       );
     },
   },
