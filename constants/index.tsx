@@ -1,9 +1,9 @@
 import {
   AssetStatusEnum,
+  DistributionStatusesEnum,
   TaskStatusExportEnum,
   TaskStatusImportEnum,
 } from "@/enums";
-import { DistributionStatus } from "@/types/distribution";
 import { SelectItemType } from "@/types/primitives";
 
 export const imagePlaceholder = "/assets/images/placeholder.svg";
@@ -22,17 +22,18 @@ export const userRoles: SelectItemType[] = [
     value: "warehouse_worker",
   },
 ];
-export const DistributionStatuses: DistributionStatus[] = [
-  "Pending",
-  "In Transit",
-  "Delivered",
-  "Cancelled",
-  "Returned",
-  "On Hold",
-  "Completed",
-  "Failed",
-  "Scheduled",
-];
+
+export const DISTRIBUTION_STATUSES: Record<DistributionStatusesEnum, string> = {
+  [DistributionStatusesEnum.PENDING]: "Pending",
+  [DistributionStatusesEnum.IN_TRANSIT]: "In Transit",
+  [DistributionStatusesEnum.DELIVERED]: "Delivered",
+  [DistributionStatusesEnum.CANCELLED]: "Cancelled",
+  [DistributionStatusesEnum.RETURNED]: "Returned",
+  [DistributionStatusesEnum.ON_HOLD]: "On Hold",
+  [DistributionStatusesEnum.COMPLETED]: "Completed",
+  [DistributionStatusesEnum.FAILED]: "Failed",
+  [DistributionStatusesEnum.SCHEDULED]: "Scheduled",
+} as const;
 
 export const TASK_STATUS_IMPORT: Record<TaskStatusImportEnum, string> = {
   [TaskStatusImportEnum.PENDING]: "Pending",
@@ -44,6 +45,7 @@ export const TASK_STATUS_IMPORT: Record<TaskStatusImportEnum, string> = {
 
 // TaskStatusExportEnum labels
 export const TASK_STATUS_EXPORT: Record<TaskStatusExportEnum, string> = {
+  [TaskStatusImportEnum.PENDING]: "Pending",
   [TaskStatusExportEnum.PICKED]: "Picked",
   [TaskStatusExportEnum.PACKED]: "Packed",
   [TaskStatusExportEnum.LOADED]: "Loaded",

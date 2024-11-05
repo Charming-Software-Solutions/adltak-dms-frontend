@@ -9,7 +9,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { validateImage } from "@/lib/imageUtils";
-import { ImageUp, XCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ImageUp, Pencil, XCircle } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { ChangeEvent, useEffect, useState, useRef } from "react";
@@ -28,6 +29,7 @@ type ImageDropzoneProps = {
   label?: string;
   disabled?: boolean;
   children?: React.ReactNode;
+  classname?: string;
 };
 
 const ImageDropzonePreview = ({
@@ -35,6 +37,7 @@ const ImageDropzonePreview = ({
   onRemove,
 }: ImageDropzonePreviewProps) => {
   const [preview, setPreview] = useState<string | null>(null);
+  const [hover, setHover] = useState(false);
 
   useEffect(() => {
     if (file instanceof File) {
@@ -48,8 +51,16 @@ const ImageDropzonePreview = ({
     }
   }, [file]);
 
+  const handleMouseEnter = () => setHover(true);
+  const handleMouseLeave = () => setHover(false);
+
   return (
-    <AspectRatio ratio={1 / 1}>
+    <AspectRatio
+      ratio={1 / 1}
+      className="relative group"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {preview ? (
         <React.Fragment>
           <Image
@@ -57,12 +68,28 @@ const ImageDropzonePreview = ({
             alt="image-thumbnail"
             priority
             fill
-            className="h-auto max-w-full rounded-sm"
+            className="h-auto max-w-full rounded-sm object-cover transition-opacity duration-200"
           />
-          <XCircle
-            className="absolute top-0 right-0 p-1 text-red-500"
-            onClick={onRemove}
-          />
+          {file instanceof File ? (
+            <XCircle
+              className="absolute top-2 right-2 p-1 text-red-500 cursor-pointer hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={onRemove}
+            />
+          ) : (
+            <div
+              className={`absolute top-0 left-0 w-full h-full flex items-center justify-center rounded-sm transition-all duration-200 ${
+                hover ? "bg-black/40" : "bg-transparent"
+              }`}
+            >
+              {hover && (
+                <Pencil
+                  size={48}
+                  color="white"
+                  className="transition-opacity duration-200"
+                />
+              )}
+            </div>
+          )}
         </React.Fragment>
       ) : null}
     </AspectRatio>
@@ -70,9 +97,9 @@ const ImageDropzonePreview = ({
 };
 
 const ImageDropzone = (props: ImageDropzoneProps) => {
-  const { control, name, label } = props;
+  const { control, name, label, classname } = props;
+  const [file, setFile] = useState<File | string | undefined>(undefined);
   const [dropped, setDropped] = useState(false);
-  const [file, setFile] = useState<File | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -80,6 +107,13 @@ const ImageDropzone = (props: ImageDropzoneProps) => {
       control={control}
       name={name}
       render={({ field }) => {
+        useEffect(() => {
+          if (field.value) {
+            setFile(field.value);
+            setDropped(true);
+          }
+        }, [field.value]);
+
         const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
           const selectedFile = event.target.files?.[0] || undefined;
           if (selectedFile) {
@@ -112,7 +146,10 @@ const ImageDropzone = (props: ImageDropzoneProps) => {
             <FormControl>
               <div onClick={() => fileInputRef.current?.click()}>
                 <DropZone
-                  className="dropzone bg-neutral-50 border border-dashed w-[10rem] h-full rounded-md flex items-center justify-center cursor-pointer p-0"
+                  className={cn(
+                    "dropzone bg-neutral-50 border border-dashed w-[10rem] h-full rounded-md flex items-center justify-center cursor-pointer p-0",
+                    classname,
+                  )}
                   getDropOperation={(types) => {
                     return types.has("image/jpeg") ||
                       types.has("image/png") ||

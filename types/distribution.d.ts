@@ -1,5 +1,7 @@
+import { DistributionStatusesEnum } from "@/enums";
 import { Product } from "./product";
 import { Employee } from "./user";
+import { DISTRIBUTION_STATUSES } from "@/constants";
 
 export type DistributionProduct = {
   id: string;
@@ -8,17 +10,6 @@ export type DistributionProduct = {
   product: Product;
   quantity: number;
 };
-
-export type DistributionStatus =
-  | "Pending"
-  | "In Transit"
-  | "Delivered"
-  | "Cancelled"
-  | "Returned"
-  | "On Hold"
-  | "Completed"
-  | "Failed"
-  | "Scheduled";
 
 export type DistributionType = "IMPORT" | "EXPORT";
 
@@ -29,7 +20,9 @@ export type Distribution = {
   updated_at: string;
   products: DistributionProduct[];
   type: DistributionType;
-  status: DistributionStatus;
+  status: DistributionStatusesEnum;
   client: string;
   employee: string;
 };
+
+export type DistributionStatus = keyof typeof DISTRIBUTION_STATUSES;

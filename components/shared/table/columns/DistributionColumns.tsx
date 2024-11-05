@@ -1,19 +1,29 @@
 "use client";
+
+import DistributionForm, {
+  useDistributionForm,
+} from "@/app/(root)/distributions/components/DistributionForm";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { deleteDistribution } from "@/lib/actions/distribution.actions";
 import { formatDateTime } from "@/lib/utils";
 import { Distribution } from "@/types/distribution";
 import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
 import DeleteDialog from "../../dialogs/DeleteDialog";
+import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
+import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import React from "react";
 
 export const visibleDistributionColumns = {
   desktop: {
     dist_id: true,
     product_count: true,
     asset_count: true,
+    distribution_items: true,
     status: true,
     client: true,
     logistics_person: true,
@@ -26,6 +36,52 @@ export const visibleDistributionColumns = {
     actions: true,
   },
 };
+
+const DistributionActionsCell = React.memo(
+  ({ distribution }: { distribution: Distribution }) => {
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const { form, onSubmit } = useDistributionForm({
+      distribution,
+      mode: "edit",
+    });
+
+    return (
+      <div className="flex items-center gap-2">
+        <EditDialog
+          title="Edit Distribution"
+          open={openEditDialog}
+          setOpen={setOpenEditDialog}
+        >
+          <DistributionForm form={form} />
+          <ResponsiveDialogFooter>
+            <div className="dialog-footer">
+              <Button
+                className="w-full"
+                variant={"outline"}
+                onClick={() => setOpenEditDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="w-full"
+                onClick={form.handleSubmit((values) =>
+                  onSubmit(values, setOpenEditDialog),
+                )}
+              >
+                Save changes
+              </Button>
+            </div>
+          </ResponsiveDialogFooter>
+        </EditDialog>
+        <DeleteDialog
+          title="Delete Distribution"
+          deleteAction={async () => await deleteDistribution(distribution.id)}
+          placeholder="Are you sure you want to delete the distribution?"
+        />
+      </div>
+    );
+  },
+);
 
 export const DistributionColumns: ColumnDef<Distribution>[] = [
   {
@@ -49,6 +105,21 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
     header: "Assets",
     cell: ({ row }) => {
       return <span>20</span>;
+    },
+  },
+  {
+    accessorKey: "distribution_items",
+    header: "Items",
+    cell: ({ row }) => {
+      const distribution = row.original;
+
+      return (
+        <ViewItemsDialog
+          items={{
+            products: distribution.products,
+          }}
+        />
+      );
     },
   },
   {
@@ -99,23 +170,11 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
   {
     accessorKey: "actions",
     header: "Actions",
-    cell: ({ row }) => {
-      const distribution = row.original;
-
-      return (
-        <div className="flex items-center gap-2">
-          <ViewItemsDialog
-            items={{
-              products: distribution.products,
-            }}
-          />
-          <DeleteDialog
-            title="Delete Distribution"
-            deleteAction={async () => await deleteDistribution(distribution.id)}
-            placeholder="Are you sure you want to delete the distribution?"
-          />
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <DistributionActionsCell
+        key={`actions-${row.original.id}`}
+        distribution={row.original}
+      />
+    ),
   },
 ];

@@ -32,3 +32,9 @@ export type ProductSKU = {
   category: string;
   type: string;
 };
+
+export type ProductClientProps = {
+  brands: Brand[];
+  categories: Category[];
+  types: Type[];
+};

@@ -111,7 +111,7 @@ const ResponsiveDialogFooter = ({
 type ResponsiveDialogProps = {
   children: React.ReactNode;
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 /* Structure

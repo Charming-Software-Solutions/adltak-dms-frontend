@@ -6,15 +6,66 @@ import CustomFormField, {
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { createTask, updateTask } from "@/lib/actions/task.actions";
+import { formatErrorResponse } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
-import { TaskFormData } from "@/schemas";
+import { TaskFormData, taskFormSchema } from "@/schemas";
+import { ApiResponse } from "@/types/api";
 import { Distribution } from "@/types/distribution";
-import { UseFormReturn } from "react-hook-form";
+import { Task } from "@/types/task";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm, UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<TaskFormData>;
   distributions: Distribution[];
   className?: string;
+};
+
+export const useTaskForm = ({
+  task = undefined,
+  mode,
+}: {
+  task?: Task;
+  mode: "create" | "edit";
+}) => {
+  const router = useRouter();
+
+  const form = useForm<TaskFormData>({
+    resolver: zodResolver(taskFormSchema),
+    defaultValues: {
+      employee: task?.employee ?? "",
+      distribution: task?.distribution.id ?? "",
+    },
+  });
+
+  const onSubmit = async (
+    values: z.infer<typeof taskFormSchema>,
+    setOpen: (value: boolean) => void,
+  ) => {
+    const formData = new FormData();
+    formData.append("employee", values.employee);
+    formData.append("distribution", values.distribution);
+
+    const result: ApiResponse<Task> =
+      mode === "create"
+        ? await createTask(formData)
+        : await updateTask(task!.id, formData);
+
+    if (result.errors) {
+      toast.error(formatErrorResponse(result.errors), {
+        position: "top-center",
+      });
+    } else {
+      setOpen(false);
+      router.refresh();
+      form.reset();
+    }
+  };
+  return { form, onSubmit };
 };
 
 const TaskForm = ({ form, distributions, className }: Props) => {

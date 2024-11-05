@@ -10,14 +10,16 @@ import {
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
 import { Button } from "@/components/ui/button";
-import { DistributionStatuses } from "@/constants";
-import { ListFilter } from "lucide-react";
-import React, { useState } from "react";
-import FilterBadge from "./FilterBadge";
-import { formatDateTime } from "@/lib/utils";
-import FilterSelect from "./FilterSelect";
-import { Brand } from "@/types/product";
 import { Separator } from "@/components/ui/separator";
+import { formatDateTime } from "@/lib/utils";
+import { Brand } from "@/types/product";
+import { ListFilter } from "lucide-react";
+import { useState } from "react";
+import FilterBadge from "./FilterBadge";
+import FilterSelect from "./FilterSelect";
+import { DISTRIBUTION_STATUSES } from "@/constants";
+
+const DistributionStatus = Object.values(DISTRIBUTION_STATUSES);
 
 type AppliedFilters = {
   status?: string;
@@ -82,7 +84,7 @@ const FilterDialog = ({ brands }: Props) => {
           )}
           <FilterSelect
             name="Status"
-            items={DistributionStatuses}
+            items={DistributionStatus}
             isObject={false}
             placeholder="Select Status"
             onChange={(value) => updateFilter("status", value)}

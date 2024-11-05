@@ -7,9 +7,10 @@ import { SidebarTrigger } from "../ui/sidebar";
 
 type Props = {
   children: React.ReactNode;
+  overrideHeaderTitle?: string;
 };
 
-const Header = ({ children }: Props) => {
+const Header = ({ children, overrideHeaderTitle }: Props) => {
   const pathname = usePathname();
   const currentLink = pathname === "/" ? "Insights" : pathname.slice(1);
   const displayLink = capitalize(currentLink);
@@ -19,7 +20,9 @@ const Header = ({ children }: Props) => {
       <SidebarTrigger className="ml-1 size-5" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="w-full flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{displayLink}</h1>
+        <h1 className="text-2xl font-bold">
+          {overrideHeaderTitle ?? displayLink}
+        </h1>
         {children}
       </div>
     </header>

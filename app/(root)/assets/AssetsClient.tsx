@@ -2,25 +2,6 @@
 
 import Header from "@/components/shared/Header";
 import {
-  AssetColumns,
-  visibleAssetColumns,
-} from "@/components/shared/table/columns/AssetColumns";
-import { DataTable } from "@/components/shared/table/data-table";
-import { Button } from "@/components/ui/button";
-import { useAssetForm, useResponsive } from "@/hooks";
-import { Asset } from "@/types/asset";
-import { PlusCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import AssetForm from "./components/AssetForm";
-import { Classification } from "@/types/generics";
-import { assetFormSchema } from "@/schemas";
-import { z } from "zod";
-import { ICreateAsset } from "@/interfaces";
-import { ApiResponse } from "@/types/api";
-import { createAsset } from "@/lib/actions/asset.actions";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import {
   ResponsiveDialog,
   ResponsiveDialogContent,
   ResponsiveDialogFooter,
@@ -28,6 +9,18 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
+import {
+  AssetColumns,
+  visibleAssetColumns,
+} from "@/components/shared/table/columns/AssetColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { Button } from "@/components/ui/button";
+import { useResponsive } from "@/hooks";
+import { Asset } from "@/types/asset";
+import { Classification } from "@/types/generics";
+import { PlusCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import AssetForm, { useAssetForm } from "./components/AssetForm";
 
 type Props = {
   assets: Asset[];
@@ -38,33 +31,12 @@ const AssetsClient = ({ assets, assetTypes }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  const router = useRouter();
   const isDesktop = useResponsive("desktop");
-  const form = useAssetForm();
+  const { form, onSubmit } = useAssetForm({ mode: "create" });
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const onSubmit = async (values: z.infer<typeof assetFormSchema>) => {
-    const asset: ICreateAsset = {
-      name: values.name,
-      code: values.code,
-      type: values.type,
-    };
-
-    const result: ApiResponse<Asset> = await createAsset(asset);
-
-    if (result.errors) {
-      toast.error(`${result.errors}`, {
-        position: "top-center",
-      });
-    } else {
-      setOpenDialog(false);
-      router.refresh();
-      form.reset();
-    }
-  };
 
   return (
     <React.Fragment>
@@ -96,7 +68,9 @@ const AssetsClient = ({ assets, assetTypes }: Props) => {
                     disabled={
                       !form.formState.isValid || form.formState.isSubmitting
                     }
-                    onClick={() => form.handleSubmit(onSubmit)()}
+                    onClick={form.handleSubmit((values) =>
+                      onSubmit(values, setOpenDialog),
+                    )}
                   >
                     Add Asset
                   </Button>

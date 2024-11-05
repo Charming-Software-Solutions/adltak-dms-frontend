@@ -5,6 +5,18 @@ export enum UserRoleEnum {
   PROJECT = "project_handler",
 }
 
+export enum DistributionStatusesEnum {
+  PENDING = "PENDING",
+  IN_TRANSIT = "IN_TRANSIT",
+  DELIVERED = "DELIVERED",
+  CANCELLED = "CANCELLED",
+  RETURNED = "RETURNED",
+  ON_HOLD = "ON_HOLD",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+  SCHEDULED = "SCHEDULED",
+}
+
 export enum TaskStatusImportEnum {
   PENDING = "PENDING",
   RECEIVED = "RECEIVED",
@@ -14,6 +26,7 @@ export enum TaskStatusImportEnum {
 }
 
 export enum TaskStatusExportEnum {
+  PENDING = "PENDING",
   PICKED = "PICKED",
   PACKED = "PACKED",
   LOADED = "LOADED",
