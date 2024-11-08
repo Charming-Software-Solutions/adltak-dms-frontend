@@ -80,7 +80,11 @@ const AppSidebar = ({ session }: Props) => {
     <Sidebar>
       <SidebarHeader>
         <div className="flex h-14 items-center px-2 justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-semibold"
+            prefetch={true}
+          >
             <Image
               src={"/assets/images/logo.jpg"}
               alt={"adtalk-logo"}
