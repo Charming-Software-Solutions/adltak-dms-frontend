@@ -161,3 +161,28 @@ export function generateProductSKU(skuFormat: ProductSKU): string {
 
   return `${namePart}-${categoryPart}-${typePart}`;
 }
+
+export function filterDataTable<T>(
+  items: T[],
+  query: (item: T) => boolean,
+): T[] {
+  return items.filter(query);
+}
+
+export function toPSTDate(date: Date | null | undefined): Date | undefined {
+  return date ? new Date(date.getTime() + 8 * 60 * 60 * 1000) : undefined;
+}
+
+export function monthsFromNow(date: Date, n: number): Date {
+  const result = new Date(date);
+  result.setMonth(result.getMonth() + n);
+  return result;
+}
+
+export function formatFilterValue(value: string): string {
+  return value
+    .replace(/_/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}

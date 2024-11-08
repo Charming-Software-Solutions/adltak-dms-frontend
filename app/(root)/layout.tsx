@@ -2,11 +2,10 @@ import Providers from "@/components/Providers";
 import AppSidebar from "@/components/shared/AppSidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getUserById } from "@/lib/actions/user.actions";
 import { getSession } from "@/lib/session";
 import { LoaderIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import React, { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -29,22 +28,24 @@ export default async function RootLayout({
         enableSystem
         disableTransitionOnChange
       >
-        <div vaul-drawer-wrapper="">
-          <SidebarProvider>
-            <AppSidebar session={session} />
-            <SidebarInset>
-              <Suspense
-                fallback={
-                  <div className="flex flex-1 items-center justify-center">
-                    <LoaderIcon className="animate-spin" />
-                  </div>
-                }
-              >
-                <main className="flex flex-1 flex-col">{children}</main>
-              </Suspense>
-            </SidebarInset>
-          </SidebarProvider>
-        </div>
+        <NuqsAdapter>
+          <div vaul-drawer-wrapper="">
+            <SidebarProvider>
+              <AppSidebar session={session} />
+              <SidebarInset>
+                <Suspense
+                  fallback={
+                    <div className="flex flex-1 items-center justify-center">
+                      <LoaderIcon className="animate-spin" />
+                    </div>
+                  }
+                >
+                  <main className="flex flex-1 flex-col">{children}</main>
+                </Suspense>
+              </SidebarInset>
+            </SidebarProvider>
+          </div>
+        </NuqsAdapter>
       </ThemeProvider>
     </Providers>
   );

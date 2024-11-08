@@ -9,6 +9,7 @@ export type Product = {
   thumbnail: string;
   status: string;
   stock: number;
+  expiration: string;
 };
 
 export type Category = {
