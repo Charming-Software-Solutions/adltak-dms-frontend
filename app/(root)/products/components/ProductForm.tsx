@@ -46,6 +46,9 @@ export const useProductForm = ({
       type: product?.type.id,
       thumbnail: product?.thumbnail,
       stock: product?.stock,
+      expiration: product?.expiration
+        ? new Date(product?.expiration)
+        : undefined,
     },
   });
 
@@ -60,6 +63,7 @@ export const useProductForm = ({
     formData.append("category", values.category);
     formData.append("type", values.type);
     formData.append("stock", values.stock.toString());
+    formData.append("expiration", values.expiration.toISOString());
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
@@ -161,7 +165,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
         <CustomFormField
           fieldType={FormFieldType.DATE}
           control={form.control}
-          name="expiration-date"
+          name="expiration"
           label="Product Expiration"
           placeholder="Select date"
         />

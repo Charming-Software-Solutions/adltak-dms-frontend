@@ -29,6 +29,7 @@ export const visibleProductColumns = {
     category: true,
     type: true,
     stock: true,
+    expiration: true,
     actions: true,
   },
   mobile: {
@@ -112,8 +113,8 @@ export const ProductColumns: ColumnDef<Product>[] = [
           alt="Product image"
           priority
           className="aspect-square rounded-md object-cover"
-          height={64}
-          width={64}
+          height={58}
+          width={58}
           src={
             row.getValue("thumbnail")
               ? row.getValue("thumbnail")
@@ -147,6 +148,14 @@ export const ProductColumns: ColumnDef<Product>[] = [
     header: "Type",
   },
   { accessorKey: "stock", header: "Stock" },
+  {
+    accessorKey: "expiration",
+    header: "Expiration",
+    cell: ({ row }) => {
+      const expirationDate = new Date(row.original.expiration);
+      return expirationDate.toLocaleDateString();
+    },
+  },
   {
     accessorKey: "actions",
     header: "Actions",

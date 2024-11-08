@@ -27,6 +27,9 @@ export const productFormSchema = z.object({
   //   message: "Status is required.",
   // }),
   stock: z.coerce.number().positive(),
+  expiration: z.coerce.date({
+    required_error: "A date of expiration is required.",
+  }),
 });
 
 export const userFormSchema = z.object({

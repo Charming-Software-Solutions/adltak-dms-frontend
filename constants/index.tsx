@@ -22,6 +22,44 @@ export const userRoles: SelectItemType[] = [
     value: "warehouse_worker",
   },
 ];
+export const distributionTypes: SelectItemType[] = [
+  {
+    label: "Import",
+    value: "IMPORT",
+  },
+  {
+    label: "Export",
+    value: "EXPORT",
+  },
+];
+export const productStockStatuses: SelectItemType[] = [
+  {
+    label: "Out of Stock",
+    value: "OUT_OF_STOCK",
+  },
+  {
+    label: "Low Stock",
+    value: "LOW_STOCK",
+  },
+  {
+    label: "In Stock",
+    value: "IN_STOCK",
+  },
+];
+export const productMonthExpirationFreq: SelectItemType[] = [
+  {
+    label: "3 months from now",
+    value: "3",
+  },
+  {
+    label: "6 months from now",
+    value: "6",
+  },
+  {
+    label: "12 months from now",
+    value: "12",
+  },
+];
 
 export const DISTRIBUTION_STATUSES: Record<DistributionStatusesEnum, string> = {
   [DistributionStatusesEnum.PENDING]: "Pending",

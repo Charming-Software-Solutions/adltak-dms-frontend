@@ -5,6 +5,12 @@ export enum UserRoleEnum {
   PROJECT = "project_handler",
 }
 
+export enum ProductStockStatusesEnum {
+  OUT_OF_STOCK = "OUT_OF_STOCK",
+  LOW_STOCK = "LOW_STOCK",
+  IN_STOCK = "IN_STOCK",
+}
+
 export enum DistributionStatusesEnum {
   PENDING = "PENDING",
   IN_TRANSIT = "IN_TRANSIT",
