@@ -2,7 +2,7 @@ type ViewConfig<T extends string> = {
   [K in T]: boolean;
 };
 
-interface ColumnsConfig<T extends string> {
+export interface ColumnsConfig<T extends string> {
   desktop: ViewConfig<T>;
   mobile: Partial<ViewConfig<T>>;
 }

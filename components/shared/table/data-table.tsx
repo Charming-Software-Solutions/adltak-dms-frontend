@@ -24,7 +24,7 @@ import React from "react";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableSearch } from "./data-table-search";
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   visibleColumns?: VisibilityState;

@@ -1,10 +1,15 @@
 "use client";
 
 import {
+  DataTableProps,
+  DataTable,
+} from "@/components/shared/table/data-table";
+import {
   DistributionProductFormData,
   distributionProductSchema,
 } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMediaQuery } from "react-responsive";
 
