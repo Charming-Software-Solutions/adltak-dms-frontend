@@ -1,6 +1,5 @@
 import { ApiResponse, ErrorResponse } from "@/types/api";
 import { ProductSKU } from "@/types/product";
-import { UserRoleBooleans } from "@/types/user";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -90,31 +89,6 @@ export async function fetchAndHandleResponse<T>({
   }
 }
 
-function getStringSubstring(string: string, range: number): string {
-  return string.substring(0, range - 1);
-}
-
-// export function generateProductSku(product: Product): string {
-//   const separator = "-";
-//   const charCount = 3;
-//
-//   const productName = getStringSubstring(product.name, charCount);
-//   const productBrand = getStringSubstring(product.brand.name, charCount);
-//   const productCategory = getStringSubstring(product.category.name, charCount);
-//   const productType = getStringSubstring(product.type.name, charCount);
-//
-//   return `${productName}${separator}${productBrand}${separator}${productCategory}${separator}${productType}`;
-// }
-
-export function getUserRoleBooleans(selectedRole: string): UserRoleBooleans {
-  return {
-    is_staff: false,
-    is_warehouse: selectedRole === "is_warehouse",
-    is_project: selectedRole === "is_project",
-    is_logistics: selectedRole === "is_logistics",
-  };
-}
-
 export function formatUserRole(rawRole: string): string {
   if (rawRole === "admin") {
     return "Admin";
@@ -186,3 +160,23 @@ export function formatFilterValue(value: string): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 }
+
+export const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("FileReader result is not a string."));
+      }
+    };
+
+    reader.onerror = () => {
+      reject(new Error("FileReader encountered an error."));
+    };
+
+    reader.readAsDataURL(file);
+  });
+};
