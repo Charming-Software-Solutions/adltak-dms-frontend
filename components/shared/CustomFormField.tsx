@@ -72,6 +72,7 @@ const RenderInput = ({
               {...field}
               className="h-11 p-regular-16 md:p-regular-14 border-0"
               type={props.inputType ?? "text"}
+              disabled={props.disabled}
             />
           </FormControl>
         </div>
@@ -156,7 +157,6 @@ const CustomFormField = (props: BaseCustomProps) => {
 
   return (
     <FormField
-      disabled={props.disabled}
       control={control}
       name={name}
       render={({ field }) => (
