@@ -1,6 +1,5 @@
 "use server";
 
-import { ICreateUser } from "@/interfaces";
 import { fetchAndHandleResponse } from "../utils";
 import { ApiResponse } from "@/types/api";
 import { User } from "@/types/user";
@@ -8,13 +7,24 @@ import { getSession } from "../session";
 
 const USER_URL = `${process.env.DOMAIN}/user/`;
 
-async function createUser(body: ICreateUser): Promise<ApiResponse<User>> {
+async function createUser(formData: FormData): Promise<ApiResponse<User>> {
   return fetchAndHandleResponse({
     url: USER_URL,
-    contentType: "application/json",
     jwt: (await getSession())?.access,
     method: "POST",
-    body: JSON.stringify(body),
+    body: formData,
+  });
+}
+
+async function updateUser(
+  id: string,
+  formData: FormData,
+): Promise<ApiResponse<User>> {
+  return fetchAndHandleResponse({
+    url: `${USER_URL}${id}/`,
+    jwt: (await getSession())?.access,
+    method: "PUT",
+    body: formData,
   });
 }
 
@@ -37,4 +47,4 @@ async function getUserById(
   });
 }
 
-export { createUser, getUsers, getUserById };
+export { createUser, updateUser, getUsers, getUserById };

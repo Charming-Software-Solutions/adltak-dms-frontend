@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Sidebar,
   SidebarContent,
@@ -7,74 +5,25 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { logout } from "@/lib/actions/auth.actions";
-import { formatUserRole } from "@/lib/utils";
-import { UserLogin as Session } from "@/types/user";
-import {
-  Archive,
-  ArrowDownUp,
-  ChevronUp,
-  ClipboardCheck,
-  LayoutDashboard,
-  Package,
-} from "lucide-react";
+import { UserLogin as Session, User } from "@/types/user";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { redirect } from "next/navigation";
+import NavMain from "./NavMain";
 import ThemeToggle from "./ThemeToggle";
-
-const data = {
-  navLinks: [
-    {
-      label: "Insights",
-      icon: <LayoutDashboard className="size-4" />,
-      route: "/",
-      isActive: true,
-    },
-    {
-      label: "Distributions",
-      icon: <ArrowDownUp className="size-4" />,
-      route: "/distributions",
-    },
-    {
-      label: "Products",
-      icon: <Package className="size-4" />,
-      route: "/products",
-    },
-    {
-      label: "Tasks",
-      icon: <ClipboardCheck className="size-4" />,
-      route: "/tasks",
-    },
-    {
-      label: "Assets",
-      icon: <Archive className="size-4" />,
-      route: "/assets",
-    },
-  ],
-};
+import { getUserById } from "@/lib/actions/user.actions";
+import { NavUser } from "./NavUser";
 
 type Props = {
   session: Session | null;
 };
 
-const AppSidebar = ({ session }: Props) => {
-  const pathname = usePathname();
-
+const AppSidebar = async ({ session }: Props) => {
   if (!session) {
     redirect("/login");
   }
+  const user = await getUserById(session?.user, session?.access);
 
   return (
     <Sidebar>
@@ -101,64 +50,16 @@ const AppSidebar = ({ session }: Props) => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {data.navLinks.map((link, index) => (
-                <SidebarMenuItem key={index}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname == link.route}
-                    className="h-10"
-                  >
-                    <Link href={link.route} prefetch={true}>
-                      {link.icon}
-                      <span>{link.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <NavMain />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton
-                  size={"lg"}
-                  className="px-3 py-8 rounded-lg bg-card border text-card-foreground shadow-sm"
-                >
-                  <Avatar className="size-10">
-                    <AvatarImage src="/assets/images/avatar.jpg" />
-                    <AvatarFallback>LG</AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {session.user.email}
-                    </span>
-                    <span className="truncate text-xs">
-                      {formatUserRole(session.user.role)}
-                    </span>
-                  </div>
-                  <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
-                <DropdownMenuItem
-                  onClick={() => {
-                    logout(session.refresh);
-                  }}
-                >
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <NavUser
+          user={user.data as User}
+          refresh={session.refresh}
+          employee={session.employee}
+        />
       </SidebarFooter>
     </Sidebar>
   );

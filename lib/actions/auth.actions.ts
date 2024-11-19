@@ -1,7 +1,6 @@
 "use server";
 
 import { UserLogin } from "@/types/user";
-import { redirect } from "next/navigation";
 import { createSession, deleteSession } from "../session";
 import { fetchAndHandleResponse } from "../utils";
 
@@ -21,10 +20,11 @@ async function login(email: string, password: string): Promise<UserLogin> {
   if (!response || !response.data) {
     throw new Error("Login failed: no response or invalid data");
   }
-  const userData = response.data as UserLogin;
-  await createSession(userData);
+  const userDataLogin = response.data as UserLogin;
 
-  return userData;
+  await createSession(userDataLogin);
+
+  return userDataLogin;
 }
 
 async function logout(refresh: string) {

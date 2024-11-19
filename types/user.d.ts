@@ -1,7 +1,7 @@
+import { USER_ROLES } from "@/constants";
 import { UserRoleEnum } from "@/enums";
 
 export type User = {
-  id: string;
   id: string;
   email: string;
   role: UserRoleEnum;
@@ -10,14 +10,12 @@ export type User = {
 export type UserLogin = {
   refresh: string;
   access: string;
-  user: User;
-};
-
-export type UserRoleBooleans = {
-  is_staff: boolean;
-  is_warehouse: boolean;
-  is_project: boolean;
-  is_logistics: boolean;
+  user: string;
+  employee?: {
+    id: string | undefined;
+    name: string | undefined;
+    profile_image?: string | undefined;
+  };
 };
 
 export type Employee = {
@@ -26,4 +24,12 @@ export type Employee = {
   updated_at: string;
   name: string;
   user: User;
+  profile_image: string;
 };
+
+export type EmployeeLogin = {
+  name: string | undefined;
+  profile_image?: string | undefined;
+};
+
+export type UserRole = keyof typeof USER_ROLES;

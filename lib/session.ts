@@ -1,4 +1,4 @@
-import { User, UserLogin } from "@/types/user";
+import { UserLogin } from "@/types/user";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import "server-only";
@@ -6,7 +6,12 @@ import "server-only";
 type SessionPayload = {
   access: string;
   refresh: string;
-  user: User;
+  user: string;
+  employee?: {
+    id: string;
+    name: string;
+    profile_image?: string;
+  };
   expiresAt: Date;
 };
 
@@ -14,13 +19,24 @@ const secret = new TextEncoder().encode(process.env.SECRET);
 
 const REFRESH_TOKEN_DURATION = 7 * 24 * 60 * 60 * 1000;
 
-export async function createSession(userLogin: UserLogin) {
-  const access = userLogin.access;
-  const refresh = userLogin.refresh;
-  const user = userLogin.user;
+export async function createSession(userDataLogin: UserLogin) {
+  const { access, refresh, user, employee } = userDataLogin;
 
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_DURATION);
-  const session = await encrypt({ access, refresh, user, expiresAt });
+
+  const session = await encrypt({
+    access,
+    refresh,
+    user,
+    employee: employee
+      ? {
+          id: employee.id || "",
+          name: employee.name || "",
+          profile_image: employee.profile_image,
+        }
+      : undefined,
+    expiresAt,
+  });
 
   cookies().set("session", session, {
     httpOnly: true,
@@ -47,6 +63,7 @@ export async function getSession(): Promise<SessionPayload | null> {
     access: payload.access,
     refresh: payload.refresh,
     user: payload.user,
+    employee: payload.employee,
     expiresAt: new Date(payload.expiresAt),
   };
 }

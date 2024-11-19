@@ -1,5 +1,3 @@
-import { DistributionStatusesEnum } from "@/enums";
-
 export interface ICreateProduct {
   sku: string;
   name: string;
@@ -9,9 +7,13 @@ export interface ICreateProduct {
   stock: number;
 }
 
-export interface ICreateUser {
-  email: string;
-  password: string;
+export interface ICreateEmployee {
+  name: string;
+  user: {
+    email: string;
+    role: string;
+  };
+  profile_image: string | undefined;
 }
 
 export interface ICreateDistributionProduct {

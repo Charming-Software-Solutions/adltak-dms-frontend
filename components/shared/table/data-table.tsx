@@ -77,7 +77,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-3.5 py-1">
-      {searchField && filters && (
+      {(searchField || filters) && (
         <div className="flex shrink-0 items-center">
           <div className="flex items-center w-full justify-between">
             <div className="w-full">

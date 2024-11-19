@@ -1,6 +1,7 @@
 import {
   AssetStatusEnum,
   DistributionStatusesEnum,
+  UserRoleEnum,
   TaskStatusExportEnum,
   TaskStatusImportEnum,
 } from "@/enums";
@@ -101,4 +102,10 @@ export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
   [AssetStatusEnum.IN_USE]: "In Use",
   [AssetStatusEnum.MAINTENANCE]: "Maintenance",
   [AssetStatusEnum.LOST]: "Lost",
+} as const;
+
+export const USER_ROLES: Partial<Record<UserRoleEnum, string>> = {
+  [UserRoleEnum.LOGISTICS_SPECIALIST]: "Logistics Specialist",
+  [UserRoleEnum.WAREHOUSE_WORKER]: "Warehouse Worker",
+  [UserRoleEnum.PROJECT_HANDLER]: "Project Handler",
 } as const;
