@@ -3,12 +3,13 @@
 import { Asset, AssetStatus } from "@/types/asset";
 import { fetchAndHandleResponse } from "../utils";
 import { ApiResponse } from "@/types/api";
-import { ICreateAsset } from "@/interfaces";
+import { getSession } from "../session";
 
 const ASSET_URL = `${process.env.DOMAIN}/asset/`;
 
 async function createAsset(body: FormData): Promise<ApiResponse<Asset>> {
   return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
     url: ASSET_URL,
     method: "POST",
     body: body,
@@ -17,6 +18,7 @@ async function createAsset(body: FormData): Promise<ApiResponse<Asset>> {
 
 async function getAssets(): Promise<Asset[]> {
   const response = await fetchAndHandleResponse<Asset[]>({
+    jwt: (await getSession())?.access,
     url: ASSET_URL,
     method: "GET",
   });
@@ -28,6 +30,7 @@ async function updateAsset(
   body: FormData,
 ): Promise<ApiResponse<Asset>> {
   return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
     url: `${ASSET_URL}${id}/`,
     method: "PATCH",
     body: body,
@@ -43,6 +46,7 @@ async function updateAssetStatus({
 }): Promise<ApiResponse<Asset>> {
   return fetchAndHandleResponse({
     url: `${ASSET_URL}${id}/`,
+    jwt: (await getSession())?.access,
     method: "PATCH",
     contentType: "application/json",
     body: JSON.stringify({
@@ -53,6 +57,7 @@ async function updateAssetStatus({
 
 async function deleteAsset(id: string): Promise<ApiResponse<string>> {
   return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
     url: `${ASSET_URL}${id}/`,
     method: "DELETE",
   });
