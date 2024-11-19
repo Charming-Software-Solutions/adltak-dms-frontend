@@ -27,6 +27,7 @@ import { useDistributionStore } from "@/lib/store";
 import { filterDataTable, formatFilterValue, toPSTDate } from "@/lib/utils";
 import { Distribution } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
+import { UserSession } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { parseAsIsoDate, parseAsString, useQueryStates } from "nuqs";
@@ -37,8 +38,11 @@ import DistributionAddProduct from "./components/DistributionAddProduct";
 import DistributionForm, {
   useDistributionForm,
 } from "./components/DistributionForm";
+import { UserRoleEnum } from "@/enums";
+import { hasPermission } from "@/lib/auth";
 
 type Props = {
+  user: UserSession;
   distributions: Distribution[];
   brands: Brand[];
   products: Product[];
@@ -51,7 +55,7 @@ type AppliedFilters = {
   endDate: Date | undefined;
 };
 
-const DistributionClient = ({ distributions, products }: Props) => {
+const DistributionClient = ({ user, distributions, products }: Props) => {
   const DistributionStatus = Object.entries(DISTRIBUTION_STATUSES).map(
     ([key, value]) => {
       return {
@@ -136,8 +140,8 @@ const DistributionClient = ({ distributions, products }: Props) => {
         data={hasActiveFilters() ? getFilteredDistributions() : distributions}
         visibleColumns={
           isDesktop
-            ? visibleDistributionColumns.desktop
-            : visibleDistributionColumns.mobile
+            ? visibleDistributionColumns(user.role).desktop
+            : visibleDistributionColumns(user.role).mobile
         }
         searchField={{ column: "client", placeholder: "Search by client" }}
         filters={
@@ -268,72 +272,77 @@ const DistributionClient = ({ distributions, products }: Props) => {
               Export
             </span>
           </Button>
-          <ResponsiveDialog
-            open={openDistributionDialog}
-            setOpen={setOpenDistributionDialog}
-          >
-            <ResponsiveDialogTrigger>
-              <Button className="h-8">
-                <PlusCircle className="mr-9 md:mr-2 size-4" />
-                <span className="hidden sm:inline">Create Distribution</span>
-              </Button>
-            </ResponsiveDialogTrigger>
-            <ResponsiveDialogContent>
-              <ResponsiveDialogHeader>
-                <ResponsiveDialogTitle>
-                  Create Distribution
-                </ResponsiveDialogTitle>
-              </ResponsiveDialogHeader>
-              <div className="space-y-2 px-4 md:px-0">
-                <Tabs defaultValue="details">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="details">Details</TabsTrigger>
-                    <TabsTrigger value="products">Products</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="details">
-                    <Card className="p-4">
-                      <DistributionForm form={form} />
-                    </Card>
-                  </TabsContent>
-                  <TabsContent value="products">
-                    <Card className="p-4">
-                      <DistributionAddProduct products={products} />
-                    </Card>
-                  </TabsContent>
-                </Tabs>
-              </div>
-              <ResponsiveDialogFooter>
-                <div className="flex flex-row w-full gap-2">
-                  <Button
-                    className="flex-grow w-full"
-                    variant={"outline"}
-                    onClick={() => setOpenDistributionDialog(false)}
-                  >
-                    <span>Cancel</span>
-                  </Button>
-                  <Button
-                    className="flex-grow w-full"
-                    onClick={form.handleSubmit((values) =>
-                      onSubmit(
-                        values,
-                        setOpenDistributionDialog,
-                        items,
-                        clearItems,
-                      ),
-                    )}
-                    disabled={
-                      // disabled only when form is not valid, isSubmitting, or
-                      // product list is empty
-                      !(form.formState.isValid && items.length > 0) ||
-                      form.formState.isSubmitting
-                    }
-                  >
+          {hasPermission(user.role, [
+            UserRoleEnum.ADMIN,
+            UserRoleEnum.LOGISTICS_SPECIALIST,
+          ]) && (
+            <ResponsiveDialog
+              open={openDistributionDialog}
+              setOpen={setOpenDistributionDialog}
+            >
+              <ResponsiveDialogTrigger>
+                <Button className="h-8">
+                  <PlusCircle className="mr-9 md:mr-2 size-4" />
+                  <span className="hidden sm:inline">Create Distribution</span>
+                </Button>
+              </ResponsiveDialogTrigger>
+              <ResponsiveDialogContent>
+                <ResponsiveDialogHeader>
+                  <ResponsiveDialogTitle>
                     Create Distribution
-                  </Button>
+                  </ResponsiveDialogTitle>
+                </ResponsiveDialogHeader>
+                <div className="space-y-2 px-4 md:px-0">
+                  <Tabs defaultValue="details">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="details">Details</TabsTrigger>
+                      <TabsTrigger value="products">Products</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="details">
+                      <Card className="p-4">
+                        <DistributionForm form={form} />
+                      </Card>
+                    </TabsContent>
+                    <TabsContent value="products">
+                      <Card className="p-4">
+                        <DistributionAddProduct products={products} />
+                      </Card>
+                    </TabsContent>
+                  </Tabs>
                 </div>
-              </ResponsiveDialogFooter>
-            </ResponsiveDialogContent>
-          </ResponsiveDialog>
+                <ResponsiveDialogFooter>
+                  <div className="flex flex-row w-full gap-2">
+                    <Button
+                      className="flex-grow w-full"
+                      variant={"outline"}
+                      onClick={() => setOpenDistributionDialog(false)}
+                    >
+                      <span>Cancel</span>
+                    </Button>
+                    <Button
+                      className="flex-grow w-full"
+                      onClick={form.handleSubmit((values) =>
+                        onSubmit(
+                          values,
+                          setOpenDistributionDialog,
+                          items,
+                          clearItems,
+                        ),
+                      )}
+                      disabled={
+                        // disabled only when form is not valid, isSubmitting, or
+                        // product list is empty
+                        !(form.formState.isValid && items.length > 0) ||
+                        form.formState.isSubmitting
+                      }
+                    >
+                      Create Distribution
+                    </Button>
+                  </div>
+                </ResponsiveDialogFooter>
+              </ResponsiveDialogContent>
+            </ResponsiveDialog>
+          )}
         </div>
       </Header>
       <main className="grid flex-1 items-start p-4 lg:px-6 h-[200px]">

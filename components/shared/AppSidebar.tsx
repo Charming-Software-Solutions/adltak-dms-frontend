@@ -23,7 +23,8 @@ const AppSidebar = async ({ session }: Props) => {
   if (!session) {
     redirect("/login");
   }
-  const user = await getUserById(session?.user, session?.access);
+  const userData = await getUserById(session?.user.id, session?.access);
+  const user = userData.data as User;
 
   return (
     <Sidebar>
@@ -50,13 +51,13 @@ const AppSidebar = async ({ session }: Props) => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <NavMain />
+            <NavMain user={user} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser
-          user={user.data as User}
+          user={user}
           refresh={session.refresh}
           employee={session.employee}
         />

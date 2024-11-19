@@ -7,10 +7,18 @@ export type User = {
   role: UserRoleEnum;
 };
 
+export type UserSession = {
+  id: string;
+  role: UserRoleEnum;
+};
+
 export type UserLogin = {
   refresh: string;
   access: string;
-  user: string;
+  user: {
+    id: string;
+    role: UserRoleEnum;
+  };
   employee?: {
     id: string | undefined;
     name: string | undefined;

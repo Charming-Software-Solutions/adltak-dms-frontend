@@ -1,5 +1,6 @@
 "use client";
 
+import FilterBadge from "@/components/shared/filter/FilterBadge";
 import FilterDialog from "@/components/shared/filter/FilterDialog";
 import FilterSelect from "@/components/shared/filter/FilterSelect";
 import Header from "@/components/shared/Header";
@@ -30,6 +31,7 @@ import {
   monthsFromNow,
 } from "@/lib/utils";
 import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
+import { UserSession } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import React, { useEffect, useState } from "react";
@@ -37,9 +39,11 @@ import { Separator } from "react-aria-components";
 import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import ProductForm, { useProductForm } from "./components/ProductForm";
-import FilterBadge from "@/components/shared/filter/FilterBadge";
+import { hasPermission } from "@/lib/auth";
+import { UserRoleEnum } from "@/enums";
 
 type Props = {
+  user: UserSession;
   products: Product[];
   brands: Brand[];
   categories: Category[];
@@ -54,7 +58,13 @@ type AppliedFilters = {
   expiration: number | undefined;
 };
 
-const ProductClient = ({ products, brands, categories, types }: Props) => {
+const ProductClient = ({
+  user,
+  products,
+  brands,
+  categories,
+  types,
+}: Props) => {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
@@ -167,75 +177,81 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
             </Button>
           </CSVLink>
 
-          <ResponsiveDialog open={open} setOpen={setOpen}>
-            <ResponsiveDialogTrigger>
-              <Button className="h-8">
-                <PlusCircle className="mr-9 md:mr-2 size-4" />
-                <span className="hidden sm:inline">Add Product</span>
-              </Button>
-            </ResponsiveDialogTrigger>
-            <ResponsiveDialogContent>
-              <ResponsiveDialogHeader>
-                <ResponsiveDialogTitle>Add Product</ResponsiveDialogTitle>
-                <ResponsiveDialogDescription>
-                  Add products that you want to keep track of
-                </ResponsiveDialogDescription>
-              </ResponsiveDialogHeader>
-              <ProductForm
-                form={form}
-                className="px-4 md:px-0"
-                brands={brands}
-                categories={categories}
-                types={types}
-              />
-              <ResponsiveDialogFooter>
-                <div className="flex flex-row flex-grow w-full gap-2">
-                  <Button variant={"outline"} onClick={() => setOpen(false)}>
-                    <span>Cancel</span>
-                  </Button>
-                  <Button
-                    variant={"outline"}
-                    onClick={async () => {
-                      // Only fetch and set values when sku is initially null
-                      // to avoid overload fetching
-                      if (!form.getValues("sku")) {
-                        const category = await getCategoryById(productCategory);
-                        const type = await getTypeById(productType);
+          {hasPermission(user.role, [
+            UserRoleEnum.ADMIN,
+            UserRoleEnum.LOGISTICS_SPECIALIST,
+          ]) && (
+            <ResponsiveDialog open={open} setOpen={setOpen}>
+              <ResponsiveDialogTrigger>
+                <Button className="h-8">
+                  <PlusCircle className="mr-9 md:mr-2 size-4" />
+                  <span className="hidden sm:inline">Add Product</span>
+                </Button>
+              </ResponsiveDialogTrigger>
+              <ResponsiveDialogContent>
+                <ResponsiveDialogHeader>
+                  <ResponsiveDialogTitle>Add Product</ResponsiveDialogTitle>
+                  <ResponsiveDialogDescription>
+                    Add products that you want to keep track of
+                  </ResponsiveDialogDescription>
+                </ResponsiveDialogHeader>
+                <ProductForm
+                  form={form}
+                  className="px-4 md:px-0"
+                  brands={brands}
+                  categories={categories}
+                  types={types}
+                />
+                <ResponsiveDialogFooter>
+                  <div className="flex flex-row flex-grow w-full gap-2">
+                    <Button variant={"outline"} onClick={() => setOpen(false)}>
+                      <span>Cancel</span>
+                    </Button>
+                    <Button
+                      variant={"outline"}
+                      onClick={async () => {
+                        // Only fetch and set values when sku is initially null
+                        // to avoid overload fetching
+                        if (!form.getValues("sku")) {
+                          const category =
+                            await getCategoryById(productCategory);
+                          const type = await getTypeById(productType);
 
-                        if (category.data && type.data) {
-                          const productSKUFormat: ProductSKU = {
-                            name: productName,
-                            category: category.data.name,
-                            type: type.data.name,
-                          };
-                          const productSKU =
-                            generateProductSKU(productSKUFormat);
-                          form.setValue("sku", productSKU);
+                          if (category.data && type.data) {
+                            const productSKUFormat: ProductSKU = {
+                              name: productName,
+                              category: category.data.name,
+                              type: type.data.name,
+                            };
+                            const productSKU =
+                              generateProductSKU(productSKUFormat);
+                            form.setValue("sku", productSKU);
+                          }
                         }
+                      }}
+                      disabled={
+                        form.formState.isSubmitting ||
+                        !(productName && productCategory && productType)
                       }
-                    }}
-                    disabled={
-                      form.formState.isSubmitting ||
-                      !(productName && productCategory && productType)
-                    }
-                  >
-                    <span>Generate SKU</span>
-                  </Button>
-                  <Button
-                    className="flex-grow w-full"
-                    onClick={form.handleSubmit((values) =>
-                      onSubmit(values, setOpen),
-                    )}
-                    disabled={
-                      !form.formState.isValid || form.formState.isSubmitting
-                    }
-                  >
-                    Add Product
-                  </Button>
-                </div>
-              </ResponsiveDialogFooter>
-            </ResponsiveDialogContent>
-          </ResponsiveDialog>
+                    >
+                      <span>Generate SKU</span>
+                    </Button>
+                    <Button
+                      className="flex-grow w-full"
+                      onClick={form.handleSubmit((values) =>
+                        onSubmit(values, setOpen),
+                      )}
+                      disabled={
+                        !form.formState.isValid || form.formState.isSubmitting
+                      }
+                    >
+                      Add Product
+                    </Button>
+                  </div>
+                </ResponsiveDialogFooter>
+              </ResponsiveDialogContent>
+            </ResponsiveDialog>
+          )}
         </div>
       </Header>
       <main className="main-container">
@@ -245,8 +261,8 @@ const ProductClient = ({ products, brands, categories, types }: Props) => {
             data={hasActiveFilters() ? getFilteredProducts() : products}
             visibleColumns={
               isDesktop
-                ? visibleProductColumns.desktop
-                : visibleProductColumns.mobile
+                ? visibleProductColumns(user.role).desktop
+                : visibleProductColumns(user.role).mobile
             }
             searchField={{ column: "name", placeholder: "Search product..." }}
             filters={
