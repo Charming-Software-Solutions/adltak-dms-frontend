@@ -21,13 +21,17 @@ import { Classification } from "@/types/generics";
 import { PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import AssetForm, { useAssetForm } from "./components/AssetForm";
+import { UserSession } from "@/types/user";
+import { hasPermission } from "@/lib/auth";
+import { UserRoleEnum } from "@/enums";
 
 type Props = {
+  user: UserSession;
   assets: Asset[];
   assetTypes: Classification[];
 };
 
-const AssetsClient = ({ assets, assetTypes }: Props) => {
+const AssetsClient = ({ user, assets, assetTypes }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -42,42 +46,47 @@ const AssetsClient = ({ assets, assetTypes }: Props) => {
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
-          <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
-            <ResponsiveDialogTrigger>
-              <Button className="h-8">
-                <PlusCircle className="mr-9 md:mr-2 size-4" />
-                <span className="hidden sm:inline">Add Asset</span>
-              </Button>
-            </ResponsiveDialogTrigger>
-            <ResponsiveDialogContent>
-              <ResponsiveDialogHeader>
-                <ResponsiveDialogTitle>Add Asset</ResponsiveDialogTitle>
-              </ResponsiveDialogHeader>
-              <AssetForm form={form} assetTypes={assetTypes} />
-              <ResponsiveDialogFooter>
-                <div className="flex flex-row w-full gap-2">
-                  <Button
-                    className="flex-grow w-full"
-                    variant={"outline"}
-                    onClick={() => setOpenDialog(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    className="flex-grow w-full"
-                    disabled={
-                      !form.formState.isValid || form.formState.isSubmitting
-                    }
-                    onClick={form.handleSubmit((values) =>
-                      onSubmit(values, setOpenDialog),
-                    )}
-                  >
-                    Add Asset
-                  </Button>
-                </div>
-              </ResponsiveDialogFooter>
-            </ResponsiveDialogContent>
-          </ResponsiveDialog>
+          {hasPermission(user.role, [
+            UserRoleEnum.ADMIN,
+            UserRoleEnum.LOGISTICS_SPECIALIST,
+          ]) && (
+            <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+              <ResponsiveDialogTrigger>
+                <Button className="h-8">
+                  <PlusCircle className="mr-9 md:mr-2 size-4" />
+                  <span className="hidden sm:inline">Add Asset</span>
+                </Button>
+              </ResponsiveDialogTrigger>
+              <ResponsiveDialogContent>
+                <ResponsiveDialogHeader>
+                  <ResponsiveDialogTitle>Add Asset</ResponsiveDialogTitle>
+                </ResponsiveDialogHeader>
+                <AssetForm form={form} assetTypes={assetTypes} />
+                <ResponsiveDialogFooter>
+                  <div className="flex flex-row w-full gap-2">
+                    <Button
+                      className="flex-grow w-full"
+                      variant={"outline"}
+                      onClick={() => setOpenDialog(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="flex-grow w-full"
+                      disabled={
+                        !form.formState.isValid || form.formState.isSubmitting
+                      }
+                      onClick={form.handleSubmit((values) =>
+                        onSubmit(values, setOpenDialog),
+                      )}
+                    >
+                      Add Asset
+                    </Button>
+                  </div>
+                </ResponsiveDialogFooter>
+              </ResponsiveDialogContent>
+            </ResponsiveDialog>
+          )}
         </div>
       </Header>
       <main className="main-container">
@@ -87,8 +96,8 @@ const AssetsClient = ({ assets, assetTypes }: Props) => {
             data={assets}
             visibleColumns={
               isDesktop
-                ? visibleAssetColumns.desktop
-                : visibleAssetColumns.mobile
+                ? visibleAssetColumns(user.role).desktop
+                : visibleAssetColumns(user.role).mobile
             }
           />
         ) : null}

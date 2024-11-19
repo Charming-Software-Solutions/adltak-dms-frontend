@@ -19,25 +19,36 @@ import React, { useState } from "react";
 import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
+import { createColumnConfig } from "../column.config";
+import { UserRoleEnum } from "@/enums";
+import { hasPermission } from "@/lib/auth";
 
-export const visibleProductColumns = {
-  desktop: {
-    thumbnail: true,
-    name: true,
-    sku: true,
-    brand: true,
-    category: true,
-    type: true,
-    stock: true,
-    expiration: true,
-    actions: true,
-  },
-  mobile: {
-    name: true,
-    brand: true,
-    stock: true,
-    actions: true,
-  },
+export const visibleProductColumns = (userRole: UserRoleEnum) => {
+  return createColumnConfig({
+    desktop: {
+      thumbnail: true,
+      name: true,
+      sku: true,
+      brand: true,
+      category: true,
+      type: true,
+      stock: true,
+      expiration: true,
+      actions: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.LOGISTICS_SPECIALIST,
+      ]),
+    },
+    mobile: {
+      name: true,
+      brand: true,
+      stock: true,
+      actions: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.LOGISTICS_SPECIALIST,
+      ]),
+    },
+  });
 };
 
 const ProductActionsCell = React.memo(({ product }: { product: Product }) => {

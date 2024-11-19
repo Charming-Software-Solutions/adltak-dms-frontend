@@ -15,16 +15,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Distribution } from "@/types/distribution";
+import { UserSession } from "@/types/user";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 type Props = {
+  user: UserSession;
   distributions: Distribution[];
 };
 
-const HomeClient = ({ distributions }: Props) => {
+const HomeClient = ({ user, distributions }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
 
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
@@ -77,8 +79,8 @@ const HomeClient = ({ distributions }: Props) => {
                 showPagination={false}
                 visibleColumns={
                   isDesktop
-                    ? visibleDistributionColumns.desktop
-                    : visibleDistributionColumns.mobile
+                    ? visibleDistributionColumns(user.role).desktop
+                    : visibleDistributionColumns(user.role).mobile
                 }
               />
             ) : null}

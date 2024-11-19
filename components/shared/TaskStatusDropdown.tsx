@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -74,4 +75,4 @@ const TaskStatusDropdown = ({ id, currentStatus, type }: Props) => {
   );
 };
 
-export default TaskStatusDropdown;
+export default React.memo(TaskStatusDropdown);

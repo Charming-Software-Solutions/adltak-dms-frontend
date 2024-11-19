@@ -23,27 +23,52 @@ import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { UserRoleEnum } from "@/enums";
+import { createColumnConfig } from "../column.config";
+import { hasPermission } from "@/lib/auth";
+import { Badge } from "@/components/ui/badge";
 
-export const visibleTaskColumns = {
-  desktop: {
-    warehouse_person: true,
-    distribution_client: true,
-    distribution_id: true,
-    distribution_type: true,
-    distribution_items: true,
-    status: true,
-    created_at: true,
-    actions: true,
-  },
-  mobile: {
-    distribution_client: true,
-    distribution_id: true,
-    distribution_type: true,
-    distribution_items: true,
-    status: true,
-    created_at: true,
-    actions: true,
-  },
+export const visibleTaskColumns = (userRole: UserRoleEnum) => {
+  return createColumnConfig({
+    desktop: {
+      warehouse_person: true,
+      distribution_client: true,
+      distribution_id: true,
+      distribution_type: true,
+      distribution_items: true,
+      status_dropdown: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.LOGISTICS_SPECIALIST,
+        UserRoleEnum.WAREHOUSE_WORKER,
+      ]),
+      status_badge: hasPermission(userRole, [UserRoleEnum.PROJECT_HANDLER]),
+      created_at: true,
+      actions: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.PROJECT_HANDLER,
+      ]),
+    },
+    mobile: {
+      distribution_client: true,
+      distribution_id: true,
+      distribution_type: true,
+      distribution_items: true,
+      status_dropdown: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.LOGISTICS_SPECIALIST,
+        UserRoleEnum.WAREHOUSE_WORKER,
+      ]),
+      status_badge: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.PROJECT_HANDLER,
+      ]),
+      created_at: false,
+      actions: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.PROJECT_HANDLER,
+      ]),
+    },
+  });
 };
 
 export const TaskColumns: ColumnDef<Task>[] = [
@@ -129,7 +154,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "status_dropdown",
     header: "Status",
     cell: ({ row }) => {
       const type = row.original.distribution.type;
@@ -137,11 +162,19 @@ export const TaskColumns: ColumnDef<Task>[] = [
 
       return (
         <TaskStatusDropdown
+          key={`task-status-${row.original.id}`}
           id={row.original.id}
           currentStatus={status}
           type={type}
         />
       );
+    },
+  },
+  {
+    accessorKey: "status_badge",
+    header: "Status",
+    cell: ({ row }) => {
+      return <Badge variant={"secondary"}>{row.original.status}</Badge>;
     },
   },
   {

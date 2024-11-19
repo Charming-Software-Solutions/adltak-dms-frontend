@@ -19,25 +19,35 @@ import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { UserRoleEnum } from "@/enums";
+import { hasPermission } from "@/lib/auth";
 
-export const visibleAssetColumns = createColumnConfig({
-  desktop: {
-    thumbnail: true,
-    name: true,
-    code: true,
-    type: true,
-    status: true,
-    created_at: true,
-    actions: true,
-  },
-  mobile: {
-    thumbnail: true,
-    name: true,
-    code: true,
-    type: true,
-    actions: true,
-  },
-});
+export const visibleAssetColumns = (userRole: UserRoleEnum) => {
+  return createColumnConfig({
+    desktop: {
+      thumbnail: true,
+      name: true,
+      code: true,
+      type: true,
+      status: true,
+      created_at: true,
+      actions: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.LOGISTICS_SPECIALIST,
+      ]),
+    },
+    mobile: {
+      thumbnail: true,
+      name: true,
+      code: true,
+      type: true,
+      actions: hasPermission(userRole, [
+        UserRoleEnum.ADMIN,
+        UserRoleEnum.LOGISTICS_SPECIALIST,
+      ]),
+    },
+  });
+};
 
 const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
   const [openDialog, setOpenDialog] = useState(false);

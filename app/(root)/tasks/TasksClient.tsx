@@ -21,13 +21,15 @@ import { PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
+import { UserSession } from "@/types/user";
 
 type Props = {
+  user: UserSession;
   tasks: Task[];
   distributions: Distribution[];
 };
 
-const TasksClient = ({ tasks, distributions }: Props) => {
+const TasksClient = ({ user, tasks, distributions }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -87,7 +89,9 @@ const TasksClient = ({ tasks, distributions }: Props) => {
             columns={TaskColumns}
             data={tasks}
             visibleColumns={
-              isDesktop ? visibleTaskColumns.desktop : visibleTaskColumns.mobile
+              isDesktop
+                ? visibleTaskColumns(user.role).desktop
+                : visibleTaskColumns(user.role).mobile
             }
           />
         ) : null}

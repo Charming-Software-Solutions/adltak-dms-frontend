@@ -1,14 +1,15 @@
 "use server";
 
+import { ApiResponse } from "@/types/api";
 import { Task, TaskStatus } from "@/types/task";
 import { fetchAndHandleResponse } from "../utils";
-import { ApiResponse } from "@/types/api";
-import { ICreateTask } from "@/interfaces";
+import { getSession } from "../session";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
 
 async function createTask(body: FormData): Promise<ApiResponse<Task>> {
   return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
     url: TASK_URL,
     method: "POST",
     body: body,
@@ -17,6 +18,7 @@ async function createTask(body: FormData): Promise<ApiResponse<Task>> {
 
 async function getTasks(): Promise<Task[]> {
   const response = await fetchAndHandleResponse<Task[]>({
+    jwt: (await getSession())?.access,
     url: TASK_URL,
     method: "GET",
   });
@@ -28,6 +30,7 @@ async function updateTask(
   body: FormData,
 ): Promise<ApiResponse<Task>> {
   return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
     url: `${TASK_URL}${id}/`,
     method: "PATCH",
     body: body,
@@ -42,6 +45,7 @@ async function updateTaskStatus({
   status: TaskStatus;
 }): Promise<ApiResponse<Task>> {
   return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
     url: `${TASK_URL}${id}/`,
     contentType: "application/json",
     method: "PATCH",
@@ -53,9 +57,10 @@ async function updateTaskStatus({
 
 async function deleteTask(id: string): Promise<ApiResponse<string>> {
   return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
     url: `${TASK_URL}${id}/`,
     method: "DELETE",
   });
 }
 
-export { createTask, getTasks, updateTask, updateTaskStatus, deleteTask };
+export { createTask, deleteTask, getTasks, updateTask, updateTaskStatus };

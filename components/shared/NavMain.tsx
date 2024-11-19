@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import { UserRoleEnum } from "@/enums";
+import { User } from "@/types/user";
 import {
   Archive,
   ArrowDownUp,
@@ -9,50 +10,69 @@ import {
   Package,
   Users,
 } from "lucide-react";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import React from "react";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 
-const NavMain = () => {
+export type NavMainProps = {
+  user: User;
+};
+
+export type NavLink = {
+  label: string;
+  icon: React.ReactNode;
+  route: string;
+  isActive?: boolean;
+  allowedRoles?: UserRoleEnum[];
+};
+
+const NAV_LINKS: NavLink[] = [
+  {
+    label: "Insights",
+    icon: <LayoutDashboard className="size-4" />,
+    route: "/",
+    isActive: true,
+  },
+  {
+    label: "Distributions",
+    icon: <ArrowDownUp className="size-4" />,
+    route: "/distributions",
+  },
+  {
+    label: "Products",
+    icon: <Package className="size-4" />,
+    route: "/products",
+  },
+  {
+    label: "Tasks",
+    icon: <ClipboardCheck className="size-4" />,
+    route: "/tasks",
+  },
+  {
+    label: "Assets",
+    icon: <Archive className="size-4" />,
+    route: "/assets",
+  },
+  {
+    label: "Employees",
+    icon: <Users className="size-4" />,
+    route: "/employees",
+    allowedRoles: [UserRoleEnum.ADMIN],
+  },
+];
+
+const NavMain = ({ user }: NavMainProps) => {
   const pathname = usePathname();
-
-  const navLinks = [
-    {
-      label: "Insights",
-      icon: <LayoutDashboard className="size-4" />,
-      route: "/",
-      isActive: true,
-    },
-    {
-      label: "Distributions",
-      icon: <ArrowDownUp className="size-4" />,
-      route: "/distributions",
-    },
-    {
-      label: "Products",
-      icon: <Package className="size-4" />,
-      route: "/products",
-    },
-    {
-      label: "Tasks",
-      icon: <ClipboardCheck className="size-4" />,
-      route: "/tasks",
-    },
-    {
-      label: "Assets",
-      icon: <Archive className="size-4" />,
-      route: "/assets",
-    },
-    {
-      label: "Employees",
-      icon: <Users className="size-4" />,
-      route: "/employees",
-    },
-  ];
+  const authorizedLinks = NAV_LINKS.filter(
+    (link) =>
+      !link.allowedRoles ||
+      link.allowedRoles.includes(user.role as UserRoleEnum),
+  );
 
   return (
     <SidebarMenu>
-      {navLinks.map((link, index) => (
+      {authorizedLinks.map((link, index) => (
         <SidebarMenuItem key={index}>
           <SidebarMenuButton
             asChild

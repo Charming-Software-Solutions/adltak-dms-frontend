@@ -1,5 +1,4 @@
 "use client";
-
 import DistributionForm, {
   useDistributionForm,
 } from "@/app/(root)/distributions/components/DistributionForm";
@@ -17,28 +16,33 @@ import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import React from "react";
-import { DISTRIBUTION_STATUSES } from "@/constants";
+import { UserRoleEnum } from "@/enums";
+import { hasPermission } from "@/lib/auth";
 
-export const visibleDistributionColumns = {
+export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
   desktop: {
     dist_id: true,
-    // product_count: true,
-    // asset_count: true,
+    product_count: true,
+    asset_count: true,
     distribution_items: true,
-    type: true,
     status: true,
     client: true,
     logistics_person: true,
     created_at: true,
-    actions: true,
+    actions: hasPermission(userRole, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.LOGISTICS_SPECIALIST,
+    ]),
   },
   mobile: {
     dist_id: true,
-    distribution_items: true,
     logistics_person: true,
-    actions: true,
+    actions: hasPermission(userRole, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.LOGISTICS_SPECIALIST,
+    ]),
   },
-};
+});
 
 const DistributionActionsCell = React.memo(
   ({ distribution }: { distribution: Distribution }) => {
@@ -129,18 +133,7 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      return (
-        <Badge variant={"secondary"}>
-          {DISTRIBUTION_STATUSES[row.original.status]}
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => {
-      return <Badge variant={"secondary"}>{row.original.type}</Badge>;
+      return <Badge variant={"secondary"}>{row.original.status}</Badge>;
     },
   },
   {
