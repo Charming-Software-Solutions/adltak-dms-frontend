@@ -1,17 +1,10 @@
 import { UserLogin } from "@/types/user";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import "server-only";
 
-type SessionPayload = {
-  access: string;
-  refresh: string;
-  user: string;
-  employee?: {
-    id: string;
-    name: string;
-    profile_image?: string;
-  };
+type SessionPayload = UserLogin & {
   expiresAt: Date;
 };
 
@@ -48,15 +41,13 @@ export async function createSession(userDataLogin: UserLogin) {
 export async function getSession(): Promise<SessionPayload | null> {
   const cookie = cookies().get("session")?.value;
   if (!cookie) {
-    console.error("Session cookie not found.");
-    return null;
+    redirect("/login");
   }
+
   const payload = await decrypt(cookie);
+
   if (!payload) {
-    console.error(
-      "Failed to decrypt session cookie or invalid payload format.",
-    );
-    return null;
+    redirect("/login");
   }
 
   return {
@@ -76,7 +67,7 @@ export async function encrypt(payload: SessionPayload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("7d") // Refresh token lifetime set to 7 days
     .sign(secret);
 }
 
