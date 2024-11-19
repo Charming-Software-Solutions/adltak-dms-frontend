@@ -32,16 +32,17 @@ export const productFormSchema = z.object({
   }),
 });
 
-export const userFormSchema = z.object({
+export const employeeFormSchema = z.object({
   email: z.string().min(2, {
     message: "Email is required.",
   }),
-  password: z.string().min(6, {
-    message: "Password should be at least 6 characters.",
+  name: z.string().min(1, {
+    message: "Name is required.",
   }),
   role: z.string().min(2, {
     message: "User role is required.",
   }),
+  profile_image: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
 export const distributionProductSchema = z.object({
@@ -92,7 +93,7 @@ export const assetFormSchema = z.object({
 });
 
 export type ProductFormData = z.infer<typeof productFormSchema>;
-export type UserFormData = z.infer<typeof userFormSchema>;
+export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 export type DistributionFormData = z.infer<typeof distributionFormSchema>;
 export type DistributionProductFormData = z.infer<
   typeof distributionProductSchema

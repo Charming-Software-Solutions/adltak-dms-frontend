@@ -1,8 +1,8 @@
 export enum UserRoleEnum {
-  AMDMIN = "admin",
-  LOGISTICS = "logistics_specialist",
-  WAREHOUSE = "warehouse_worker",
-  PROJECT = "project_handler",
+  ADMIN = "ADMIN",
+  LOGISTICS_SPECIALIST = "LOGISTICS_SPECIALIST",
+  WAREHOUSE_WORKER = "WAREHOUSE_WORKER",
+  PROJECT_HANDLER = "PROJECT_HANDLER",
 }
 
 export enum ProductStockStatusesEnum {
@@ -53,4 +53,9 @@ export enum AssetConditionEnum {
   FAIR = "FAIR",
   POOR = "POOR",
   DAMAGED = "DAMAGED",
+}
+
+export enum FormModeEnum {
+  CREATE = "CREATE",
+  EDIT = "EDIT",
 }

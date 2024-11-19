@@ -31,6 +31,7 @@ export const visibleAssetColumns = createColumnConfig({
     actions: true,
   },
   mobile: {
+    thumbnail: true,
     name: true,
     code: true,
     type: true,
