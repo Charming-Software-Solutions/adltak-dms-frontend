@@ -28,6 +28,7 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { getEmployees } from "@/lib/actions/employee.actions";
 
 export const visibleTaskColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -205,7 +206,11 @@ export const TaskColumns: ColumnDef<Task>[] = [
         queryKey: ["edit-task"],
         queryFn: async () => {
           const distributions = await getDistributions();
-          return { distributions };
+          const warehousePersons = await getEmployees();
+          const filteredWarehousePersons = warehousePersons.filter(
+            (person) => person.user.role === UserRoleEnum.WAREHOUSE_WORKER,
+          );
+          return { distributions, filteredWarehousePersons };
         },
       });
 
@@ -216,7 +221,11 @@ export const TaskColumns: ColumnDef<Task>[] = [
             open={openDialog}
             setOpen={setOpenDialog}
           >
-            <TaskForm form={form} distributions={data?.distributions ?? []} />
+            <TaskForm
+              form={form}
+              distributions={data?.distributions ?? []}
+              warehousePersons={data?.filteredWarehousePersons ?? []}
+            />
             <ResponsiveDialogFooter>
               <div className="dialog-footer">
                 <Button
