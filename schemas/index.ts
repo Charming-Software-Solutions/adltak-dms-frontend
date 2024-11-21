@@ -87,6 +87,9 @@ export const assetFormSchema = z.object({
   status: z.string().min(1, {
     message: "Status is required.",
   }),
+  product: z.string().uuid({
+    message: "Product is required.",
+  }),
 });
 
 export type ProductFormData = z.infer<typeof productFormSchema>;
