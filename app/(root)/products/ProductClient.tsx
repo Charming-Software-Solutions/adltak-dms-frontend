@@ -42,6 +42,7 @@ import { Separator } from "react-aria-components";
 import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import ProductForm, { useProductForm } from "./components/ProductForm";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Props = {
   user: UserSession;
@@ -307,13 +308,16 @@ const ProductClient = ({
                     Add products that you want to keep track of
                   </ResponsiveDialogDescription>
                 </ResponsiveDialogHeader>
-                <ProductForm
-                  form={form}
-                  className="px-4 md:px-0"
-                  brands={brands}
-                  categories={categories}
-                  types={types}
-                />
+                <ScrollArea className="md:max-h-[33rem] overflow-auto">
+                  <ProductForm
+                    form={form}
+                    className="px-4 md:px-0"
+                    brands={brands}
+                    categories={categories}
+                    types={types}
+                  />
+                </ScrollArea>
+
                 <ResponsiveDialogFooter>
                   <div className="flex flex-row flex-grow w-full gap-2">
                     <Button variant={"outline"} onClick={() => setOpen(false)}>

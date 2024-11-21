@@ -23,6 +23,8 @@ import { createColumnConfig } from "../column.config";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 
 export const visibleProductColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -75,13 +77,26 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
         open={openDialog}
         setOpen={setOpenDialog}
       >
-        <ProductForm
-          form={form}
-          brands={data?.brands ?? []}
-          categories={data?.categories ?? []}
-          types={data?.productTypes ?? []}
-        />
-        <ResponsiveDialogFooter>
+        <OverlayScrollbarsComponent
+          defer
+          options={{
+            scrollbars: {
+              autoHide: "leave",
+              autoHideDelay: 200,
+              theme: "os-theme-dark",
+            },
+          }}
+          className="max-h-[33rem] pb-4 md:pb-0"
+        >
+          <ProductForm
+            form={form}
+            className="px-4 md:px-1"
+            brands={data?.brands ?? []}
+            categories={data?.categories ?? []}
+            types={data?.productTypes ?? []}
+          />
+        </OverlayScrollbarsComponent>
+        <ResponsiveDialogFooter className="px-1">
           <div className="flex flex-row w-full gap-2">
             <Button
               className="w-full"
