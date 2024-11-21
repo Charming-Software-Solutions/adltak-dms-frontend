@@ -22,6 +22,7 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { createColumnConfig } from "../column.config";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
+import { DataTableColumnHeader } from "../data-table-column-header";
 
 export const visibleProductColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -161,7 +162,11 @@ export const ProductColumns: ColumnDef<Product>[] = [
   { accessorKey: "stock", header: "Stock" },
   {
     accessorKey: "expiration",
-    header: "Expiration",
+    header: ({ column }) => (
+      <div className="hidden md:table-cell">
+        <DataTableColumnHeader column={column} title="Expiration" />
+      </div>
+    ),
     cell: ({ row }) => {
       const expirationDate = new Date(row.original.expiration);
       return expirationDate.toLocaleDateString();

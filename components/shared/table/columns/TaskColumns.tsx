@@ -107,7 +107,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
   {
     accessorKey: "distribution_id",
     accessorFn: (row) => row.distribution.dist_id,
-    header: "Distribution ID",
+    header: "Distribution",
     cell: ({ row }) => {
       return <span>#{row.original.distribution.dist_id}</span>;
     },
@@ -184,7 +184,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
     accessorKey: "created_at",
     header: ({ column }) => (
       <div className="hidden md:table-cell">
-        <DataTableColumnHeader column={column} title="Date" />
+        <DataTableColumnHeader column={column} title="Created" />
       </div>
     ),
     cell: ({ row }) => {

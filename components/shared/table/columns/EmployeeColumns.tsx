@@ -15,6 +15,8 @@ import EditDialog from "../../dialogs/EditDialog";
 import TableImage from "../../image/TableImage";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { FormModeEnum } from "@/enums";
+import { formatDateTime } from "@/lib/utils";
+import { DataTableColumnHeader } from "../data-table-column-header";
 
 export const visibileEmployeeColumns = {
   desktop: {
@@ -23,6 +25,7 @@ export const visibileEmployeeColumns = {
     name: true,
     role: true,
     actions: true,
+    created_at: true,
   },
   mobile: {
     profile_image: true,
@@ -115,6 +118,20 @@ export const EmployeeColumns: ColumnDef<Employee>[] = [
       const role = row.original.user.role;
 
       return <Badge variant={"secondary"}>{USER_ROLES[role]}</Badge>;
+    },
+  },
+  {
+    accessorKey: "created_at",
+    header: ({ column }) => (
+      <div className="hidden md:table-cell">
+        <DataTableColumnHeader column={column} title="Created" />
+      </div>
+    ),
+    cell: ({ row }) => {
+      const dateString = row.getValue("created_at");
+      return (
+        <div className="hidden md:table-cell">{formatDateTime(dateString)}</div>
+      );
     },
   },
   {

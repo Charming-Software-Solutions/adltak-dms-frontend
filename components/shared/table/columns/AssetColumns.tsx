@@ -163,7 +163,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     accessorKey: "created_at",
     header: ({ column }) => (
       <div className="hidden md:table-cell">
-        <DataTableColumnHeader column={column} title="Date" />
+        <DataTableColumnHeader column={column} title="Created" />
       </div>
     ),
     cell: ({ row }) => {
