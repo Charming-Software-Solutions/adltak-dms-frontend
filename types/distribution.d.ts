@@ -2,11 +2,20 @@ import { DistributionStatusesEnum } from "@/enums";
 import { Product } from "./product";
 import { Employee } from "./user";
 import { DISTRIBUTION_STATUSES } from "@/constants";
+import { BaseModel } from "./generics";
+import { Asset } from "./asset";
 
-export type DistributionProduct = {
-  id: string;
-  created_at?: string;
-  updated_at?: string;
+export type DistributionItem<T> = BaseModel & {
+  item: T;
+  quantity: number;
+};
+
+export type DistributionAsset = BaseModel & {
+  asset: Asset;
+  quantity: number;
+};
+
+export type DistributionProduct = BaseModel & {
   product: Product;
   quantity: number;
 };
@@ -19,6 +28,7 @@ export type Distribution = {
   created_at: string;
   updated_at: string;
   products: DistributionProduct[];
+  assets?: DistributionAsset[];
   type: DistributionType;
   status: DistributionStatusesEnum;
   client: string;
