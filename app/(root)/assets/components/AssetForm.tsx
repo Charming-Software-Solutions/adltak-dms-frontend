@@ -91,14 +91,14 @@ const AssetForm = ({ form, assetTypes, className }: Props) => {
               fieldType={FormFieldType.INPUT}
               control={form.control}
               name="name"
-              label="Asset Name"
+              label="Name"
               placeholder="Monobloc Chair"
             />
             <CustomFormField
               fieldType={FormFieldType.INPUT}
               control={form.control}
               name="code"
-              label="Asset Code"
+              label="Code"
               placeholder="MC001"
             />
           </div>
@@ -107,7 +107,7 @@ const AssetForm = ({ form, assetTypes, className }: Props) => {
           fieldType={FormFieldType.SELECT}
           control={form.control}
           name="type"
-          label="Asset Type"
+          label="Type"
           placeholder="Select type"
         >
           {assetTypes.map((type, key) => (

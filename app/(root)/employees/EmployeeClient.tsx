@@ -20,6 +20,7 @@ import { Employee } from "@/types/user";
 import React, { useState } from "react";
 import EmployeeForm, { useEmployeeForm } from "./components/EmployeeForm";
 import { FormModeEnum } from "@/enums";
+import { PlusCircle } from "lucide-react";
 
 type Props = {
   employees: Employee[];
@@ -47,7 +48,10 @@ const EmployeeClient = ({ employees }: Props) => {
       <Header>
         <ResponsiveDialog open={openUserDialog} setOpen={setOpenUserDialog}>
           <ResponsiveDialogTrigger>
-            <Button className="h-8">Create Employee</Button>
+            <Button className="h-8">
+              <PlusCircle className="mr-9 md:mr-2 size-4" />
+              <span className="hidden sm:inline">Create Employee</span>
+            </Button>
           </ResponsiveDialogTrigger>
           <ResponsiveDialogContent>
             <ResponsiveDialogHeader>
