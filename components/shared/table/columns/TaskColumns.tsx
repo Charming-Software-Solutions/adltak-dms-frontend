@@ -77,7 +77,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
   {
     accessorKey: "warehouse_person",
     accessorFn: (row) => row.warehouse_person,
-    header: "Warehouse Person",
+    header: "Warehouse Personnel",
     cell: ({ row }) => {
       const isDesktop = useResponsive("desktop");
 

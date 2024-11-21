@@ -104,8 +104,9 @@ export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
   [AssetStatusEnum.LOST]: "Lost",
 } as const;
 
-export const USER_ROLES: Partial<Record<UserRoleEnum, string>> = {
-  [UserRoleEnum.LOGISTICS_SPECIALIST]: "Logistics Specialist",
-  [UserRoleEnum.WAREHOUSE_WORKER]: "Warehouse Worker",
-  [UserRoleEnum.PROJECT_HANDLER]: "Project Handler",
+export const USER_ROLES: Record<UserRoleEnum, string> = {
+  [UserRoleEnum.ADMIN]: "Admin",
+  [UserRoleEnum.LOGISTICS_SPECIALIST]: "Logistics Team Member",
+  [UserRoleEnum.WAREHOUSE_WORKER]: "Warehouse Personnel",
+  [UserRoleEnum.PROJECT_HANDLER]: "Project Manager",
 } as const;

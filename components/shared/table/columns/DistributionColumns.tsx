@@ -160,7 +160,7 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
   },
   {
     accessorKey: "logistics_person",
-    header: "Logistics Person",
+    header: "Logistics Team Member",
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">

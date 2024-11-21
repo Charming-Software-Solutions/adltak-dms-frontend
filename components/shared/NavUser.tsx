@@ -22,6 +22,8 @@ import { formatUserRole } from "@/lib/utils";
 import { EmployeeLogin, User } from "@/types/user";
 import NavUserProfile from "./NavUserProfile";
 import { logout } from "@/lib/actions/auth.actions";
+import { USER_ROLES } from "@/constants";
+import { UserRoleEnum } from "@/enums";
 
 export function NavUser({
   user,
@@ -45,7 +47,11 @@ export function NavUser({
             >
               <NavUserProfile
                 title={employee?.name ?? "Admin"}
-                subtitle={formatUserRole(user.role)}
+                subtitle={
+                  user.role.toUpperCase() === UserRoleEnum.ADMIN
+                    ? "Admin"
+                    : USER_ROLES[user.role]
+                }
                 alt={"profile-image"}
                 avatarImage={employee?.profile_image}
               />
