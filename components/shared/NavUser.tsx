@@ -33,7 +33,6 @@ export function NavUser({
   employee?: EmployeeLogin;
 }) {
   const { isMobile } = useSidebar();
-  const avatarImage = employee?.profile_image || "/assets/images/avatar.jpg";
 
   return (
     <SidebarMenu>
@@ -48,7 +47,7 @@ export function NavUser({
                 title={employee?.name ?? "Admin"}
                 subtitle={formatUserRole(user.role)}
                 alt={"profile-image"}
-                avatarImage={avatarImage}
+                avatarImage={employee?.profile_image}
               />
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -64,7 +63,7 @@ export function NavUser({
                 title={employee?.name ?? "Admin"}
                 subtitle={formatUserRole(user.role)}
                 alt={"profile-image"}
-                avatarImage={avatarImage}
+                avatarImage={employee?.profile_image}
               />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
