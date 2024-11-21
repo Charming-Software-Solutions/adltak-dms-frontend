@@ -61,7 +61,7 @@ const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
                   </Button>
                 </FormControl>
               </PopoverTrigger>
-              <PopoverContent className="md:min-w-[30rem] p-0">
+              <PopoverContent className={cn("p-0", popOverSize)}>
                 <Command>
                   <CommandInput placeholder={placeholder.searchPlaceholder} />
                   <CommandList>
