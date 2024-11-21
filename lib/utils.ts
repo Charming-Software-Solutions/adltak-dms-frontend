@@ -1,5 +1,5 @@
 import { ApiResponse, ErrorResponse } from "@/types/api";
-import { ProductSKU } from "@/types/product";
+import { Product, ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -180,3 +180,36 @@ export const fileToBase64 = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
   });
 };
+
+export function filterProductsByExpiration(products: Product[]): {
+  fresh: Product[];
+  nearExpiration: Product[];
+  expired: Product[];
+} {
+  const currentDate = new Date();
+
+  const nextMonthDate = new Date(currentDate);
+  nextMonthDate.setMonth(currentDate.getMonth() + 1);
+
+  const fresh: Product[] = [];
+  const nearExpiration: Product[] = [];
+  const expired: Product[] = [];
+
+  products.forEach((product) => {
+    const productExpiration = new Date(product.expiration);
+
+    if (productExpiration <= currentDate) {
+      expired.push(product);
+    } else if (
+      productExpiration >= currentDate &&
+      productExpiration <= nextMonthDate
+    ) {
+      nearExpiration.push(product);
+    } else {
+      fresh.push(product);
+    }
+  });
+
+  // Return an object with the categorized products
+  return { fresh, nearExpiration, expired };
+}
