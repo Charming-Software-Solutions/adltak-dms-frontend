@@ -65,7 +65,7 @@ const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
                 <Command>
                   <CommandInput placeholder={placeholder.searchPlaceholder} />
                   <CommandList>
-                    <CommandEmpty>No language found.</CommandEmpty>
+                    <CommandEmpty>No results found.</CommandEmpty>
                     <CommandGroup>
                       {items.map((item) => (
                         <CommandItem
