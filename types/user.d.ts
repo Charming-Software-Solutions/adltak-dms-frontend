@@ -1,5 +1,6 @@
 import { USER_ROLES } from "@/constants";
 import { UserRoleEnum } from "@/enums";
+import { BaseModel } from "./generics";
 
 export type User = {
   id: string;
