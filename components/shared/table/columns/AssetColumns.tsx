@@ -5,31 +5,45 @@ import AssetForm, {
 } from "@/app/(root)/assets/components/AssetForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { CopyButton } from "@/components/ui/copy-button";
+import { Separator } from "@/components/ui/separator";
 import { ASSET_STATUS, imagePlaceholder } from "@/constants";
+import { UserRoleEnum } from "@/enums";
 import { deleteAsset } from "@/lib/actions/asset.actions";
 import { getAssetTypes } from "@/lib/actions/asset.classifcations.actions";
+import { getProducts } from "@/lib/actions/product.actions";
+import { hasPermission } from "@/lib/auth";
 import { formatDateTime } from "@/lib/utils";
 import { Asset } from "@/types/asset";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { ExternalLink, Eye } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
-import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "../../ResponsiveDialog";
 import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { UserRoleEnum } from "@/enums";
-import { hasPermission } from "@/lib/auth";
 
 export const visibleAssetColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
     desktop: {
       thumbnail: true,
       name: true,
-      code: true,
+      identifiera: true,
+      product: true,
       type: true,
       status: true,
+      area: true,
       created_at: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
@@ -37,10 +51,10 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       ]),
     },
     mobile: {
-      thumbnail: true,
       name: true,
-      code: true,
+      identifiera: true,
       type: true,
+      area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
         UserRoleEnum.LOGISTICS_SPECIALIST,
@@ -61,7 +75,8 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
     queryKey: ["edit-asset", asset.id],
     queryFn: async () => {
       const assetTypes = await getAssetTypes();
-      return { assetTypes };
+      const products = await getProducts();
+      return { assetTypes, products };
     },
   });
 
@@ -77,8 +92,9 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
           key={`form-${asset.id}`}
           form={form}
           assetTypes={data?.assetTypes ?? []}
+          products={data?.products ?? []}
         />
-        <ResponsiveDialogFooter>
+        <ResponsiveDialogFooter className="px-1">
           <div className="dialog-footer">
             <Button
               variant="outline"
@@ -142,8 +158,102 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     header: "Name",
   },
   {
-    accessorKey: "code",
-    header: "Code",
+    accessorKey: "product",
+    header: "Product",
+    cell: ({ row }) => {
+      const product = row.original.product;
+      const [openDialog, setOpenDialog] = useState(false);
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"} size={"icon"}>
+              <ExternalLink className="size-4" />
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:min-w-[20rem]">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Product</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            {product ? (
+              <Card className="flex items-center justify-between p-2">
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={product?.thumbnail ?? imagePlaceholder}
+                    alt={"item-thumbnail"}
+                    className="h-[3.9rem] w-auto object-contain rounded-sm"
+                    priority
+                    width={100}
+                    height={100}
+                  />
+                  <div className="grid flex-1 gap-1.5 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {product.name}
+                    </span>
+                    <div className="flex gap-2 items-center text-xs">
+                      <span className="truncate font-semibold">
+                        {product.sku}{" "}
+                      </span>
+                      <Separator className="h-2" orientation="vertical" />
+                      <span className="truncate">{product.brand.name} </span>
+                      <Separator className="h-2" orientation="vertical" />
+                      <span className="truncate">{product.category.name} </span>
+                      <Separator className="h-2" orientation="vertical" />
+                      <span className="truncate">{product.type.name} </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ) : (
+              <span>No product.</span>
+            )}
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
+    },
+  },
+  {
+    accessorKey: "identifiera",
+    header: "Indentifiers",
+    cell: ({ row }) => {
+      const [openDialog, setOpenDialog] = useState(false);
+      const asset = row.original;
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"}>
+              <Eye className="size-4 mr-2" /> View
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-[28rem]">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Identifiers</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <div className="grid gap-3 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Asset Code</dt>
+                <div className="flex items-center">
+                  <dd>{asset.code}</dd>
+                  <CopyButton value={asset.code} className="ml-2" />
+                </div>
+              </div>
+              <Separator className="my-1" />
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">BA Reference Number</dt>
+                <div className="flex items-center">
+                  <dd>{asset.ba_reference_number}</dd>
+                  <CopyButton
+                    value={asset.ba_reference_number!}
+                    className="ml-2"
+                  />
+                </div>
+              </div>
+            </div>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
+    },
   },
   {
     accessorKey: "type",
@@ -157,6 +267,31 @@ export const AssetColumns: ColumnDef<Asset>[] = [
       const status = row.original.status;
 
       return <Badge variant={"secondary"}>{ASSET_STATUS[status]}</Badge>;
+    },
+  },
+  {
+    accessorKey: "area",
+    header: "Area",
+    cell: ({ row }) => {
+      const [openDialog, setOpenDialog] = useState(false);
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"} size={"icon"}>
+              <Eye className="size-6" />
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-md">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Area</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <span className="font-medium text-sm">
+              {row.original.area ?? "No area found."}
+            </span>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
     },
   },
   {

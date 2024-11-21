@@ -24,14 +24,16 @@ import AssetForm, { useAssetForm } from "./components/AssetForm";
 import { UserSession } from "@/types/user";
 import { hasPermission } from "@/lib/auth";
 import { UserRoleEnum } from "@/enums";
+import { Product } from "@/types/product";
 
 type Props = {
   user: UserSession;
   assets: Asset[];
   assetTypes: Classification[];
+  products: Product[];
 };
 
-const AssetsClient = ({ user, assets, assetTypes }: Props) => {
+const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -64,11 +66,15 @@ const AssetsClient = ({ user, assets, assetTypes }: Props) => {
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>
-                <ResponsiveDialogHeader>
+                <ResponsiveDialogHeader className="px-1">
                   <ResponsiveDialogTitle>Add Asset</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
-                <AssetForm form={form} assetTypes={assetTypes} />
-                <ResponsiveDialogFooter>
+                <AssetForm
+                  form={form}
+                  assetTypes={assetTypes}
+                  products={products}
+                />
+                <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
                     <Button
                       className="flex-grow w-full"

@@ -1,5 +1,6 @@
 "use client";
 
+import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/CustomFormField";
@@ -14,6 +15,7 @@ import { AssetFormData, assetFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Asset } from "@/types/asset";
 import { Classification } from "@/types/generics";
+import { Product } from "@/types/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -23,6 +25,7 @@ import { z } from "zod";
 type Props = {
   form: UseFormReturn<AssetFormData>;
   assetTypes: Classification[];
+  products: Product[];
   className?: string;
 };
 
@@ -43,6 +46,9 @@ export const useAssetForm = ({
       type: asset?.type.id ?? "",
       status: asset?.status ?? "",
       thumbnail: asset?.thumbnail ?? undefined,
+      product: asset?.product?.id ?? "",
+      area: asset?.area ?? "",
+      baReferenceNumber: asset?.ba_reference_number ?? "",
     },
   });
 
@@ -55,6 +61,9 @@ export const useAssetForm = ({
     formData.append("code", values.code);
     formData.append("type", values.type);
     formData.append("status", values.status);
+    formData.append("product", values.product);
+    formData.append("area", values.area);
+    formData.append("ba_reference_number", values.baReferenceNumber);
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
@@ -80,7 +89,7 @@ export const useAssetForm = ({
   return { form, onSubmit };
 };
 
-const AssetForm = ({ form, assetTypes, className }: Props) => {
+const AssetForm = ({ form, assetTypes, products, className }: Props) => {
   return (
     <Form {...form}>
       <div className={cn("form-container", className)}>
@@ -103,6 +112,34 @@ const AssetForm = ({ form, assetTypes, className }: Props) => {
             />
           </div>
         </div>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="baReferenceNumber"
+          label="BA Reference Number"
+          placeholder="BA1234567890"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="area"
+          label="Area"
+          placeholder="Quezon City"
+        />
+        <ComboBoxFormField
+          items={products.map((product) => ({
+            label: product.name,
+            value: product.id,
+          }))}
+          control={form.control}
+          name="product"
+          placeholder={{
+            triggerPlaceholder: "Select product...",
+            searchPlaceholder: "Search product...",
+          }}
+          label="Product"
+          popOverSize="md:min-w-[28.3rem]"
+        />
         <CustomFormField
           fieldType={FormFieldType.SELECT}
           control={form.control}

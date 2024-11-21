@@ -10,6 +10,8 @@ export type Product = {
   status: string;
   stock: number;
   expiration: string;
+  area?: string;
+  ba_reference_number?: string;
 };
 
 export type Category = {

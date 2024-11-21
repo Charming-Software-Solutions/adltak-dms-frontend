@@ -61,7 +61,7 @@ const DistributionActionsCell = React.memo(
           setOpen={setOpenEditDialog}
         >
           <DistributionForm form={form} />
-          <ResponsiveDialogFooter>
+          <ResponsiveDialogFooter className="px-1">
             <div className="dialog-footer">
               <Button
                 className="w-full"

@@ -49,6 +49,8 @@ export const useProductForm = ({
       expiration: product?.expiration
         ? new Date(product?.expiration)
         : undefined,
+      area: product?.area ?? "",
+      baReferenceNumber: product?.ba_reference_number ?? "",
     },
   });
 
@@ -64,6 +66,8 @@ export const useProductForm = ({
     formData.append("type", values.type);
     formData.append("stock", values.stock.toString());
     formData.append("expiration", values.expiration.toISOString());
+    formData.append("area", values.area);
+    formData.append("ba_reference_number", values.baReferenceNumber);
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
@@ -115,6 +119,20 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
             />
           </div>
         </div>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="baReferenceNumber"
+          label="BA Reference Number"
+          placeholder="BA1234567890"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="area"
+          label="Area"
+          placeholder="Quezon City"
+        />
         <CustomFormField
           fieldType={FormFieldType.SELECT}
           control={form.control}

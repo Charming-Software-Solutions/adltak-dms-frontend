@@ -2,11 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Pen } from "lucide-react";
-import { useState } from "react";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
-  ResponsiveDialogFooter,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
@@ -28,7 +26,7 @@ const EditDialog = ({ title, children, open, setOpen }: Props) => {
         </Button>
       </ResponsiveDialogTrigger>
       <ResponsiveDialogContent>
-        <ResponsiveDialogHeader>
+        <ResponsiveDialogHeader className="px-1">
           <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
         </ResponsiveDialogHeader>
         {children}

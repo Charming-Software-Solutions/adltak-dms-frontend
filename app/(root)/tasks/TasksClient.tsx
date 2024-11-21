@@ -74,7 +74,7 @@ const TasksClient = ({
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>
-                <ResponsiveDialogHeader>
+                <ResponsiveDialogHeader className="px-1">
                   <ResponsiveDialogTitle>Create Task</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
                 <TaskForm
@@ -82,7 +82,7 @@ const TasksClient = ({
                   distributions={distributions}
                   warehousePersons={filteredWarehousePersons}
                 />
-                <ResponsiveDialogFooter>
+                <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
                     <Button
                       className="flex-grow w-full"
