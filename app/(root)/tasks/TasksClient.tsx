@@ -17,7 +17,7 @@ import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Distribution } from "@/types/distribution";
 import { Task } from "@/types/task";
-import { PlusCircle } from "lucide-react";
+import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
@@ -56,6 +56,12 @@ const TasksClient = ({
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
+          <Button size="sm" variant="outline" className="h-8 gap-1">
+            <FileIcon className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Export
+            </span>
+          </Button>
           {hasPermission(user.role, [
             UserRoleEnum.ADMIN,
             UserRoleEnum.PROJECT_HANDLER,

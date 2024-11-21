@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { useResponsive } from "@/hooks";
 import { Asset } from "@/types/asset";
 import { Classification } from "@/types/generics";
-import { PlusCircle } from "lucide-react";
+import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import AssetForm, { useAssetForm } from "./components/AssetForm";
 import { UserSession } from "@/types/user";
@@ -46,6 +46,12 @@ const AssetsClient = ({ user, assets, assetTypes }: Props) => {
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
+          <Button size="sm" variant="outline" className="h-8 gap-1">
+            <FileIcon className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Export
+            </span>
+          </Button>
           {hasPermission(user.role, [
             UserRoleEnum.ADMIN,
             UserRoleEnum.LOGISTICS_SPECIALIST,
