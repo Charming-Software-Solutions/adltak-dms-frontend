@@ -13,6 +13,7 @@ export type Asset = BaseModel & {
   condition: AssetConditionEnum;
   stock: number;
   product?: Product;
+  area?: string;
 };
 
 export type AssetStatus = keyof typeof ASSET_STATUS;

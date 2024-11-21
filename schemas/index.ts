@@ -30,6 +30,9 @@ export const productFormSchema = z.object({
   expiration: z.coerce.date({
     required_error: "A date of expiration is required.",
   }),
+  area: z.string().min(1, {
+    message: "Area is required.",
+  }),
 });
 
 export const employeeFormSchema = z.object({
@@ -89,6 +92,9 @@ export const assetFormSchema = z.object({
   }),
   product: z.string().uuid({
     message: "Product is required.",
+  }),
+  area: z.string().min(1, {
+    message: "Area is required.",
   }),
 });
 

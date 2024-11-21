@@ -47,6 +47,7 @@ export const useAssetForm = ({
       status: asset?.status ?? "",
       thumbnail: asset?.thumbnail ?? undefined,
       product: asset?.product?.id ?? "",
+      area: asset?.area ?? "",
     },
   });
 
@@ -60,6 +61,7 @@ export const useAssetForm = ({
     formData.append("type", values.type);
     formData.append("status", values.status);
     formData.append("product", values.product);
+    formData.append("area", values.area);
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
@@ -108,6 +110,13 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
             />
           </div>
         </div>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="area"
+          label="Area"
+          placeholder="Quezon City"
+        />
         <ComboBoxFormField
           items={products.map((product) => ({
             label: product.name,

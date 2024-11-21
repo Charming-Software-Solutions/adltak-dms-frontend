@@ -10,6 +10,7 @@ export type Product = {
   status: string;
   stock: number;
   expiration: string;
+  area?: string;
 };
 
 export type Category = {

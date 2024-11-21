@@ -1,6 +1,5 @@
 "use client";
 
-import Iamge from "next/image";
 import AssetForm, {
   useAssetForm,
 } from "@/app/(root)/assets/components/AssetForm";
@@ -43,6 +42,7 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       product: true,
       type: true,
       status: true,
+      area: true,
       created_at: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
@@ -54,6 +54,7 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       name: true,
       code: true,
       type: true,
+      area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
         UserRoleEnum.LOGISTICS_SPECIALIST,
@@ -227,6 +228,31 @@ export const AssetColumns: ColumnDef<Asset>[] = [
       const status = row.original.status;
 
       return <Badge variant={"secondary"}>{ASSET_STATUS[status]}</Badge>;
+    },
+  },
+  {
+    accessorKey: "area",
+    header: "Area",
+    cell: ({ row }) => {
+      const [openDialog, setOpenDialog] = useState(false);
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"} size={"icon"}>
+              <Eye className="size-6" />
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-md">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Area</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <span className="font-medium text-sm">
+              {row.original.area ?? "No area found."}
+            </span>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
     },
   },
   {

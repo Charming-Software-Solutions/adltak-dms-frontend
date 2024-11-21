@@ -5,26 +5,33 @@ import ProductForm, {
 } from "@/app/(root)/products/components/ProductForm";
 import { Button } from "@/components/ui/button";
 import { imagePlaceholder } from "@/constants";
+import { UserRoleEnum } from "@/enums";
 import { deleteProduct } from "@/lib/actions/product.actions";
 import {
   getBrands,
   getCategories,
   getTypes,
 } from "@/lib/actions/product.classications.actions";
+import { hasPermission } from "@/lib/auth";
 import { Product } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import React, { useState } from "react";
 import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
-import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+  ResponsiveDialogTrigger,
+} from "../../ResponsiveDialog";
 import { createColumnConfig } from "../column.config";
-import { UserRoleEnum } from "@/enums";
-import { hasPermission } from "@/lib/auth";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
+import { Eye, MapPin } from "lucide-react";
 
 export const visibleProductColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -37,6 +44,7 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
       type: true,
       stock: true,
       expiration: true,
+      area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
         UserRoleEnum.LOGISTICS_SPECIALIST,
@@ -46,6 +54,7 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
       name: true,
       brand: true,
       stock: true,
+      area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
         UserRoleEnum.LOGISTICS_SPECIALIST,
@@ -175,6 +184,31 @@ export const ProductColumns: ColumnDef<Product>[] = [
     header: "Type",
   },
   { accessorKey: "stock", header: "Stock" },
+  {
+    accessorKey: "area",
+    header: "Area",
+    cell: ({ row }) => {
+      const [openDialog, setOpenDialog] = useState(false);
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"} size={"icon"}>
+              <Eye className="size-6" />
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-md">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Area</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <span className="font-medium text-sm">
+              {row.original.area ?? "No area found."}
+            </span>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
+    },
+  },
   {
     accessorKey: "expiration",
     header: ({ column }) => (
