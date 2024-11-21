@@ -23,8 +23,14 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DISTRIBUTION_STATUSES, distributionTypes } from "@/constants";
-import { useDistributionStore } from "@/lib/store";
+import { UserRoleEnum } from "@/enums";
+import { hasPermission } from "@/lib/auth";
+import {
+  useDistributionAssetStore,
+  useDistributionProductStore,
+} from "@/lib/store";
 import { filterDataTable, formatFilterValue, toPSTDate } from "@/lib/utils";
+import { Asset } from "@/types/asset";
 import { Distribution } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
 import { UserSession } from "@/types/user";
@@ -34,18 +40,18 @@ import { parseAsIsoDate, parseAsString, useQueryStates } from "nuqs";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useShallow } from "zustand/shallow";
-import DistributionAddProduct from "./components/DistributionAddProduct";
+import DistributionAddItem from "./components/DistributionAddItem";
 import DistributionForm, {
   useDistributionForm,
 } from "./components/DistributionForm";
-import { UserRoleEnum } from "@/enums";
-import { hasPermission } from "@/lib/auth";
 
 type Props = {
   user: UserSession;
+  employee: string;
   distributions: Distribution[];
   brands: Brand[];
   products: Product[];
+  assets: Asset[];
 };
 
 type AppliedFilters = {
@@ -55,7 +61,13 @@ type AppliedFilters = {
   endDate: Date | undefined;
 };
 
-const DistributionClient = ({ user, distributions, products }: Props) => {
+const DistributionClient = ({
+  user,
+  employee,
+  distributions,
+  products,
+  assets,
+}: Props) => {
   const DistributionStatus = Object.entries(DISTRIBUTION_STATUSES).map(
     ([key, value]) => {
       return {
@@ -83,14 +95,27 @@ const DistributionClient = ({ user, distributions, products }: Props) => {
   });
 
   const router = useRouter();
-  const { form, onSubmit } = useDistributionForm({ mode: "create" });
+  const { form, onSubmit } = useDistributionForm({
+    mode: "create",
+    employee: employee,
+  });
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-  const { items, clearItems } = useDistributionStore(
-    useShallow((state) => ({
-      items: state.items,
-      clearItems: state.clearItems,
-    })),
-  );
+
+  const { items: productItems, clearItems: clearProductItems } =
+    useDistributionProductStore(
+      useShallow((state) => ({
+        items: state.items,
+        clearItems: state.clearItems,
+      })),
+    );
+
+  const { items: assetItems, clearItems: clearAssetItems } =
+    useDistributionAssetStore(
+      useShallow((state) => ({
+        items: state.items,
+        clearItems: state.clearItems,
+      })),
+    );
 
   const updateFilter = (
     key: keyof AppliedFilters,
@@ -286,7 +311,7 @@ const DistributionClient = ({ user, distributions, products }: Props) => {
                   <span className="hidden sm:inline">Create Distribution</span>
                 </Button>
               </ResponsiveDialogTrigger>
-              <ResponsiveDialogContent>
+              <ResponsiveDialogContent className="max-w-xl">
                 <ResponsiveDialogHeader>
                   <ResponsiveDialogTitle>
                     Create Distribution
@@ -294,9 +319,10 @@ const DistributionClient = ({ user, distributions, products }: Props) => {
                 </ResponsiveDialogHeader>
                 <div className="space-y-2 px-4 md:px-0">
                   <Tabs defaultValue="details">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="details">Details</TabsTrigger>
                       <TabsTrigger value="products">Products</TabsTrigger>
+                      <TabsTrigger value="assets">Assets</TabsTrigger>
                     </TabsList>
                     <TabsContent value="details">
                       <Card className="p-4">
@@ -305,7 +331,20 @@ const DistributionClient = ({ user, distributions, products }: Props) => {
                     </TabsContent>
                     <TabsContent value="products">
                       <Card className="p-4">
-                        <DistributionAddProduct products={products} />
+                        <DistributionAddItem
+                          items={products}
+                          type="product"
+                          store={useDistributionProductStore}
+                        />
+                      </Card>
+                    </TabsContent>
+                    <TabsContent value="assets">
+                      <Card className="p-4">
+                        <DistributionAddItem
+                          items={assets}
+                          type="asset"
+                          store={useDistributionAssetStore}
+                        />
                       </Card>
                     </TabsContent>
                   </Tabs>
@@ -313,26 +352,29 @@ const DistributionClient = ({ user, distributions, products }: Props) => {
                 <ResponsiveDialogFooter>
                   <div className="flex flex-row w-full gap-2">
                     <Button
-                      className="flex-grow w-full"
+                      className="flex-grow w-full select-none"
                       variant={"outline"}
                       onClick={() => setOpenDistributionDialog(false)}
                     >
                       <span>Cancel</span>
                     </Button>
                     <Button
-                      className="flex-grow w-full"
+                      className="flex-grow w-full select-none"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(
                           values,
                           setOpenDistributionDialog,
-                          items,
-                          clearItems,
+                          { products: productItems, assets: assetItems },
+                          () => {
+                            clearProductItems();
+                            clearAssetItems();
+                          },
                         ),
                       )}
                       disabled={
                         // disabled only when form is not valid, isSubmitting, or
                         // product list is empty
-                        !(form.formState.isValid && items.length > 0) ||
+                        !(form.formState.isValid && productItems.length > 0) ||
                         form.formState.isSubmitting
                       }
                     >

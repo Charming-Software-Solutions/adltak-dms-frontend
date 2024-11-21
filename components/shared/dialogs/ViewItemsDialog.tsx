@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DistributionProduct } from "@/types/distribution";
+import { DistributionAsset, DistributionProduct } from "@/types/distribution";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Eye } from "lucide-react";
 import { useState } from "react";
@@ -20,6 +20,7 @@ import {
 type Props = {
   items: {
     products: DistributionProduct[];
+    assets: DistributionAsset[];
   };
 };
 
@@ -33,7 +34,7 @@ const ViewItemsDialog = ({ items }: Props) => {
           <Eye className="size-4 mr-2" /> View
         </Button>
       </ResponsiveDialogTrigger>
-      <ResponsiveDialogContent className="w-[25rem]">
+      <ResponsiveDialogContent className="max-w-md">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>Items</ResponsiveDialogTitle>
         </ResponsiveDialogHeader>
@@ -64,7 +65,34 @@ const ViewItemsDialog = ({ items }: Props) => {
                       name={item.product.name}
                       classification={item.product.category.name}
                       quantity={item.quantity}
-                      sku={item.product.sku}
+                    />
+                  ))}
+                </div>
+              </OverlayScrollbarsComponent>
+            </div>
+          </TabsContent>
+          <TabsContent value="assets">
+            <div className="mt-2 space-y-2">
+              <span className="text-sm">Total: {items.assets.length}</span>
+              <OverlayScrollbarsComponent
+                defer
+                options={{
+                  scrollbars: {
+                    autoHide: "leave",
+                    autoHideDelay: 200,
+                    theme: "os-theme-dark",
+                  },
+                }}
+                className="max-h-[31rem] pb-4 md:pb-0"
+              >
+                <div className="flex flex-col gap-2">
+                  {items.assets.map((item) => (
+                    <ItemCard
+                      key={item.id}
+                      thumbnail={item.asset.thumbnail}
+                      name={item.asset.name}
+                      classification={item.asset.type.name}
+                      quantity={item.quantity}
                     />
                   ))}
                 </div>

@@ -24,6 +24,9 @@ const AppSidebar = async ({ session }: Props) => {
     redirect("/login");
   }
   const userData = await getUserById(session?.user.id, session?.access);
+  if (userData.errors) {
+    throw new Error("An error have occured.");
+  }
   const user = userData.data as User;
 
   return (

@@ -18,6 +18,7 @@ import { DataTableColumnHeader } from "../data-table-column-header";
 import React from "react";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
+import { DISTRIBUTION_STATUSES } from "@/constants";
 
 export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
   desktop: {
@@ -111,7 +112,11 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
     accessorKey: "asset_count",
     header: "Assets",
     cell: ({ row }) => {
-      return <span>20</span>;
+      return (
+        <span className="items-center">
+          {row.original.assets && row.original.assets.length}
+        </span>
+      );
     },
   },
   {
@@ -124,6 +129,7 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
         <ViewItemsDialog
           items={{
             products: distribution.products,
+            assets: distribution.assets ?? [],
           }}
         />
       );
@@ -133,7 +139,11 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      return <Badge variant={"secondary"}>{row.original.status}</Badge>;
+      return (
+        <Badge variant={"secondary"}>
+          {DISTRIBUTION_STATUSES[row.original.status]}
+        </Badge>
+      );
     },
   },
   {

@@ -27,6 +27,10 @@ export interface ICreateDistribution {
     product: string;
     quantity: number;
   }[];
+  assets?: {
+    asset: string;
+    quantity: number;
+  }[];
   type: string;
   status: string;
   client: string;
