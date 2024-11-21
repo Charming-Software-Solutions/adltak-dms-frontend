@@ -31,7 +31,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
-  if (isAdminRoute && session?.user.role !== UserRoleEnum.ADMIN) {
+  if (isAdminRoute && session?.user.role.toUpperCase() !== UserRoleEnum.ADMIN) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 

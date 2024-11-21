@@ -67,7 +67,7 @@ const NavMain = ({ user }: NavMainProps) => {
   const authorizedLinks = NAV_LINKS.filter(
     (link) =>
       !link.allowedRoles ||
-      link.allowedRoles.includes(user.role as UserRoleEnum),
+      link.allowedRoles.includes(user.role.toUpperCase() as UserRoleEnum),
   );
 
   return (
