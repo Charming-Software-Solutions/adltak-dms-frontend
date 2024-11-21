@@ -21,7 +21,7 @@ import { PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
-import { UserSession } from "@/types/user";
+import { Employee, UserSession } from "@/types/user";
 import { hasPermission } from "@/lib/auth";
 import { UserRoleEnum } from "@/enums";
 
@@ -29,14 +29,24 @@ type Props = {
   user: UserSession;
   tasks: Task[];
   distributions: Distribution[];
+  warehousePersons: Employee[];
 };
 
-const TasksClient = ({ user, tasks, distributions }: Props) => {
+const TasksClient = ({
+  user,
+  tasks,
+  distributions,
+  warehousePersons,
+}: Props) => {
   const [isMounted, setIsMounted] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
   const { form, onSubmit } = useTaskForm({ mode: "create" });
+
+  const filteredWarehousePersons = warehousePersons.filter(
+    (person) => person.user.role === UserRoleEnum.WAREHOUSE_WORKER,
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -61,7 +71,11 @@ const TasksClient = ({ user, tasks, distributions }: Props) => {
                 <ResponsiveDialogHeader>
                   <ResponsiveDialogTitle>Create Task</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
-                <TaskForm form={form} distributions={distributions} />
+                <TaskForm
+                  form={form}
+                  distributions={distributions}
+                  warehousePersons={filteredWarehousePersons}
+                />
                 <ResponsiveDialogFooter>
                   <div className="flex flex-row w-full gap-2">
                     <Button

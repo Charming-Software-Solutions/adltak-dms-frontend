@@ -4,6 +4,7 @@ import { ApiResponse } from "@/types/api";
 import { Task, TaskStatus } from "@/types/task";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "../session";
+import { UserRoleEnum } from "@/enums";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
 
@@ -16,12 +17,19 @@ async function createTask(body: FormData): Promise<ApiResponse<Task>> {
   });
 }
 
-async function getTasks(): Promise<Task[]> {
+async function getTasks(userId?: string, role?: string): Promise<Task[]> {
+  let params = "";
+
+  if (userId && role === UserRoleEnum.WAREHOUSE_WORKER) {
+    params = `?user_id=${userId}`;
+  }
+
   const response = await fetchAndHandleResponse<Task[]>({
     jwt: (await getSession())?.access,
-    url: TASK_URL,
+    url: `${TASK_URL}${params}`,
     method: "GET",
   });
+
   return response.data ?? [];
 }
 
