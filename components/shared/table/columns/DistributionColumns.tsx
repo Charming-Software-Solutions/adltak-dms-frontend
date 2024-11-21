@@ -23,8 +23,8 @@ import { DISTRIBUTION_STATUSES } from "@/constants";
 export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
   desktop: {
     dist_id: true,
-    product_count: true,
-    asset_count: true,
+    product_count: false,
+    asset_count: false,
     distribution_items: true,
     status: true,
     client: true,
