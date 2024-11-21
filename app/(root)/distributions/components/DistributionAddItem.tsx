@@ -102,6 +102,7 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
               type === "product" ? "Search product..." : "Search asset...",
           }}
           label={type === "product" ? "Product" : "Asset"}
+          popOverSize="md:min-w-[30rem]"
         />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
