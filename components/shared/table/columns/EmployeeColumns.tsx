@@ -53,11 +53,12 @@ const EmployeeActionsCell = React.memo(
           setOpen={setOpenDialog}
         >
           <EmployeeForm
+            className="px-1"
             key={`form-employee-${employee.id}`}
             form={form}
             mode={FormModeEnum.EDIT}
           />
-          <ResponsiveDialogFooter>
+          <ResponsiveDialogFooter className="px-1">
             <div className="flex flex-row w-full gap-2">
               <Button
                 className="w-full"

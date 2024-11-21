@@ -66,7 +66,7 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>
-                <ResponsiveDialogHeader>
+                <ResponsiveDialogHeader className="px-1">
                   <ResponsiveDialogTitle>Add Asset</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
                 <AssetForm
@@ -74,7 +74,7 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                   assetTypes={assetTypes}
                   products={products}
                 />
-                <ResponsiveDialogFooter>
+                <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
                     <Button
                       className="flex-grow w-full"

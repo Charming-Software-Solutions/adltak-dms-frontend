@@ -226,7 +226,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
               distributions={data?.distributions ?? []}
               warehousePersons={data?.filteredWarehousePersons ?? []}
             />
-            <ResponsiveDialogFooter>
+            <ResponsiveDialogFooter className="px-1">
               <div className="dialog-footer">
                 <Button
                   variant={"outline"}

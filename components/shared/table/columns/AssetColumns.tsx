@@ -93,7 +93,7 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
           assetTypes={data?.assetTypes ?? []}
           products={data?.products ?? []}
         />
-        <ResponsiveDialogFooter>
+        <ResponsiveDialogFooter className="px-1">
           <div className="dialog-footer">
             <Button
               variant="outline"
