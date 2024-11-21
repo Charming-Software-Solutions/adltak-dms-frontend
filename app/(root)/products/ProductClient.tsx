@@ -19,31 +19,29 @@ import {
 } from "@/components/shared/table/columns/ProductColumns";
 import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
-import { productMonthExpirationFreq, productStockStatuses } from "@/constants";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { productStockStatuses } from "@/constants";
+import { UserRoleEnum } from "@/enums";
 import {
   getCategoryById,
   getTypeById,
 } from "@/lib/actions/product.classications.actions";
+import { hasPermission } from "@/lib/auth";
 import {
   filterDataTable,
   filterProductsByExpiration,
   formatFilterValue,
   generateProductSKU,
-  getProductsNearExpiration,
-  monthsFromNow,
 } from "@/lib/utils";
 import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
 import { UserSession } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { parseAsString, useQueryStates } from "nuqs";
 import React, { useEffect, useState } from "react";
 import { Separator } from "react-aria-components";
 import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import ProductForm, { useProductForm } from "./components/ProductForm";
-import { hasPermission } from "@/lib/auth";
-import { UserRoleEnum } from "@/enums";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Props = {
   user: UserSession;
