@@ -25,12 +25,14 @@ type ComboBoxFormFieldProps = {
     searchPlaceholder: string;
   };
   name: string;
+  popOverSize: string;
   label?: string;
   disabled?: boolean;
 };
 
 const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
-  const { items, control, placeholder, name, label } = props;
+  const { items, control, placeholder, name, popOverSize, label, disabled } =
+    props;
   const [open, setOpen] = useState(false);
 
   return (
