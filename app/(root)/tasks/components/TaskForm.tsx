@@ -1,12 +1,7 @@
 "use client";
 
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
-import CustomFormField, {
-  FormFieldType,
-} from "@/components/shared/CustomFormField";
 import { Form } from "@/components/ui/form";
-import { SelectItem } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -14,6 +9,7 @@ import { TaskFormData, taskFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Distribution } from "@/types/distribution";
 import { Task } from "@/types/task";
+import { Employee } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -23,10 +19,7 @@ import { z } from "zod";
 type Props = {
   form: UseFormReturn<TaskFormData>;
   distributions: Distribution[];
-  warehousePersons: {
-    id: string;
-    name: string;
-  }[];
+  warehousePersons: Employee[];
   className?: string;
 };
 
