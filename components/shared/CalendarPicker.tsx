@@ -13,6 +13,7 @@ type Props = {
   placeholder: string;
   type: "from" | "to";
   onSelect: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  onRemove: () => void;
   label?: string;
   disabled?: boolean;
   minDate?: Date;
@@ -23,13 +24,23 @@ const CalendarPicker = ({
   placeholder,
   type,
   onSelect,
+  onRemove,
   label,
   disabled,
   minDate,
 }: Props) => {
   return (
     <div className="grid space-y-2 w-full">
-      <span className="text-sm">{label}</span>
+      <div className="flex items-center justify-between">
+        <span className="text-sm">{label}</span>
+        <Button
+          variant={"link"}
+          className="text-sm h-4 text-red-700"
+          onClick={onRemove}
+        >
+          Clear Filter
+        </Button>
+      </div>
       <Popover>
         <PopoverTrigger asChild disabled={disabled}>
           <Button

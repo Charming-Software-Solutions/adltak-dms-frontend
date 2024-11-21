@@ -65,8 +65,8 @@ export const distributionFormSchema = z.object({
 });
 
 export const taskFormSchema = z.object({
-  employee: z.string().min(1, {
-    message: "Employee is required.",
+  warehousePerson: z.string().uuid({
+    message: "Warehouse person is required.",
   }),
   distribution: z.string().uuid({
     message: "Distribution is required.",

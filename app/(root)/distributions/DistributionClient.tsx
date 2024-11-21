@@ -210,6 +210,7 @@ const DistributionClient = ({
                 items={distributionTypes}
                 placeholder="Select type"
                 onChange={(value) => updateFilter("distType", value)}
+                onRemove={() => updateFilter("distType", "")}
                 value={appliedFilters.distType}
                 className="px-4"
               />
@@ -218,6 +219,7 @@ const DistributionClient = ({
                 items={DistributionStatus}
                 placeholder="Select status"
                 onChange={(value) => updateFilter("status", value)}
+                onRemove={() => updateFilter("status", "")}
                 value={appliedFilters.status}
                 className="px-4"
               />
@@ -231,6 +233,7 @@ const DistributionClient = ({
                     onSelect={(value) =>
                       updateFilter("startDate", value as Date | undefined)
                     }
+                    onRemove={() => updateFilter("startDate", undefined)}
                     label="From:"
                   />
 
@@ -240,6 +243,7 @@ const DistributionClient = ({
                     onSelect={(value) =>
                       updateFilter("endDate", value as Date | undefined)
                     }
+                    onRemove={() => updateFilter("endDate", undefined)}
                     type="to"
                     label="To:"
                     disabled={!appliedFilters.startDate}

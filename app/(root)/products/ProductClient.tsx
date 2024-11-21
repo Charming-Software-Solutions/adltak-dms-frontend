@@ -308,6 +308,7 @@ const ProductClient = ({
                     items={productStockStatuses}
                     placeholder="Select status"
                     onChange={(value) => updateFilter("stock", value)}
+                    onRemove={() => updateFilter("stock", "")}
                     value={appliedFilters.stock}
                     className="px-4"
                     isObject={true}
@@ -317,6 +318,7 @@ const ProductClient = ({
                     items={brands}
                     placeholder="Select brand"
                     onChange={(value) => updateFilter("brand", value)}
+                    onRemove={() => updateFilter("brand", "")}
                     value={appliedFilters.brand}
                     className="px-4"
                     isObject={true}
@@ -326,6 +328,7 @@ const ProductClient = ({
                     items={categories}
                     placeholder="Select category"
                     onChange={(value) => updateFilter("category", value)}
+                    onRemove={() => updateFilter("category", "")}
                     value={appliedFilters.category}
                     className="px-4"
                     isObject={true}
@@ -335,6 +338,7 @@ const ProductClient = ({
                     items={types}
                     placeholder="Select type"
                     onChange={(value) => updateFilter("type", value)}
+                    onRemove={() => updateFilter("type", "")}
                     value={appliedFilters.type}
                     className="px-4"
                     isObject={true}
@@ -346,6 +350,7 @@ const ProductClient = ({
                     onChange={(value) =>
                       updateFilter("expiration", Number(value))
                     }
+                    onRemove={() => updateFilter("expiration", "")}
                     value={
                       appliedFilters.expiration !== undefined
                         ? productMonthExpirationFreq.find(

@@ -1,9 +1,13 @@
 "use client";
 
 import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { UserRoleEnum } from "@/enums";
+import { useResponsive } from "@/hooks";
 import { getDistributions } from "@/lib/actions/distribution.actions";
 import { deleteTask } from "@/lib/actions/task.actions";
+import { hasPermission } from "@/lib/auth";
 import { cn, formatDateTime } from "@/lib/utils";
 import { DistributionType } from "@/types/distribution";
 import { Task } from "@/types/task";
@@ -22,12 +26,9 @@ import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import TaskStatusDropdown from "../../TaskStatusDropdown";
-import { DataTableColumnHeader } from "../data-table-column-header";
-import { UserRoleEnum } from "@/enums";
 import { createColumnConfig } from "../column.config";
-import { hasPermission } from "@/lib/auth";
-import { Badge } from "@/components/ui/badge";
-import Assets from "@/app/(root)/assets/page";
+import { DataTableColumnHeader } from "../data-table-column-header";
+import { getEmployees } from "@/lib/actions/employee.actions";
 
 export const visibleTaskColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -75,15 +76,15 @@ export const visibleTaskColumns = (userRole: UserRoleEnum) => {
 export const TaskColumns: ColumnDef<Task>[] = [
   {
     accessorKey: "warehouse_person",
-    accessorFn: (row) => row.employee,
+    accessorFn: (row) => row.warehouse_person,
     header: "Warehouse Person",
     cell: ({ row }) => {
-      const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
+      const isDesktop = useResponsive("desktop");
 
       return (
         <div className="flex items-center space-x-2">
           {isDesktop && <PersonIcon className="size-4" />}
-          <span>{row.original.employee}</span>
+          <span>{row.original.warehouse_person.name}</span>
         </div>
       );
     },
@@ -205,7 +206,11 @@ export const TaskColumns: ColumnDef<Task>[] = [
         queryKey: ["edit-task"],
         queryFn: async () => {
           const distributions = await getDistributions();
-          return { distributions };
+          const warehousePersons = await getEmployees();
+          const filteredWarehousePersons = warehousePersons.filter(
+            (person) => person.user.role === UserRoleEnum.WAREHOUSE_WORKER,
+          );
+          return { distributions, filteredWarehousePersons };
         },
       });
 
@@ -216,7 +221,11 @@ export const TaskColumns: ColumnDef<Task>[] = [
             open={openDialog}
             setOpen={setOpenDialog}
           >
-            <TaskForm form={form} distributions={data?.distributions ?? []} />
+            <TaskForm
+              form={form}
+              distributions={data?.distributions ?? []}
+              warehousePersons={data?.filteredWarehousePersons ?? []}
+            />
             <ResponsiveDialogFooter>
               <div className="dialog-footer">
                 <Button

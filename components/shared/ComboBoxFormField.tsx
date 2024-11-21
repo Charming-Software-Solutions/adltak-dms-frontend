@@ -25,12 +25,14 @@ type ComboBoxFormFieldProps = {
     searchPlaceholder: string;
   };
   name: string;
+  popOverSize: string;
   label?: string;
   disabled?: boolean;
 };
 
 const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
-  const { items, control, placeholder, name, label } = props;
+  const { items, control, placeholder, name, popOverSize, label, disabled } =
+    props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -59,7 +61,7 @@ const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
                   </Button>
                 </FormControl>
               </PopoverTrigger>
-              <PopoverContent className="md:min-w-[30rem] p-0">
+              <PopoverContent className={cn("p-0", popOverSize)}>
                 <Command>
                   <CommandInput placeholder={placeholder.searchPlaceholder} />
                   <CommandList>

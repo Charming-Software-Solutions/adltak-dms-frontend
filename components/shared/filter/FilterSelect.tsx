@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -15,6 +16,7 @@ type FilterSelectProps = {
   placeholder: string;
   name: string;
   onChange: (selectedValue: string) => void;
+  onRemove: () => void;
   value: string | undefined;
   className?: string;
   isObject?: boolean;
@@ -25,13 +27,23 @@ const FilterSelect = ({
   placeholder,
   name,
   onChange,
+  onRemove,
   value,
   className,
   isObject = false,
 }: FilterSelectProps) => {
   return (
     <div className={cn("space-y-2", className)}>
-      <span className="text-sm font-semibold">{name}</span>
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-semibold">{name}</span>
+        <Button
+          variant={"link"}
+          className="text-sm h-4 text-red-700"
+          onClick={onRemove}
+        >
+          Clear Filter
+        </Button>
+      </div>
       <Select onValueChange={onChange} value={value}>
         <SelectTrigger>
           <SelectValue placeholder={placeholder} />

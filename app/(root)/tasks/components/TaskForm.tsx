@@ -1,11 +1,7 @@
 "use client";
 
-import CustomFormField, {
-  FormFieldType,
-} from "@/components/shared/CustomFormField";
+import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import { Form } from "@/components/ui/form";
-import { SelectItem } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -13,6 +9,7 @@ import { TaskFormData, taskFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Distribution } from "@/types/distribution";
 import { Task } from "@/types/task";
+import { Employee } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -22,6 +19,7 @@ import { z } from "zod";
 type Props = {
   form: UseFormReturn<TaskFormData>;
   distributions: Distribution[];
+  warehousePersons: Employee[];
   className?: string;
 };
 
@@ -37,7 +35,7 @@ export const useTaskForm = ({
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      employee: task?.employee ?? "",
+      warehousePerson: task?.warehouse_person.id ?? "",
       distribution: task?.distribution.id ?? "",
     },
   });
@@ -47,8 +45,10 @@ export const useTaskForm = ({
     setOpen: (value: boolean) => void,
   ) => {
     const formData = new FormData();
-    formData.append("employee", values.employee);
+    formData.append("warehouse_person", values.warehousePerson);
     formData.append("distribution", values.distribution);
+
+    console.log(values);
 
     const result: ApiResponse<Task> =
       mode === "create"
@@ -68,45 +68,43 @@ export const useTaskForm = ({
   return { form, onSubmit };
 };
 
-const TaskForm = ({ form, distributions, className }: Props) => {
+const TaskForm = ({
+  form,
+  distributions,
+  className,
+  warehousePersons,
+}: Props) => {
   return (
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 px-1", className)}>
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
+        <ComboBoxFormField
+          items={warehousePersons.map((person) => ({
+            label: person.name,
+            value: person.id,
+          }))}
           control={form.control}
-          name="employee"
+          name="warehousePerson"
+          placeholder={{
+            triggerPlaceholder: "Select warehouse person...",
+            searchPlaceholder: "Search warehouse person...",
+          }}
           label="Warehouse Person"
-          placeholder="John Doe"
+          popOverSize="md:min-w-[28.5rem]"
         />
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
+        <ComboBoxFormField
+          items={distributions.map((distribution) => ({
+            label: `ID: ${distribution.dist_id} | Client: ${distribution.client} | Type: ${distribution.type}`,
+            value: distribution.id,
+          }))}
           control={form.control}
           name="distribution"
+          placeholder={{
+            triggerPlaceholder: "Select distribution...",
+            searchPlaceholder: "Search distribution...",
+          }}
           label="Distribution"
-          placeholder="Select Distribution"
-        >
-          {distributions.map((distribution, key) => (
-            <SelectItem key={key} value={distribution.id}>
-              <div className="flex space-x-2 items-center">
-                <span>
-                  <strong>ID: </strong>
-                  {distribution.dist_id}
-                </span>
-                <Separator className="h-4" orientation="vertical" />
-                <span>
-                  <strong>Client: </strong>
-                  {distribution.client}
-                </span>
-                <Separator className="h-4" orientation="vertical" />
-                <span>
-                  <strong>Type: </strong>
-                  {distribution.type}
-                </span>
-              </div>
-            </SelectItem>
-          ))}
-        </CustomFormField>
+          popOverSize="md:min-w-[28.5rem]"
+        />
       </div>
     </Form>
   );

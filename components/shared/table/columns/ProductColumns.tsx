@@ -70,7 +70,7 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
   return (
     <div className="flex items-center gap-2">
       <EditDialog
-        title="Edit Products"
+        title="Edit Product"
         open={openDialog}
         setOpen={setOpenDialog}
       >
