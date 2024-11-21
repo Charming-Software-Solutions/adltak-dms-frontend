@@ -27,6 +27,7 @@ import { UserRoleEnum } from "@/enums";
 import { createColumnConfig } from "../column.config";
 import { hasPermission } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
+import Assets from "@/app/(root)/assets/page";
 
 export const visibleTaskColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -148,6 +149,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
         <ViewItemsDialog
           items={{
             products: distribution.products,
+            assets: distribution.assets ?? [],
           }}
         />
       );

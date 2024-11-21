@@ -14,8 +14,10 @@ import { QuantityItem } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { DistributionFormData, distributionFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
-import { Distribution, DistributionProduct } from "@/types/distribution";
+import { Asset } from "@/types/asset";
+import { Distribution, DistributionItem } from "@/types/distribution";
 import { SelectItemType } from "@/types/primitives";
+import { Product } from "@/types/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -41,9 +43,11 @@ const distributionTypes: SelectItemType[] = [
 export const useDistributionForm = ({
   distribution = undefined,
   mode,
+  employee,
 }: {
   distribution?: Distribution;
   mode: "create" | "edit";
+  employee?: string;
 }) => {
   const router = useRouter();
 
@@ -59,25 +63,31 @@ export const useDistributionForm = ({
   const onSubmit = async (
     values: z.infer<typeof distributionFormSchema>,
     setOpen: (value: boolean) => void,
-    items?: QuantityItem<DistributionProduct>[],
+    items?: {
+      products: QuantityItem<DistributionItem<Product>>[];
+      assets?: QuantityItem<DistributionItem<Asset>>[];
+    },
     clearItems?: () => void,
   ) => {
     let distributionCreate: ICreateDistribution | undefined;
     const distributionUpdate = new FormData();
 
-    if (mode === "create" && items && items.length > 0) {
+    if (mode === "create" && items && items.products.length > 0) {
       distributionCreate = {
-        employee: "Jonny English",
-        products: items.map((item) => ({
-          product: item.id,
-          quantity: item.quantity,
+        employee: employee!,
+        products: items.products.map((product) => ({
+          product: product.id,
+          quantity: product.quantity,
+        })),
+        assets: items.assets?.map((asset) => ({
+          asset: asset.id,
+          quantity: asset.quantity,
         })),
         type: values.type,
         status: values.status,
         client: values.client,
       };
     } else {
-      distributionUpdate.append("employee", "Johnny English");
       distributionUpdate.append("type", values.type);
       distributionUpdate.append("status", values.status);
       distributionUpdate.append("client", values.client);
