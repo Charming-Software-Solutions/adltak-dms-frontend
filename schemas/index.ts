@@ -45,9 +45,9 @@ export const employeeFormSchema = z.object({
   profile_image: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
-export const distributionProductSchema = z.object({
-  product: z.string().uuid({
-    message: "Product is required.",
+export const distributionItemSchema = z.object({
+  item: z.string().uuid({
+    message: "Item is required.",
   }),
   quantity: z.coerce.number().positive(),
 });
@@ -62,9 +62,6 @@ export const distributionFormSchema = z.object({
   status: z.string().min(1, {
     message: "Status is required.",
   }),
-  // logisticsPerson: z.string().min(1, {
-  //   message: "Logitics person is required.",
-  // }),
 });
 
 export const taskFormSchema = z.object({
@@ -95,8 +92,6 @@ export const assetFormSchema = z.object({
 export type ProductFormData = z.infer<typeof productFormSchema>;
 export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 export type DistributionFormData = z.infer<typeof distributionFormSchema>;
-export type DistributionProductFormData = z.infer<
-  typeof distributionProductSchema
->;
+export type DistributionItemFormData = z.infer<typeof distributionItemSchema>;
 export type TaskFormData = z.infer<typeof taskFormSchema>;
 export type AssetFormData = z.infer<typeof assetFormSchema>;
