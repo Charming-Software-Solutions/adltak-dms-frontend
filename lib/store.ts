@@ -1,6 +1,9 @@
-import { DistributionProduct } from "@/types/distribution";
+import { Asset } from "@/types/asset";
+import { DistributionItem } from "@/types/distribution";
+import { Product } from "@/types/product";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import { useShallow } from "zustand/shallow";
 
 type BaseItem = {
   id: string;
@@ -88,5 +91,10 @@ export const createItemStore = <T extends BaseItem>(storeName: string) =>
     ),
   );
 
-export const useDistributionStore =
-  createItemStore<DistributionProduct>("distribution-store");
+export const useDistributionProductStore = createItemStore<
+  DistributionItem<Product>
+>("distribution-product-store");
+
+export const useDistributionAssetStore = createItemStore<
+  DistributionItem<Asset>
+>("distribution-asset-store");
