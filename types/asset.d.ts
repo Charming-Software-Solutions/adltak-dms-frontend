@@ -14,6 +14,7 @@ export type Asset = BaseModel & {
   stock: number;
   product?: Product;
   area?: string;
+  ba_reference_number?: string;
 };
 
 export type AssetStatus = keyof typeof ASSET_STATUS;

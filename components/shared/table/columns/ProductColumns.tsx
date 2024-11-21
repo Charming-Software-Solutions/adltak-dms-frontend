@@ -4,6 +4,8 @@ import ProductForm, {
   useProductForm,
 } from "@/app/(root)/products/components/ProductForm";
 import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
+import { Separator } from "@/components/ui/separator";
 import { imagePlaceholder } from "@/constants";
 import { UserRoleEnum } from "@/enums";
 import { deleteProduct } from "@/lib/actions/product.actions";
@@ -16,6 +18,7 @@ import { hasPermission } from "@/lib/auth";
 import { Product } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { ExternalLink, Eye } from "lucide-react";
 import Image from "next/image";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import React, { useState } from "react";
@@ -31,7 +34,6 @@ import {
 } from "../../ResponsiveDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { Eye, MapPin } from "lucide-react";
 
 export const visibleProductColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -39,11 +41,10 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
       thumbnail: true,
       name: true,
       sku: true,
-      brand: true,
-      category: true,
-      type: true,
+      classifications: true,
       stock: true,
       expiration: true,
+      identifiera: true,
       area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
@@ -52,8 +53,9 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
     },
     mobile: {
       name: true,
-      brand: true,
+      classifications: true,
       stock: true,
+      identifiera: true,
       area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
@@ -165,23 +167,86 @@ export const ProductColumns: ColumnDef<Product>[] = [
     header: "Name",
   },
   {
-    accessorKey: "sku",
-    header: "SKU",
+    accessorKey: "classifications",
+    header: "Classifications",
+    cell: ({ row }) => {
+      const [openDialog, setOpenDialog] = useState(false);
+      const product = row.original;
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"}>
+              <Eye className="size-4 mr-2" /> View
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-[25rem]">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Classifications</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <div className="grid gap-3 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Brand</dt>
+                <dd>{product.brand.name}</dd>
+              </div>
+              <Separator className="my-1" />
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Category</dt>
+                <dd>{product.category.name}</dd>
+              </div>
+              <Separator className="my-1" />
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Type</dt>
+                <dd>{product.type.name}</dd>
+              </div>
+            </div>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
+    },
   },
   {
-    accessorKey: "brand",
-    accessorFn: (row) => row.brand.name,
-    header: "Brand",
-  },
-  {
-    accessorKey: "category",
-    accessorFn: (row) => row.category.name,
-    header: "Category",
-  },
-  {
-    accessorKey: "type",
-    accessorFn: (row) => row.type.name,
-    header: "Type",
+    accessorKey: "identifiera",
+    header: "Indentifiers",
+    cell: ({ row }) => {
+      const [openDialog, setOpenDialog] = useState(false);
+      const product = row.original;
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"}>
+              <Eye className="size-4 mr-2" /> View
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-[28rem]">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Identifiers</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <div className="grid gap-3 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Product SKU</dt>
+                <div className="flex items-center">
+                  <dd>{product.sku}</dd>
+                  <CopyButton value={product.sku} className="ml-2" />
+                </div>
+              </div>
+              <Separator className="my-1" />
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">BA Reference Number</dt>
+                <div className="flex items-center">
+                  <dd>{product.ba_reference_number}</dd>
+                  <CopyButton
+                    value={product.ba_reference_number!}
+                    className="ml-2"
+                  />
+                </div>
+              </div>
+            </div>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
+    },
   },
   { accessorKey: "stock", header: "Stock" },
   {
@@ -194,7 +259,7 @@ export const ProductColumns: ColumnDef<Product>[] = [
         <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
           <ResponsiveDialogTrigger>
             <Button variant={"outline"} size={"icon"}>
-              <Eye className="size-6" />
+              <ExternalLink className="size-4" />
             </Button>
           </ResponsiveDialogTrigger>
           <ResponsiveDialogContent className="md:max-w-md">

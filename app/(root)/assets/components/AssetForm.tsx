@@ -48,6 +48,7 @@ export const useAssetForm = ({
       thumbnail: asset?.thumbnail ?? undefined,
       product: asset?.product?.id ?? "",
       area: asset?.area ?? "",
+      baReferenceNumber: asset?.ba_reference_number ?? "",
     },
   });
 
@@ -62,6 +63,7 @@ export const useAssetForm = ({
     formData.append("status", values.status);
     formData.append("product", values.product);
     formData.append("area", values.area);
+    formData.append("ba_reference_number", values.baReferenceNumber);
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
@@ -110,6 +112,13 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
             />
           </div>
         </div>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="baReferenceNumber"
+          label="BA Reference Number"
+          placeholder="BA1234567890"
+        />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}

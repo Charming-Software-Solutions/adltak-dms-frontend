@@ -33,6 +33,9 @@ export const productFormSchema = z.object({
   area: z.string().min(1, {
     message: "Area is required.",
   }),
+  baReferenceNumber: z.string().min(1, {
+    message: "BA reference number is required.",
+  }),
 });
 
 export const employeeFormSchema = z.object({
@@ -95,6 +98,9 @@ export const assetFormSchema = z.object({
   }),
   area: z.string().min(1, {
     message: "Area is required.",
+  }),
+  baReferenceNumber: z.string().min(1, {
+    message: "BA reference number is required.",
   }),
 });
 

@@ -5,13 +5,20 @@ import AssetForm, {
 } from "@/app/(root)/assets/components/AssetForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { CopyButton } from "@/components/ui/copy-button";
+import { Separator } from "@/components/ui/separator";
 import { ASSET_STATUS, imagePlaceholder } from "@/constants";
+import { UserRoleEnum } from "@/enums";
 import { deleteAsset } from "@/lib/actions/asset.actions";
 import { getAssetTypes } from "@/lib/actions/asset.classifcations.actions";
+import { getProducts } from "@/lib/actions/product.actions";
+import { hasPermission } from "@/lib/auth";
 import { formatDateTime } from "@/lib/utils";
 import { Asset } from "@/types/asset";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { ExternalLink, Eye } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 import {
@@ -26,19 +33,13 @@ import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { UserRoleEnum } from "@/enums";
-import { hasPermission } from "@/lib/auth";
-import { getProducts } from "@/lib/actions/product.actions";
-import { Eye } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 export const visibleAssetColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
     desktop: {
       thumbnail: true,
       name: true,
-      code: true,
+      identifiera: true,
       product: true,
       type: true,
       status: true,
@@ -50,9 +51,8 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       ]),
     },
     mobile: {
-      thumbnail: true,
       name: true,
-      code: true,
+      identifiera: true,
       type: true,
       area: true,
       actions: hasPermission(userRole, [
@@ -167,11 +167,11 @@ export const AssetColumns: ColumnDef<Asset>[] = [
       return (
         <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
           <ResponsiveDialogTrigger>
-            <Button variant={"outline"}>
-              <Eye className="size-4 mr-2" /> View
+            <Button variant={"outline"} size={"icon"}>
+              <ExternalLink className="size-4" />
             </Button>
           </ResponsiveDialogTrigger>
-          <ResponsiveDialogContent className="md:min-w-[10rem]">
+          <ResponsiveDialogContent className="md:min-w-[20rem]">
             <ResponsiveDialogHeader>
               <ResponsiveDialogTitle>Product</ResponsiveDialogTitle>
             </ResponsiveDialogHeader>
@@ -213,8 +213,47 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     },
   },
   {
-    accessorKey: "code",
-    header: "Code",
+    accessorKey: "identifiera",
+    header: "Indentifiers",
+    cell: ({ row }) => {
+      const [openDialog, setOpenDialog] = useState(false);
+      const asset = row.original;
+
+      return (
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"}>
+              <Eye className="size-4 mr-2" /> View
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-[28rem]">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Identifiers</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <div className="grid gap-3 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Asset Code</dt>
+                <div className="flex items-center">
+                  <dd>{asset.code}</dd>
+                  <CopyButton value={asset.code} className="ml-2" />
+                </div>
+              </div>
+              <Separator className="my-1" />
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">BA Reference Number</dt>
+                <div className="flex items-center">
+                  <dd>{asset.ba_reference_number}</dd>
+                  <CopyButton
+                    value={asset.ba_reference_number!}
+                    className="ml-2"
+                  />
+                </div>
+              </div>
+            </div>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
+      );
+    },
   },
   {
     accessorKey: "type",
