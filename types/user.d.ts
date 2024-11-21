@@ -35,6 +35,11 @@ export type Employee = {
   profile_image: string;
 };
 
+export type EmployeeSession = {
+  name: string;
+  profile_image?: string;
+};
+
 export type EmployeeLogin = {
   name: string | undefined;
   profile_image?: string | undefined;
