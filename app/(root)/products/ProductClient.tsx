@@ -150,7 +150,7 @@ const ProductClient = ({
   };
 
   const renderProductTable = (
-    condition: "fresh" | "near_expiration" | "expired",
+    condition: "all" | "fresh" | "near_expiration" | "expired",
   ) => {
     if (!isMounted) return null;
 
@@ -161,6 +161,9 @@ const ProductClient = ({
     let filteredProducts: Product[] = [];
 
     switch (condition) {
+      case "all":
+        filteredProducts = data;
+        break;
       case "fresh":
         filteredProducts = categorizedProducts.fresh;
         break;
@@ -379,8 +382,11 @@ const ProductClient = ({
         </div>
       </Header>
       <main className="main-container">
-        <Tabs defaultValue="fresh">
+        <Tabs defaultValue="all">
           <TabsList className="min-w-[20rem]">
+            <TabsTrigger value="all" className="flex-grow">
+              All
+            </TabsTrigger>
             <TabsTrigger value="fresh" className="flex-grow">
               Fresh
             </TabsTrigger>
@@ -391,6 +397,7 @@ const ProductClient = ({
               Expired
             </TabsTrigger>
           </TabsList>
+          <TabsContent value="all">{renderProductTable("all")}</TabsContent>
           <TabsContent value="fresh">{renderProductTable("fresh")}</TabsContent>
           <TabsContent value="near_expiration">
             {renderProductTable("near_expiration")}
