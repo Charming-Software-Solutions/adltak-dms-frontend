@@ -104,9 +104,23 @@ export const assetFormSchema = z.object({
   }),
 });
 
+export const classificationFormSchema = z.object({
+  name: z.string().min(1, {
+    message: "Name is required.",
+  }),
+  description: z
+    .string()
+    .max(255, {
+      message: "Description should be only 255 characters long.",
+    })
+    .optional(),
+  classificationType: z.string().optional(),
+});
+
 export type ProductFormData = z.infer<typeof productFormSchema>;
 export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 export type DistributionFormData = z.infer<typeof distributionFormSchema>;
 export type DistributionItemFormData = z.infer<typeof distributionItemSchema>;
 export type TaskFormData = z.infer<typeof taskFormSchema>;
 export type AssetFormData = z.infer<typeof assetFormSchema>;
+export type ClassificationFormData = z.infer<typeof classificationFormSchema>;

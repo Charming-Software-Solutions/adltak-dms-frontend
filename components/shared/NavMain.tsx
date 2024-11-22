@@ -8,6 +8,7 @@ import {
   ClipboardCheck,
   LayoutDashboard,
   Package,
+  Tags,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -53,6 +54,11 @@ const NAV_LINKS: NavLink[] = [
     label: "Assets",
     icon: <Archive className="size-4" />,
     route: "/assets",
+  },
+  {
+    label: "Classifications",
+    icon: <Tags className="size-4" />,
+    route: "/classifications",
   },
   {
     label: "Employees",
