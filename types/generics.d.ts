@@ -8,3 +8,10 @@ export type BaseModel = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type ClassificationType =
+  | "all"
+  | "product_brand"
+  | "product_category"
+  | "product_type"
+  | "asset_type";
