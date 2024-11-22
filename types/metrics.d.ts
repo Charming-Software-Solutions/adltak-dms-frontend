@@ -1,6 +1,6 @@
 export type Metric = {
   value: string;
-  change: number;
+  change?: number;
   frequency?: string;
 };
 
@@ -17,4 +17,11 @@ export type MetricChartProps = {
   className?: string;
   data: any;
   config: MetricChartConfig;
+};
+
+export type InsightsMetrics = {
+  totalItemStock: number;
+  monthlyDistributionFlow: number;
+  weeklyRemainingTaskCount: number;
+  productsAboutToExpireCount: number;
 };
