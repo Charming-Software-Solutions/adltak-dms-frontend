@@ -10,6 +10,7 @@ const protectedRoutes = [
   "/tasks",
   "/assets",
   "/employee",
+  "/classifications",
 ];
 const publicRoutes = ["/login"];
 const adminRoutes = ["/employee"];
