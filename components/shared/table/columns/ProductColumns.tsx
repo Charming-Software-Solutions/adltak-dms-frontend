@@ -34,6 +34,7 @@ import {
 } from "../../ResponsiveDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibleProductColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -116,15 +117,14 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
             >
               Cancel
             </Button>
-            <Button
-              className="w-full"
+            <DialogFormButton
+              text="Save Changes"
               onClick={form.handleSubmit((values) =>
                 onSubmit(values, setOpenDialog),
               )}
               disabled={!form.formState.isValid || form.formState.isSubmitting}
-            >
-              Save Changes
-            </Button>
+              loading={form.formState.isSubmitting}
+            />
           </div>
         </ResponsiveDialogFooter>
       </EditDialog>

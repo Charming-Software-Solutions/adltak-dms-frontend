@@ -26,6 +26,7 @@ import React, { useState } from "react";
 import ClassificationForm, {
   useClassificationForm,
 } from "./components/ClassificationForm";
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 
 type Props = {
   user: UserSession;
@@ -118,17 +119,15 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
                     >
                       Cancel
                     </Button>
-                    <Button
-                      className="flex-grow w-full"
+                    <DialogFormButton
+                      text="Add Classification"
                       disabled={
                         !form.formState.isValid || form.formState.isSubmitting
                       }
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpenDialog),
                       )}
-                    >
-                      Add Classification
-                    </Button>
+                    />
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>
@@ -137,9 +136,8 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
         </div>
       </Header>
       <main className="main-container">
-        <Tabs defaultValue="all">
+        <Tabs defaultValue="product_brand">
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="product_brand">Product Brands</TabsTrigger>
             <TabsTrigger value="product_category">
               Product Categories
@@ -147,9 +145,6 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
             <TabsTrigger value="product_type">Product Types</TabsTrigger>
             <TabsTrigger value="asset_type">Asset Types</TabsTrigger>
           </TabsList>
-          <TabsContent value="all">
-            {renderClassificationTable("all").render()}
-          </TabsContent>
           <TabsContent value="product_brand">
             {renderClassificationTable("product_brand").render()}
           </TabsContent>

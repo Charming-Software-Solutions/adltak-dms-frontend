@@ -119,6 +119,7 @@ const ClassificationForm = ({ form, mode = "create", className }: Props) => {
           name="name"
           label="Name"
           placeholder="Calbee"
+          disabled={form.formState.isSubmitting}
         />
         {mode === "create" && (
           <CustomFormField
@@ -127,6 +128,7 @@ const ClassificationForm = ({ form, mode = "create", className }: Props) => {
             name="classificationType"
             label="Classification Type"
             placeholder="Select classification type"
+            disabled={form.formState.isSubmitting}
           >
             {classificationTypes.map((type, key) => (
               <SelectItem key={key} value={type.value}>
@@ -142,6 +144,7 @@ const ClassificationForm = ({ form, mode = "create", className }: Props) => {
           name="description"
           label="Description"
           placeholder="Description about classification"
+          disabled={form.formState.isSubmitting}
         />
       </div>
     </Form>

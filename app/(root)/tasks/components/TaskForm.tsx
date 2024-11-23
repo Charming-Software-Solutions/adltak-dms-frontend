@@ -90,6 +90,7 @@ const TaskForm = ({
           }}
           label="Warehouse Person"
           popOverSize="md:min-w-[28.5rem]"
+          disabled={form.formState.isSubmitting}
         />
         <ComboBoxFormField
           items={distributions.map((distribution) => ({
@@ -104,6 +105,7 @@ const TaskForm = ({
           }}
           label="Distribution"
           popOverSize="md:min-w-[28.5rem]"
+          disabled={form.formState.isSubmitting}
         />
       </div>
     </Form>

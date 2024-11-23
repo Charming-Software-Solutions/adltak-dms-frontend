@@ -123,6 +123,7 @@ const DistributionForm = ({ form, className }: Props) => {
           name="type"
           label="Distribution Type"
           placeholder="Select Type"
+          disabled={form.formState.isSubmitting}
         >
           {distributionTypes.map((type, key) => (
             <SelectItem key={key} value={type.value}>
@@ -136,6 +137,7 @@ const DistributionForm = ({ form, className }: Props) => {
           name="client"
           label="Client"
           placeholder="John Doe"
+          disabled={form.formState.isSubmitting}
         />
         <CustomFormField
           fieldType={FormFieldType.SELECT}
@@ -143,6 +145,7 @@ const DistributionForm = ({ form, className }: Props) => {
           name="status"
           label="Status"
           placeholder="Select status"
+          disabled={form.formState.isSubmitting}
         >
           {Object.keys(DISTRIBUTION_STATUSES).map((status, key) => (
             <SelectItem key={key} value={status}>

@@ -7,7 +7,6 @@ import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
-  ResponsiveDialogDescription,
   ResponsiveDialogFooter,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
@@ -37,13 +36,13 @@ import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
 import { UserSession } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import React, { useEffect, useState } from "react";
 import { Separator } from "react-aria-components";
 import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import ProductForm, { useProductForm } from "./components/ProductForm";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 
 type Props = {
   user: UserSession;
@@ -330,11 +329,16 @@ const ProductClient = ({
                 </OverlayScrollbarsComponent>
 
                 <ResponsiveDialogFooter className="px-1">
-                  <div className="flex flex-row flex-grow w-full gap-2">
-                    <Button variant={"outline"} onClick={() => setOpen(false)}>
+                  <div className="flex flex-row w-full gap-2">
+                    <Button
+                      variant={"outline"}
+                      onClick={() => setOpen(false)}
+                      className="w-full flex-grow"
+                    >
                       <span>Cancel</span>
                     </Button>
                     <Button
+                      className="flex-grow"
                       variant={"outline"}
                       onClick={async () => {
                         // Only fetch and set values when sku is initially null
@@ -363,17 +367,16 @@ const ProductClient = ({
                     >
                       <span>Generate SKU</span>
                     </Button>
-                    <Button
-                      className="flex-grow w-full"
+                    <DialogFormButton
+                      text="Add Product"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpen),
                       )}
                       disabled={
                         !form.formState.isValid || form.formState.isSubmitting
                       }
-                    >
-                      Add Product
-                    </Button>
+                      loading={form.formState.isSubmitting}
+                    />
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>

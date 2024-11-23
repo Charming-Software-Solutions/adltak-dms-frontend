@@ -33,6 +33,7 @@ import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibleAssetColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -106,15 +107,14 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
             >
               Cancel
             </Button>
-            <Button
+            <DialogFormButton
+              text="Save Changes"
               onClick={form.handleSubmit((values) =>
                 onSubmit(values, setOpenDialog),
               )}
-              className="w-full"
               disabled={form.formState.isSubmitting}
-            >
-              Save Changes
-            </Button>
+              loading={form.formState.isSubmitting}
+            />
           </div>
         </ResponsiveDialogFooter>
       </EditDialog>

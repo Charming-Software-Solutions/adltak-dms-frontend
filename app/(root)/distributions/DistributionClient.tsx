@@ -44,6 +44,7 @@ import DistributionAddItem from "./components/DistributionAddItem";
 import DistributionForm, {
   useDistributionForm,
 } from "./components/DistributionForm";
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 
 type Props = {
   user: UserSession;
@@ -362,8 +363,9 @@ const DistributionClient = ({
                     >
                       <span>Cancel</span>
                     </Button>
-                    <Button
-                      className="flex-grow w-full select-none"
+                    <DialogFormButton
+                      text="Create Distribution"
+                      className="select-none"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(
                           values,
@@ -381,9 +383,8 @@ const DistributionClient = ({
                         !(form.formState.isValid && productItems.length > 0) ||
                         form.formState.isSubmitting
                       }
-                    >
-                      Create Distribution
-                    </Button>
+                      loading={form.formState.isSubmitting}
+                    />
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>
