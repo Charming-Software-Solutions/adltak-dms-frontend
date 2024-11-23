@@ -79,7 +79,7 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       setOpen(false);
       form.reset();
       router.refresh();
-      if (result.data) {
+      if (result.data && mode === "edit") {
         form.reset(result.data);
       }
     }
@@ -93,7 +93,11 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 h-full", className)}>
         <div className="flex flex-row gap-2 items-start ">
-          <ImageDropzone control={form.control} name="profile_image" />
+          <ImageDropzone
+            control={form.control}
+            name="profile_image"
+            disabled={form.formState.isSubmitting}
+          />
           <div className="space-y-2 w-full">
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -101,7 +105,9 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
               name="email"
               label="Email"
               placeholder="example@email.com"
-              disabled={mode === FormModeEnum.EDIT}
+              disabled={
+                mode === FormModeEnum.EDIT || form.formState.isSubmitting
+              }
             />
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -109,6 +115,7 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
               name="name"
               label="Name"
               placeholder="John Doe"
+              disabled={form.formState.isSubmitting}
             />
           </div>
         </div>
@@ -118,6 +125,7 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
           name="role"
           label="Role"
           placeholder="Select role"
+          disabled={form.formState.isSubmitting}
         >
           {Object.keys(USER_ROLES).map((role, key) => (
             <SelectItem key={key} value={role}>

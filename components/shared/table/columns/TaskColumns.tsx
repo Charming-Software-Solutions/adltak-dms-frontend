@@ -29,6 +29,7 @@ import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { getEmployees } from "@/lib/actions/employee.actions";
+import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibleTaskColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -235,14 +236,14 @@ export const TaskColumns: ColumnDef<Task>[] = [
                 >
                   Cancel
                 </Button>
-                <Button
-                  className="w-full"
+                <DialogFormButton
+                  text="Save Changes"
                   onClick={form.handleSubmit((values) =>
                     onSubmit(values, setOpenDialog),
                   )}
-                >
-                  Save Changes
-                </Button>
+                  disabled={form.formState.isSubmitting}
+                  loading={form.formState.isSubmitting}
+                />
               </div>
             </ResponsiveDialogFooter>
           </EditDialog>

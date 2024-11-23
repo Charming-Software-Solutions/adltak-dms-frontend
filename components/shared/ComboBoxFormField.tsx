@@ -53,6 +53,7 @@ const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
                       "w-full justify-between h-11",
                       !field.value && "text-muted-foreground",
                     )}
+                    disabled={disabled}
                   >
                     {field.value
                       ? items.find((item) => item.value === field.value)?.label

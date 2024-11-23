@@ -24,6 +24,7 @@ import TaskForm, { useTaskForm } from "./components/TaskForm";
 import { Employee, UserSession } from "@/types/user";
 import { hasPermission } from "@/lib/auth";
 import { UserRoleEnum } from "@/enums";
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 
 type Props = {
   user: UserSession;
@@ -91,17 +92,16 @@ const TasksClient = ({
                     >
                       Cancel
                     </Button>
-                    <Button
-                      className="flex-grow w-full"
-                      disabled={
-                        !form.formState.isValid || form.formState.isSubmitting
-                      }
+                    <DialogFormButton
+                      text="Create Task"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpenDialog),
                       )}
-                    >
-                      Create Task
-                    </Button>
+                      disabled={
+                        !form.formState.isValid || form.formState.isSubmitting
+                      }
+                      loading={form.formState.isSubmitting}
+                    />
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>

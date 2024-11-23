@@ -25,6 +25,7 @@ import { UserSession } from "@/types/user";
 import { hasPermission } from "@/lib/auth";
 import { UserRoleEnum } from "@/enums";
 import { Product } from "@/types/product";
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 
 type Props = {
   user: UserSession;
@@ -83,17 +84,16 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                     >
                       Cancel
                     </Button>
-                    <Button
-                      className="flex-grow w-full"
-                      disabled={
-                        !form.formState.isValid || form.formState.isSubmitting
-                      }
+                    <DialogFormButton
+                      text="Add Asset"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpenDialog),
                       )}
-                    >
-                      Add Asset
-                    </Button>
+                      disabled={
+                        !form.formState.isValid || form.formState.isSubmitting
+                      }
+                      loading={form.formState.isSubmitting}
+                    />
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>

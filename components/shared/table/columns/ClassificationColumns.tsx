@@ -14,6 +14,7 @@ import DeleteDialog from "../../dialogs/DeleteDialog";
 import { deleteClassification } from "@/lib/actions/classification.actions";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
+import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibleClassificationColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -76,15 +77,14 @@ const ClassificationActionsCell = React.memo(
               >
                 Cancel
               </Button>
-              <Button
+              <DialogFormButton
+                text="Save Changes"
                 onClick={form.handleSubmit((values) =>
                   onSubmit(values, setOpenDialog),
                 )}
-                className="w-full"
                 disabled={form.formState.isSubmitting}
-              >
-                Save Changes
-              </Button>
+                loading={form.formState.isSubmitting}
+              />
             </div>
           </ResponsiveDialogFooter>
         </EditDialog>

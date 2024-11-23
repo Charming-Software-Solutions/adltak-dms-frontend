@@ -21,6 +21,7 @@ import React, { useState } from "react";
 import EmployeeForm, { useEmployeeForm } from "./components/EmployeeForm";
 import { FormModeEnum } from "@/enums";
 import { FileIcon, PlusCircle } from "lucide-react";
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 
 type Props = {
   employees: Employee[];
@@ -74,17 +75,16 @@ const EmployeeClient = ({ employees }: Props) => {
                   >
                     Cancel
                   </Button>
-                  <Button
-                    className="flex-grow w-full"
+                  <DialogFormButton
+                    text="Create Employee"
                     disabled={
                       !form.formState.isValid || form.formState.isSubmitting
                     }
+                    loading={form.formState.isSubmitting}
                     onClick={form.handleSubmit((values) =>
                       onSubmit(values, setOpenUserDialog),
                     )}
-                  >
-                    Create Employee
-                  </Button>
+                  />
                 </div>
               </ResponsiveDialogFooter>
             </ResponsiveDialogContent>

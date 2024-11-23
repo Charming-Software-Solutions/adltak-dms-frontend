@@ -94,6 +94,7 @@ const RenderInput = ({
             onValueChange={field.onChange}
             defaultValue={field.value}
             value={field.value}
+            disabled={props.disabled}
           >
             <FormControl>
               <SelectTrigger>

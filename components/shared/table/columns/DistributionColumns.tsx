@@ -19,6 +19,7 @@ import React from "react";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
 import { DISTRIBUTION_STATUSES } from "@/constants";
+import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
   desktop: {
@@ -70,14 +71,14 @@ const DistributionActionsCell = React.memo(
               >
                 Cancel
               </Button>
-              <Button
-                className="w-full"
+              <DialogFormButton
+                text="Save Changes"
                 onClick={form.handleSubmit((values) =>
                   onSubmit(values, setOpenEditDialog),
                 )}
-              >
-                Save changes
-              </Button>
+                disabled={form.formState.isSubmitting}
+                loading={form.formState.isSubmitting}
+              />
             </div>
           </ResponsiveDialogFooter>
         </EditDialog>

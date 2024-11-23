@@ -94,7 +94,11 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
     <Form {...form}>
       <div className={cn("form-container", className)}>
         <div className="flex flex-row gap-2 items-start">
-          <ImageDropzone control={form.control} name="thumbnail" />
+          <ImageDropzone
+            control={form.control}
+            name="thumbnail"
+            disabled={form.formState.isSubmitting}
+          />
           <div className="space-y-2 w-full">
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -102,6 +106,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
               name="name"
               label="Name"
               placeholder="Monobloc Chair"
+              disabled={form.formState.isSubmitting}
             />
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -109,6 +114,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
               name="code"
               label="Code"
               placeholder="MC001"
+              disabled={form.formState.isSubmitting}
             />
           </div>
         </div>
@@ -118,6 +124,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           name="baReferenceNumber"
           label="BA Reference Number"
           placeholder="BA1234567890"
+          disabled={form.formState.isSubmitting}
         />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
@@ -125,6 +132,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           name="area"
           label="Area"
           placeholder="Quezon City"
+          disabled={form.formState.isSubmitting}
         />
         <ComboBoxFormField
           items={products.map((product) => ({
@@ -139,6 +147,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           }}
           label="Product"
           popOverSize="md:min-w-[28.3rem]"
+          disabled={form.formState.isSubmitting}
         />
         <CustomFormField
           fieldType={FormFieldType.SELECT}
@@ -146,6 +155,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           name="type"
           label="Type"
           placeholder="Select type"
+          disabled={form.formState.isSubmitting}
         >
           {assetTypes.map((type, key) => (
             <SelectItem key={key} value={type.id}>
@@ -159,6 +169,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           name="status"
           label="Status"
           placeholder="Select status"
+          disabled={form.formState.isSubmitting}
         >
           {Object.keys(ASSET_STATUS).map((status, key) => (
             <SelectItem key={key} value={status}>

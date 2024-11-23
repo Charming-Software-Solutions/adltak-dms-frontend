@@ -103,6 +103,7 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
           }}
           label={type === "product" ? "Product" : "Asset"}
           popOverSize="md:min-w-[30rem]"
+          disabled={form.formState.isSubmitting}
         />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
@@ -111,6 +112,7 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
           name="quantity"
           label="Quantity"
           placeholder="10"
+          disabled={form.formState.isSubmitting}
         />
         <div className="flex w-full gap-2">
           <Button

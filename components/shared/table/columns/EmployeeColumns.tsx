@@ -17,6 +17,7 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { FormModeEnum } from "@/enums";
 import { formatDateTime } from "@/lib/utils";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibileEmployeeColumns = {
   desktop: {
@@ -67,15 +68,14 @@ const EmployeeActionsCell = React.memo(
               >
                 Cancel
               </Button>
-              <Button
-                className="w-full"
+              <DialogFormButton
+                text="Save Changes"
                 onClick={form.handleSubmit((values) =>
                   onSubmit(values, setOpenDialog),
                 )}
                 disabled={form.formState.isSubmitting}
-              >
-                Save Changes
-              </Button>
+                loading={form.formState.isSubmitting}
+              />
             </div>
           </ResponsiveDialogFooter>
         </EditDialog>

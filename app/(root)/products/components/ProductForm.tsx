@@ -101,7 +101,11 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 h-full", className)}>
         <div className="flex flex-row gap-2 items-start ">
-          <ImageDropzone control={form.control} name="thumbnail" />
+          <ImageDropzone
+            control={form.control}
+            name="thumbnail"
+            disabled={form.formState.isSubmitting}
+          />
           <div className="space-y-2 w-full">
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -109,6 +113,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
               name="name"
               label="Product Name"
               placeholder="Piattos"
+              disabled={form.formState.isSubmitting}
             />
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -116,6 +121,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
               name="sku"
               label="Product SKU"
               placeholder="SKU-123"
+              disabled={form.formState.isSubmitting}
             />
           </div>
         </div>
@@ -125,6 +131,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="baReferenceNumber"
           label="BA Reference Number"
           placeholder="BA1234567890"
+          disabled={form.formState.isSubmitting}
         />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
@@ -132,6 +139,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="area"
           label="Area"
           placeholder="Quezon City"
+          disabled={form.formState.isSubmitting}
         />
         <CustomFormField
           fieldType={FormFieldType.SELECT}
@@ -139,6 +147,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="brand"
           label="Product Brand"
           placeholder="Select brand"
+          disabled={form.formState.isSubmitting}
         >
           {brands.map((brand, key) => (
             <SelectItem key={key} value={brand.id}>
@@ -152,6 +161,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="category"
           label="Product Category"
           placeholder="Select category"
+          disabled={form.formState.isSubmitting}
         >
           {categories.map((category, key) => (
             <SelectItem key={key} value={category.id}>
@@ -165,6 +175,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="type"
           label="Product Type"
           placeholder="Select type"
+          disabled={form.formState.isSubmitting}
         >
           {types.map((brand, key) => (
             <SelectItem key={key} value={brand.id}>
@@ -179,6 +190,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="stock"
           label="Product stock"
           placeholder="10"
+          disabled={form.formState.isSubmitting}
         />
         <CustomFormField
           fieldType={FormFieldType.DATE}
@@ -186,6 +198,7 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           name="expiration"
           label="Product Expiration"
           placeholder="Select date"
+          disabled={form.formState.isSubmitting}
         />
       </div>
     </Form>
