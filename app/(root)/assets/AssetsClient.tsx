@@ -26,6 +26,9 @@ import { hasPermission } from "@/lib/auth";
 import { UserRoleEnum } from "@/enums";
 import { Product } from "@/types/product";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
+import FilterTaskAsset, {
+  useAssetTaskFilters,
+} from "@/components/shared/filter/FilterAssetTask";
 
 type Props = {
   user: UserSession;
@@ -40,6 +43,7 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
 
   const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useAssetForm({ mode: "create" });
+  const { getFilteredItems } = useAssetTaskFilters(assets);
 
   useEffect(() => {
     setIsMounted(true);
@@ -105,11 +109,22 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
         {isMounted ? (
           <DataTable
             columns={AssetColumns}
-            data={assets}
+            data={getFilteredItems()}
             visibleColumns={
               isDesktop
                 ? visibleAssetColumns(user.role).desktop
                 : visibleAssetColumns(user.role).mobile
+            }
+            searchField={{
+              placeholder: "Search asset...",
+              column: "name",
+            }}
+            filters={
+              <FilterTaskAsset
+                items={assets}
+                type="asset"
+                assetTypes={assetTypes}
+              />
             }
           />
         ) : null}

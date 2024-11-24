@@ -32,8 +32,10 @@ export interface DataTableProps<TData, TValue> {
   searchField?: {
     column: string;
     placeholder: string;
+    className?: string;
   };
   filters?: React.ReactNode;
+  tabsList?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -43,6 +45,7 @@ export function DataTable<TData, TValue>({
   showPagination = true,
   searchField = undefined,
   filters,
+  tabsList,
 }: DataTableProps<TData, TValue> & {
   visibleColumns?: Record<string, boolean>;
 }) {
@@ -77,7 +80,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-3.5 py-1">
-      {(searchField || filters) && (
+      {(searchField || filters || tabsList) && (
         <div className="flex shrink-0 items-center">
           <div className="flex items-center w-full justify-between">
             <div className="w-full">
@@ -89,6 +92,7 @@ export function DataTable<TData, TValue>({
                 />
               )}
             </div>
+            {tabsList && tabsList}
             {filters && filters}
           </div>
         </div>
