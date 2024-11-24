@@ -11,6 +11,7 @@ export function useDataTable<TData, TValue>({
   searchField,
   visibleColumns,
   filters,
+  tabsList,
 }: DataTableProps<TData, TValue>) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -30,6 +31,7 @@ export function useDataTable<TData, TValue>({
           showPagination={showPagination}
           searchField={searchField}
           filters={filters}
+          tabsList={tabsList}
         />
       );
     },
