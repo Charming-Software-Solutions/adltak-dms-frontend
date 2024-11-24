@@ -13,7 +13,7 @@ const protectedRoutes = [
   "/classifications",
 ];
 const publicRoutes = ["/login"];
-const adminRoutes = ["/employee"];
+const adminRoutes = ["/employees"];
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -32,7 +32,8 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
-  if (isAdminRoute && session?.user.role.toUpperCase() !== UserRoleEnum.ADMIN) {
+  if (isAdminRoute && session?.user.role !== UserRoleEnum.ADMIN) {
+    console.log(session?.user.role);
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
