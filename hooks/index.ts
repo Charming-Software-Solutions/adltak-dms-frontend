@@ -1,5 +1,6 @@
 "use client";
 
+import { Dispatch, SetStateAction, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 type Breakpoint = "mobile" | "tablet" | "desktop" | "large";
@@ -13,4 +14,12 @@ export function useResponsive(breakpoint: Breakpoint): boolean {
   };
 
   return useMediaQuery(queries[breakpoint]);
+}
+
+export function useDialog(): {
+  openDialog: boolean;
+  setOpenDialog: Dispatch<SetStateAction<boolean>>;
+} {
+  const [openDialog, setOpenDialog] = useState(false);
+  return { openDialog, setOpenDialog };
 }

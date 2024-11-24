@@ -97,6 +97,20 @@ export const TASK_STATUS: Record<string, string> = {
   ...TASK_STATUS_EXPORT,
 };
 
+export const COMBINED_TASK_STATUS: SelectItemType[] = [
+  ...Object.entries(TASK_STATUS_IMPORT).map(([key, label]) => ({
+    label,
+    value: key,
+  })),
+  ...Object.entries(TASK_STATUS_EXPORT).map(([key, label]) => ({
+    label,
+    value: key,
+  })),
+].filter(
+  (item, index, self) =>
+    index === self.findIndex((t) => t.value === item.value),
+);
+
 export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
   [AssetStatusEnum.AVAILABLE]: "Available",
   [AssetStatusEnum.IN_USE]: "In Use",

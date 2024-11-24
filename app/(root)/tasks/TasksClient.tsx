@@ -1,5 +1,9 @@
 "use client";
 
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
+import FilterTaskAsset, {
+  useAssetTaskFilters,
+} from "@/components/shared/filter/FilterAssetTask";
 import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
@@ -15,16 +19,15 @@ import {
 } from "@/components/shared/table/columns/TaskColumns";
 import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
+import { UserRoleEnum } from "@/enums";
+import { hasPermission } from "@/lib/auth";
 import { Distribution } from "@/types/distribution";
 import { Task } from "@/types/task";
+import { Employee, UserSession } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
-import { Employee, UserSession } from "@/types/user";
-import { hasPermission } from "@/lib/auth";
-import { UserRoleEnum } from "@/enums";
-import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 
 type Props = {
   user: UserSession;
@@ -44,6 +47,7 @@ const TasksClient = ({
 
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
   const { form, onSubmit } = useTaskForm({ mode: "create" });
+  const { getFilteredItems } = useAssetTaskFilters(tasks);
 
   const filteredWarehousePersons = warehousePersons.filter(
     (person) => person.user.role === UserRoleEnum.WAREHOUSE_WORKER,
@@ -114,12 +118,17 @@ const TasksClient = ({
         {isMounted ? (
           <DataTable
             columns={TaskColumns}
-            data={tasks}
+            data={getFilteredItems()}
             visibleColumns={
               isDesktop
                 ? visibleTaskColumns(user.role).desktop
                 : visibleTaskColumns(user.role).mobile
             }
+            searchField={{
+              placeholder: "Search distribution...",
+              column: "distribution_id",
+            }}
+            filters={<FilterTaskAsset items={tasks} type="task" />}
           />
         ) : null}
       </main>

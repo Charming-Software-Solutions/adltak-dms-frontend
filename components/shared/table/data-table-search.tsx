@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { Table } from "@tanstack/react-table";
 import { useQueryState } from "nuqs";
 
@@ -8,12 +9,14 @@ interface DataTableSearchProps<TData> {
   table: Table<TData>;
   column: string;
   placeholder: string;
+  className?: string;
 }
 
 export function DataTableSearch<TData>({
   table,
   column,
   placeholder,
+  className,
 }: DataTableSearchProps<TData>) {
   const [queryParam, setQueryParam] = useQueryState(column, {
     defaultValue: "",
