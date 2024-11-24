@@ -1,4 +1,5 @@
 import { ApiResponse, ErrorResponse } from "@/types/api";
+import { SelectItemType } from "@/types/primitives";
 import { Product, ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -212,4 +213,13 @@ export function filterProductsByExpiration(products: Product[]): {
 
   // Return an object with the categorized products
   return { fresh, nearExpiration, expired };
+}
+
+export function convertRecordsToArray(
+  record: Record<string, string>,
+): SelectItemType[] {
+  return Object.entries(record).map(([key, label]) => ({
+    label,
+    value: key,
+  }));
 }
