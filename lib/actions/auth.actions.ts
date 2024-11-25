@@ -1,8 +1,11 @@
 "use server";
 
-import { UserLogin } from "@/types/user";
-import { createSession, deleteSession } from "../session";
+import { ApiResponse } from "@/types/api";
+import { Employee, UserLogin } from "@/types/user";
+import { redirect } from "next/navigation";
+import { createSession, deleteSession, getSession } from "../session";
 import { fetchAndHandleResponse } from "../utils";
+import { getEmployeeProfile } from "./employee.actions";
 
 const authUrl = `${process.env.DOMAIN}/auth`;
 
@@ -48,4 +51,46 @@ async function logout(refresh: string) {
   }
 }
 
-export { login, logout };
+async function getAccountSession(): Promise<{
+  employee: Employee;
+  refresh: string;
+}> {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const employeeData = await getEmployeeProfile();
+  if (employeeData.errors) {
+    throw new Error("An error have occured.");
+  }
+  const employee = employeeData.data as Employee;
+  const refresh = session.refresh;
+
+  return { employee, refresh };
+}
+
+async function changeEmail(
+  formData: FormData,
+): Promise<ApiResponse<{ email: string }>> {
+  return fetchAndHandleResponse({
+    url: `${authUrl}/change-email/`,
+    jwt: (await getSession())?.access,
+    method: "PUT",
+    body: formData,
+  });
+}
+
+async function changePassword(
+  formData: FormData,
+): Promise<ApiResponse<{ message: string }>> {
+  return fetchAndHandleResponse({
+    url: `${authUrl}/change-password/`,
+    jwt: (await getSession())?.access,
+    method: "PUT",
+    body: formData,
+  });
+}
+
+export { changeEmail, changePassword, getAccountSession, login, logout };

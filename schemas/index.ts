@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z, ZodObject } from "zod";
 
 export const productFormSchema = z.object({
   sku: z.string().min(2, {
@@ -117,6 +117,35 @@ export const classificationFormSchema = z.object({
   classificationType: z.string().optional(),
 });
 
+export const changeEmailFormSchema = z
+  .object({
+    newEmail: z.coerce.string().email(),
+    confirmEmail: z.coerce.string().email(),
+    password: z.string(),
+  })
+  .refine((data) => data.newEmail === data.confirmEmail, {
+    message: "Emails don't match",
+    path: ["confirmEmail"],
+  });
+
+export const changePasswordFormSchema = z
+  .object({
+    newPassword: z.string().min(6, {
+      message: "Password length should be at least 6 characters.",
+    }),
+    confirmPassword: z.string(),
+    currentPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export const updateProfileFormSchema = z.object({
+  name: z.string(),
+  profileImage: z.union([z.instanceof(File), z.string()]).optional(),
+});
+
 export type ProductFormData = z.infer<typeof productFormSchema>;
 export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 export type DistributionFormData = z.infer<typeof distributionFormSchema>;
@@ -124,3 +153,6 @@ export type DistributionItemFormData = z.infer<typeof distributionItemSchema>;
 export type TaskFormData = z.infer<typeof taskFormSchema>;
 export type AssetFormData = z.infer<typeof assetFormSchema>;
 export type ClassificationFormData = z.infer<typeof classificationFormSchema>;
+export type ChangeEmailFormData = z.infer<typeof changeEmailFormSchema>;
+export type ChangePasswordFormData = z.infer<typeof changePasswordFormSchema>;
+export type UpdateProfileFormData = z.infer<typeof updateProfileFormSchema>;

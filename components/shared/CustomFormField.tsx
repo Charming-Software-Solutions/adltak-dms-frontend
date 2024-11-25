@@ -22,6 +22,7 @@ import { Button } from "../ui/button";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
+import { PasswordInput } from "../ui/password-input";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -31,12 +32,14 @@ export enum FormFieldType {
   SKELETON = "skeleton",
   IMAGE = "image",
   DATE = "date",
+  PASSWORD = "password",
 }
 
 export enum InputType {
   TEXT = "text",
   NUMBER = "number",
   EMAIL = "email",
+  PASSWORD = "password",
 }
 
 interface BaseCustomProps {
@@ -147,6 +150,12 @@ const RenderInput = ({
             </PopoverContent>
           </Popover>
         </div>
+      );
+    case FormFieldType.PASSWORD:
+      return (
+        <FormControl>
+          <PasswordInput placeholder={props.placeholder} {...field} />
+        </FormControl>
       );
     default:
       return null;

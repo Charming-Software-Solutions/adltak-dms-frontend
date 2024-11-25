@@ -21,13 +21,7 @@ export async function createSession(userDataLogin: UserLogin) {
     access,
     refresh,
     user,
-    employee: employee
-      ? {
-          id: employee.id || "",
-          name: employee.name || "",
-          profile_image: employee.profile_image,
-        }
-      : undefined,
+    employee,
     expiresAt,
   });
 

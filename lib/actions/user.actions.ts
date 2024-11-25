@@ -36,13 +36,10 @@ async function getUsers(): Promise<User[]> {
   return response.data ?? [];
 }
 
-async function getUserById(
-  id: string,
-  access: string,
-): Promise<ApiResponse<User>> {
+async function getUserById(id: string): Promise<ApiResponse<User>> {
   return await fetchAndHandleResponse({
     url: `${USER_URL}${id}`,
-    jwt: access,
+    jwt: (await getSession())?.access,
     method: "GET",
   });
 }

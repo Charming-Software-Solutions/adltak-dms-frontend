@@ -2,7 +2,6 @@ import Providers from "@/components/Providers";
 import AppSidebar from "@/components/shared/AppSidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getSession } from "@/lib/session";
 import { LoaderIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -18,8 +17,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession();
-
   return (
     <Providers>
       <ThemeProvider
@@ -31,7 +28,7 @@ export default async function RootLayout({
         <NuqsAdapter>
           <div vaul-drawer-wrapper="">
             <SidebarProvider>
-              <AppSidebar session={session} />
+              <AppSidebar />
               <SidebarInset>
                 <Suspense
                   fallback={

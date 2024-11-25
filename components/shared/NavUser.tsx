@@ -2,7 +2,6 @@
 
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,12 +17,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { formatUserRole } from "@/lib/utils";
-import { EmployeeLogin, User } from "@/types/user";
-import NavUserProfile from "./NavUserProfile";
-import { logout } from "@/lib/actions/auth.actions";
 import { USER_ROLES } from "@/constants";
-import { UserRoleEnum } from "@/enums";
+import { logout } from "@/lib/actions/auth.actions";
+import { Employee, User } from "@/types/user";
+import { useRouter } from "next/navigation";
+import NavUserProfile from "./NavUserProfile";
 
 export function NavUser({
   user,
@@ -32,9 +30,10 @@ export function NavUser({
 }: {
   user: User;
   refresh: string;
-  employee?: EmployeeLogin;
+  employee: Employee;
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -46,35 +45,31 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg bg-card border text-card-foreground shadow-sm py-8"
             >
               <NavUserProfile
-                title={employee?.name ?? "Admin"}
-                subtitle={
-                  user.role.toUpperCase() === UserRoleEnum.ADMIN
-                    ? "Admin"
-                    : USER_ROLES[user.role]
-                }
+                title={employee.name}
+                subtitle={USER_ROLES[user.role]}
                 alt={"profile-image"}
-                avatarImage={employee?.profile_image}
+                avatarImage={employee.profile_image}
               />
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-[20rem] rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <NavUserProfile
-                title={employee?.name ?? "Admin"}
-                subtitle={formatUserRole(user.role)}
+                title={employee.name}
+                subtitle={user.email}
                 alt={"profile-image"}
-                avatarImage={employee?.profile_image}
+                avatarImage={employee.profile_image}
               />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/account/")}>
                 <BadgeCheck className="size-4 mr-2" />
                 Account
               </DropdownMenuItem>

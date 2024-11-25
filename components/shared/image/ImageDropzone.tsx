@@ -106,6 +106,7 @@ const ImageDropzone = (props: ImageDropzoneProps) => {
     <FormField
       control={control}
       name={name}
+      disabled={props.disabled}
       render={({ field }) => {
         useEffect(() => {
           if (field.value) {
