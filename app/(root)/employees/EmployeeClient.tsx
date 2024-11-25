@@ -26,11 +26,12 @@ import EmployeeForm, { useEmployeeForm } from "./components/EmployeeForm";
 
 type Props = {
   employees: Employee[];
+  currentAdmin: Employee;
 };
 
 type EmployeeTab = "all" | "logistics" | "warehouse" | "project";
 
-const EmployeeClient = ({ employees }: Props) => {
+const EmployeeClient = ({ employees, currentAdmin }: Props) => {
   const [openUserDialog, setOpenUserDialog] = useState(false);
 
   const { form, onSubmit } = useEmployeeForm({ mode: "create" });
@@ -61,6 +62,10 @@ const EmployeeClient = ({ employees }: Props) => {
       default:
         break;
     }
+
+    filteredEmployees = filteredEmployees.filter(
+      (employee) => employee.user.id !== currentAdmin.user.id,
+    );
 
     const dataTable = useDataTable({
       columns: EmployeeColumns,
