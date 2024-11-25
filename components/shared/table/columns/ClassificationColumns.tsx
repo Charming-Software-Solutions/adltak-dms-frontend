@@ -68,14 +68,11 @@ const ClassificationActionsCell = React.memo(
           <ResponsiveDialogFooter className="px-1">
             <div className="dialog-footer">
               <Button
-                variant="outline"
-                onClick={() => {
-                  setOpenDialog(false);
-                  form.reset();
-                }}
-                className="w-full"
+                variant={"outline"}
+                className="flex-grow w-full"
+                onClick={() => form.reset()}
               >
-                Cancel
+                Reset
               </Button>
               <DialogFormButton
                 text="Save Changes"

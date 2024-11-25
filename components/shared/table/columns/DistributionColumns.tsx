@@ -65,11 +65,11 @@ const DistributionActionsCell = React.memo(
           <ResponsiveDialogFooter className="px-1">
             <div className="dialog-footer">
               <Button
-                className="w-full"
                 variant={"outline"}
-                onClick={() => setOpenEditDialog(false)}
+                className="flex-grow w-full"
+                onClick={() => form.reset()}
               >
-                Cancel
+                Reset
               </Button>
               <DialogFormButton
                 text="Save Changes"

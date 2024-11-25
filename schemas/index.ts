@@ -1,4 +1,4 @@
-import { z, ZodObject } from "zod";
+import { z } from "zod";
 
 export const productFormSchema = z.object({
   sku: z.string().min(2, {
@@ -144,6 +144,11 @@ export const changePasswordFormSchema = z
 export const updateProfileFormSchema = z.object({
   name: z.string(),
   profileImage: z.union([z.instanceof(File), z.string()]).optional(),
+});
+
+export const loginSchema = z.object({
+  email: z.coerce.string().email(),
+  password: z.string(),
 });
 
 export type ProductFormData = z.infer<typeof productFormSchema>;

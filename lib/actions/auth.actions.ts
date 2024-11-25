@@ -21,7 +21,9 @@ async function login(email: string, password: string): Promise<UserLogin> {
   });
 
   if (!response || !response.data) {
-    throw new Error("Login failed: no response or invalid data");
+    throw new Error(
+      response.errors ? JSON.stringify(response.errors) : "Unknown error",
+    );
   }
   const userDataLogin = response.data as UserLogin;
 

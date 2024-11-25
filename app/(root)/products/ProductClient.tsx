@@ -332,10 +332,10 @@ const ProductClient = ({
                   <div className="flex flex-row w-full gap-2">
                     <Button
                       variant={"outline"}
-                      onClick={() => setOpen(false)}
-                      className="w-full flex-grow"
+                      className="flex-grow w-full"
+                      onClick={() => form.reset()}
                     >
-                      <span>Cancel</span>
+                      Reset
                     </Button>
                     <Button
                       className="flex-grow"
