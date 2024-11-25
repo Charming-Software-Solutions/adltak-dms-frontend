@@ -6,28 +6,15 @@ import {
   SidebarGroupContent,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { UserLogin as Session, User } from "@/types/user";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import NavMain from "./NavMain";
-import ThemeToggle from "./ThemeToggle";
-import { getUserById } from "@/lib/actions/user.actions";
 import { NavUser } from "./NavUser";
+import ThemeToggle from "./ThemeToggle";
+import { getAccountSession } from "@/lib/actions/auth.actions";
 
-type Props = {
-  session: Session | null;
-};
-
-const AppSidebar = async ({ session }: Props) => {
-  if (!session) {
-    redirect("/login");
-  }
-  const userData = await getUserById(session?.user.id, session?.access);
-  if (userData.errors) {
-    throw new Error("An error have occured.");
-  }
-  const user = userData.data as User;
+const AppSidebar = async () => {
+  const accountSession = await getAccountSession();
 
   return (
     <Sidebar>
@@ -54,15 +41,15 @@ const AppSidebar = async ({ session }: Props) => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <NavMain user={user} />
+            <NavMain user={accountSession.employee.user} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser
-          user={user}
-          refresh={session.refresh}
-          employee={session.employee}
+          user={accountSession.employee.user}
+          refresh={accountSession.refresh}
+          employee={accountSession.employee}
         />
       </SidebarFooter>
     </Sidebar>

@@ -25,6 +25,14 @@ async function getEmployees(): Promise<Employee[]> {
   return response.data ?? [];
 }
 
+async function getEmployeeProfile(): Promise<ApiResponse<Employee>> {
+  return fetchAndHandleResponse({
+    url: `${EMPLOYEE_URL}profile/`,
+    method: "GET",
+    jwt: (await getSession())?.access,
+  });
+}
+
 async function updateEmployee(
   id: string,
   body: FormData,
@@ -45,4 +53,22 @@ async function deleteEmployee(id: string): Promise<ApiResponse<string>> {
   });
 }
 
-export { createEmployee, deleteEmployee, getEmployees, updateEmployee };
+async function updateEmployeeProfile(
+  formData: FormData,
+): Promise<ApiResponse<Employee>> {
+  return fetchAndHandleResponse({
+    url: `${EMPLOYEE_URL}update-employee-profile/`,
+    method: "PATCH",
+    jwt: (await getSession())?.access,
+    body: formData,
+  });
+}
+
+export {
+  createEmployee,
+  deleteEmployee,
+  getEmployeeProfile,
+  getEmployees,
+  updateEmployee,
+  updateEmployeeProfile,
+};

@@ -20,10 +20,10 @@ export type UserLogin = {
     id: string;
     role: UserRoleEnum;
   };
-  employee?: {
-    id: string | undefined;
-    name: string | undefined;
-    profile_image?: string | undefined;
+  employee: {
+    id: string;
+    name: string;
+    profile_image?: string;
   };
 };
 
@@ -33,7 +33,7 @@ export type Employee = {
   updated_at: string;
   name: string;
   user: User;
-  profile_image: string;
+  profile_image?: string;
 };
 
 export type EmployeeSession = {
