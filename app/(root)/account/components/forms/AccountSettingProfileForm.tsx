@@ -51,7 +51,7 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
       });
     } else {
       if (result.data) {
-        toast.success("Email address successfully changed!", {
+        toast.success("Profile successfully updated!", {
           position: "top-center",
         });
         setOpen(false);
