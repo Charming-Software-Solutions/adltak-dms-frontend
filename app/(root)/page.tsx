@@ -1,13 +1,13 @@
-import { getSession } from "@/lib/session";
-import HomeClient from "./Client";
 import { getDistributions } from "@/lib/actions/distribution.actions";
 import {
   getMonthlyDistributionFlow,
   getProductsAboutToExpireCount,
+  getRemainingTaskCount,
   getTotalItemStock,
-  getWeeklyRemainingTaskCount,
 } from "@/lib/actions/metrics.actions";
+import { getSession } from "@/lib/session";
 import { InsightsMetrics } from "@/types/metrics";
+import HomeClient from "./Client";
 
 export default async function Home() {
   const distributions = await getDistributions();
@@ -15,7 +15,7 @@ export default async function Home() {
   const metrics: InsightsMetrics = {
     totalItemStock: await getTotalItemStock(),
     monthlyDistributionFlow: await getMonthlyDistributionFlow(),
-    weeklyRemainingTaskCount: await getWeeklyRemainingTaskCount(),
+    remainingTaskCount: await getRemainingTaskCount(),
     productsAboutToExpireCount: await getProductsAboutToExpireCount(),
   };
 

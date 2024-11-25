@@ -78,9 +78,9 @@ const HomeClient = ({ user, distributions, metrics }: Props) => {
             icon={<ArrowUpDown className="size-4" />}
           />
           <MetricCard
-            title={"Remaining Weekly Tasks"}
-            value={metrics.weeklyRemainingTaskCount.toString()}
-            subtitle={"Tsaks remaining for the week"}
+            title={"Remaining Tasks"}
+            value={metrics.remainingTaskCount.toString()}
+            subtitle={"Overall remaining tasks"}
             icon={<ClipboardCheck className="size-4" />}
           />
           <MetricCard

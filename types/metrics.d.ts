@@ -22,6 +22,6 @@ export type MetricChartProps = {
 export type InsightsMetrics = {
   totalItemStock: number;
   monthlyDistributionFlow: number;
-  weeklyRemainingTaskCount: number;
+  remainingTaskCount: number;
   productsAboutToExpireCount: number;
 };
