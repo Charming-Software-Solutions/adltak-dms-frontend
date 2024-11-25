@@ -118,11 +118,11 @@ const EmployeeClient = ({ employees }: Props) => {
               <ResponsiveDialogFooter>
                 <div className="flex flex-row w-full gap-2">
                   <Button
-                    className="flex-grow w-full"
                     variant={"outline"}
-                    onClick={() => setOpenUserDialog(false)}
+                    className="flex-grow w-full"
+                    onClick={() => form.reset()}
                   >
-                    Cancel
+                    Reset
                   </Button>
                   <DialogFormButton
                     text="Create Employee"

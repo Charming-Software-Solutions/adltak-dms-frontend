@@ -357,11 +357,15 @@ const DistributionClient = ({
                 <ResponsiveDialogFooter>
                   <div className="flex flex-row w-full gap-2">
                     <Button
-                      className="flex-grow w-full select-none"
                       variant={"outline"}
-                      onClick={() => setOpenDistributionDialog(false)}
+                      className="flex-grow w-full"
+                      onClick={() => {
+                        form.reset();
+                        clearProductItems();
+                        clearAssetItems();
+                      }}
                     >
-                      <span>Cancel</span>
+                      Reset
                     </Button>
                     <DialogFormButton
                       text="Create Distribution"

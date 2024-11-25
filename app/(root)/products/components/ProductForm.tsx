@@ -39,13 +39,13 @@ export const useProductForm = ({
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
-      sku: product?.sku,
-      name: product?.name,
-      brand: product?.brand.id,
-      category: product?.category.id,
-      type: product?.type.id,
-      thumbnail: product?.thumbnail,
-      stock: product?.stock,
+      sku: product?.sku ?? "",
+      name: product?.name ?? "",
+      brand: product?.brand.id ?? "",
+      category: product?.category.id ?? "",
+      type: product?.type.id ?? "",
+      thumbnail: product?.thumbnail ?? "",
+      stock: product?.stock ?? 1,
       expiration: product?.expiration
         ? new Date(product?.expiration)
         : undefined,

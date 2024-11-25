@@ -231,10 +231,10 @@ export const TaskColumns: ColumnDef<Task>[] = [
               <div className="dialog-footer">
                 <Button
                   variant={"outline"}
-                  onClick={() => setOpenDialog(false)}
-                  className="w-full"
+                  className="flex-grow w-full"
+                  onClick={() => form.reset()}
                 >
-                  Cancel
+                  Reset
                 </Button>
                 <DialogFormButton
                   text="Save Changes"
