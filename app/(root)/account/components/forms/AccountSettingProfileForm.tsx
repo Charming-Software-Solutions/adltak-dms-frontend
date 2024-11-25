@@ -50,9 +50,14 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
         position: "top-center",
       });
     } else {
-      setOpen(false);
-      form.reset();
-      router.refresh();
+      if (result.data) {
+        toast.success("Email address successfully changed!", {
+          position: "top-center",
+        });
+        setOpen(false);
+        form.reset(result.data);
+        router.refresh();
+      }
     }
   };
   return { form, onSubmit };
