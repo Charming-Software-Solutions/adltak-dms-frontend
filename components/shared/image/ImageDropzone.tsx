@@ -188,7 +188,7 @@ const ImageDropzone = (props: ImageDropzoneProps) => {
                     onChange={handleFileChange}
                   />
                   {dropped ? (
-                    <div className="flex w-[8.5rem] items-center justify-center">
+                    <div className="flex size-full p-1 items-center justify-center">
                       <ImageDropzonePreview
                         file={file}
                         onRemove={handleRemoveImage}
