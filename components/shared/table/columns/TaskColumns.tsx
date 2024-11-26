@@ -41,10 +41,12 @@ export const visibleTaskColumns = (userRole: UserRoleEnum) => {
       distribution_items: true,
       status_dropdown: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
+        UserRoleEnum.PROJECT_HANDLER,
         UserRoleEnum.WAREHOUSE_WORKER,
       ]),
-      status_badge: hasPermission(userRole, [UserRoleEnum.PROJECT_HANDLER]),
+      status_badge: hasPermission(userRole, [
+        UserRoleEnum.LOGISTICS_SPECIALIST,
+      ]),
       created_at: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
