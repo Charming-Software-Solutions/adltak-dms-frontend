@@ -90,7 +90,7 @@ const ClassificationActionsCell = React.memo(
           deleteAction={async () =>
             await deleteClassification(classification.id, classificationType)
           }
-          placeholder="Are you sure you want to delete the asset?"
+          placeholder="Are you sure you want to delete the classification?"
         />
       </div>
     );
