@@ -21,7 +21,7 @@ import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import React from "react";
-import { UserRoleEnum } from "@/enums";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
 import { DISTRIBUTION_STATUSES } from "@/constants";
 import DialogFormButton from "../../buttons/DialogFormButton";
@@ -67,7 +67,7 @@ const DistributionActionsCell = React.memo(
           open={openEditDialog}
           setOpen={setOpenEditDialog}
         >
-          <DistributionForm form={form} />
+          <DistributionForm form={form} mode={FormModeEnum.EDIT} />
           <ResponsiveDialogFooter className="px-1">
             <div className="dialog-footer">
               <Button

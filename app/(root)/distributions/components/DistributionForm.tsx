@@ -4,6 +4,7 @@ import CustomFormField, {
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { DISTRIBUTION_STATUSES } from "@/constants";
+import { FormModeEnum } from "@/enums";
 import { ICreateDistribution } from "@/interfaces";
 import {
   createDistribution,
@@ -26,6 +27,7 @@ import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<DistributionFormData>;
+  mode?: FormModeEnum;
   className?: string;
 };
 
@@ -113,24 +115,30 @@ export const useDistributionForm = ({
   return { form, onSubmit };
 };
 
-const DistributionForm = ({ form, className }: Props) => {
+const DistributionForm = ({
+  form,
+  mode = FormModeEnum.CREATE,
+  className,
+}: Props) => {
   return (
     <Form {...form}>
       <div className={cn("space-y-2 px-1", className)}>
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
-          control={form.control}
-          name="type"
-          label="Distribution Type"
-          placeholder="Select Type"
-          disabled={form.formState.isSubmitting}
-        >
-          {distributionTypes.map((type, key) => (
-            <SelectItem key={key} value={type.value}>
-              {type.label}
-            </SelectItem>
-          ))}
-        </CustomFormField>
+        {mode === FormModeEnum.CREATE && (
+          <CustomFormField
+            fieldType={FormFieldType.SELECT}
+            control={form.control}
+            name="type"
+            label="Distribution Type"
+            placeholder="Select Type"
+            disabled={form.formState.isSubmitting}
+          >
+            {distributionTypes.map((type, key) => (
+              <SelectItem key={key} value={type.value}>
+                {type.label}
+              </SelectItem>
+            ))}
+          </CustomFormField>
+        )}
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}
