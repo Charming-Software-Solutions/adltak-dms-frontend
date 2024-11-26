@@ -5,9 +5,14 @@ import DistributionForm, {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { deleteDistribution } from "@/lib/actions/distribution.actions";
-import { formatDateTime } from "@/lib/utils";
-import { Distribution } from "@/types/distribution";
-import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
+import { cn, formatDateTime } from "@/lib/utils";
+import { Distribution, DistributionType } from "@/types/distribution";
+import {
+  BackpackIcon,
+  DownloadIcon,
+  PersonIcon,
+  UploadIcon,
+} from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import DeleteDialog from "../../dialogs/DeleteDialog";
@@ -24,6 +29,7 @@ import DialogFormButton from "../../buttons/DialogFormButton";
 export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
   desktop: {
     dist_id: true,
+    distribution_type: true,
     product_count: false,
     asset_count: false,
     distribution_items: true,
@@ -98,6 +104,33 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
     header: "Distribuition ID",
     cell: ({ row }) => {
       return <span>#{row.original.dist_id}</span>;
+    },
+  },
+  {
+    accessorKey: "distribution_type",
+    header: "Type",
+    cell: ({ row }) => {
+      const distributionType = row.original.type;
+
+      const TypeIcon = ({
+        type,
+        className,
+      }: {
+        type: DistributionType;
+        className?: string;
+      }) => {
+        return type === "IMPORT" ? (
+          <DownloadIcon className={cn("size-4", className)} />
+        ) : (
+          <UploadIcon className={cn("size-4", className)} />
+        );
+      };
+      return (
+        <div className="flex items-center space-x-1">
+          <TypeIcon type={distributionType} className="mr-1" />
+          <span className="font-semibold">{distributionType}</span>
+        </div>
+      );
     },
   },
   {
