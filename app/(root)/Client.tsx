@@ -1,6 +1,7 @@
 "use client";
 
 import MetricCard from "@/components/shared/card/MetricCard";
+import DistributionFlowComparisonChart from "@/components/shared/charts/DistributionFlowComparisonChart";
 import Header from "@/components/shared/Header";
 import {
   DistributionColumns,
@@ -16,7 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Distribution } from "@/types/distribution";
-import { InsightsMetrics } from "@/types/metrics";
+import { DistributionFlowComparison, InsightsMetrics } from "@/types/metrics";
 import { UserSession } from "@/types/user";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import {
@@ -33,28 +34,18 @@ type Props = {
   user: UserSession;
   distributions: Distribution[];
   metrics: InsightsMetrics;
+  distributionFlowComparison: DistributionFlowComparison[];
 };
 
-const HomeClient = ({ user, distributions, metrics }: Props) => {
+const HomeClient = ({
+  user,
+  distributions,
+  metrics,
+  distributionFlowComparison,
+}: Props) => {
   const [isMounted, setIsMounted] = useState(false);
 
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-
-  const getMostRecentDistributions = (): Distribution[] => {
-    const mostRecentDate = new Date(
-      Math.max(
-        ...distributions.map((distribution) =>
-          new Date(distribution.updated_at).getTime(),
-        ),
-      ),
-    );
-
-    return distributions.filter(
-      (distribution) =>
-        new Date(distribution.updated_at).getTime() ===
-        mostRecentDate.getTime(),
-    );
-  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -91,6 +82,7 @@ const HomeClient = ({ user, distributions, metrics }: Props) => {
           />
           <div className="flex items-center gap-2"></div>
         </div>
+        <DistributionFlowComparisonChart data={distributionFlowComparison} />
         <Card className="min-h-[100vh] flex-1 rounded-xl overflow-auto bg-muted/50 md:min-h-min">
           <CardHeader className="flex flex-row justify-between items-start">
             <div className="space-y-2">
@@ -106,7 +98,7 @@ const HomeClient = ({ user, distributions, metrics }: Props) => {
             {isMounted ? (
               <DataTable
                 columns={DistributionColumns}
-                data={distributions}
+                data={distributions.slice(0, 5)}
                 showPagination={false}
                 visibleColumns={
                   isDesktop

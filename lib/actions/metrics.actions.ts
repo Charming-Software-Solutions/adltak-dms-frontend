@@ -1,6 +1,6 @@
 "use server";
 
-import { Metric } from "@/types/metrics";
+import { DistributionFlowComparison, Metric } from "@/types/metrics";
 import { getSession } from "../session";
 import { fetchAndHandleResponse } from "../utils";
 
@@ -47,9 +47,21 @@ async function getProductsAboutToExpireCount(): Promise<number> {
   return parseMetricValue(response.data?.value);
 }
 
+async function getDistributionFlowComparison(): Promise<
+  DistributionFlowComparison[]
+> {
+  const response = await fetchAndHandleResponse<DistributionFlowComparison[]>({
+    url: `${METRICS_URL}/distribution-flow-comparison/`,
+    jwt: (await getSession())?.access,
+    method: "GET",
+  });
+  return response.data ?? [];
+}
+
 export {
   getTotalItemStock,
   getMonthlyDistributionFlow,
   getRemainingTaskCount,
   getProductsAboutToExpireCount,
+  getDistributionFlowComparison,
 };
