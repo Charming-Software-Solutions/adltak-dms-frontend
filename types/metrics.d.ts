@@ -25,3 +25,9 @@ export type InsightsMetrics = {
   remainingTaskCount: number;
   productsAboutToExpireCount: number;
 };
+
+export type DistributionFlowComparison = {
+  data: string;
+  export: number;
+  import: number;
+};

@@ -1,5 +1,6 @@
 import { getDistributions } from "@/lib/actions/distribution.actions";
 import {
+  getDistributionFlowComparison,
   getMonthlyDistributionFlow,
   getProductsAboutToExpireCount,
   getRemainingTaskCount,
@@ -18,8 +19,14 @@ export default async function Home() {
     remainingTaskCount: await getRemainingTaskCount(),
     productsAboutToExpireCount: await getProductsAboutToExpireCount(),
   };
+  const distributionFlowComparison = await getDistributionFlowComparison();
 
   return (
-    <HomeClient user={user} distributions={distributions} metrics={metrics} />
+    <HomeClient
+      user={user}
+      distributions={distributions}
+      metrics={metrics}
+      distributionFlowComparison={distributionFlowComparison}
+    />
   );
 }
