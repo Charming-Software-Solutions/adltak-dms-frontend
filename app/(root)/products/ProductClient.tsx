@@ -327,7 +327,6 @@ const ProductClient = ({
                     types={types}
                   />
                 </OverlayScrollbarsComponent>
-
                 <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
                     <Button
@@ -368,7 +367,6 @@ const ProductClient = ({
                       <span>Generate SKU</span>
                     </Button>
                     <DialogFormButton
-                      text="Add Product"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpen),
                       )}
@@ -376,7 +374,9 @@ const ProductClient = ({
                         !form.formState.isValid || form.formState.isSubmitting
                       }
                       loading={form.formState.isSubmitting}
-                    />
+                    >
+                      Add Product
+                    </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>

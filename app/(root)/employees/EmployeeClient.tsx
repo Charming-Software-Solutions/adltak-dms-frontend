@@ -130,7 +130,6 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
                     Reset
                   </Button>
                   <DialogFormButton
-                    text="Create Employee"
                     disabled={
                       !form.formState.isValid || form.formState.isSubmitting
                     }
@@ -138,7 +137,9 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
                     onClick={form.handleSubmit((values) =>
                       onSubmit(values, setOpenUserDialog),
                     )}
-                  />
+                  >
+                    Create Employee
+                  </DialogFormButton>
                 </div>
               </ResponsiveDialogFooter>
             </ResponsiveDialogContent>

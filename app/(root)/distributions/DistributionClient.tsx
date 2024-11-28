@@ -368,7 +368,6 @@ const DistributionClient = ({
                       Reset
                     </Button>
                     <DialogFormButton
-                      text="Create Distribution"
                       className="select-none"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(
@@ -388,7 +387,9 @@ const DistributionClient = ({
                         form.formState.isSubmitting
                       }
                       loading={form.formState.isSubmitting}
-                    />
+                    >
+                      Create Distribution
+                    </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>

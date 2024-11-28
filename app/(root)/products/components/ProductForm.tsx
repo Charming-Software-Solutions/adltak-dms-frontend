@@ -192,14 +192,16 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />
-        <CustomFormField
-          fieldType={FormFieldType.DATE}
-          control={form.control}
-          name="expiration"
-          label="Product Expiration"
-          placeholder="Select date"
-          disabled={form.formState.isSubmitting}
-        />
+        <div className="pb-1">
+          <CustomFormField
+            fieldType={FormFieldType.DATE}
+            control={form.control}
+            name="expiration"
+            label="Product Expiration"
+            placeholder="Select date"
+            disabled={form.formState.isSubmitting}
+          />
+        </div>
       </div>
     </Form>
   );

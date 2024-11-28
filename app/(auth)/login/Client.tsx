@@ -14,13 +14,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
 import { login } from "@/lib/actions/auth.actions";
 import { loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -104,11 +102,12 @@ const LoginClient = () => {
         </CardContent>
         <CardFooter>
           <DialogFormButton
-            text="Sign In"
             disabled={form.formState.isSubmitting}
             loading={form.formState.isSubmitting}
             onClick={() => form.handleSubmit(handleSubmit)()}
-          />
+          >
+            Sign In
+          </DialogFormButton>
         </CardFooter>
       </Card>
     </Form>

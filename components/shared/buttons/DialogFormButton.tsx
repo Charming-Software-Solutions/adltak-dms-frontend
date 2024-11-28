@@ -6,18 +6,17 @@ import { Loader2 } from "lucide-react";
 import React from "react";
 
 interface Props extends ButtonProps {
-  text: string;
   loading?: boolean;
 }
 
 const DialogFormButton: React.FC<Props> = ({
-  text,
   disabled,
   onClick,
   className,
   loading = false,
   variant,
   size,
+  children,
   ...props
 }) => {
   return (
@@ -29,8 +28,7 @@ const DialogFormButton: React.FC<Props> = ({
       size={size}
       {...props}
     >
-      {loading && <Loader2 className="animate-spin mr-2" />}
-      {text}
+      {loading ? <Loader2 className="animate-spin mr-2" /> : children}
     </Button>
   );
 };

@@ -97,7 +97,6 @@ const TasksClient = ({
                       Reset
                     </Button>
                     <DialogFormButton
-                      text="Create Task"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpenDialog),
                       )}
@@ -105,7 +104,9 @@ const TasksClient = ({
                         !form.formState.isValid || form.formState.isSubmitting
                       }
                       loading={form.formState.isSubmitting}
-                    />
+                    >
+                      Create Task
+                    </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>
