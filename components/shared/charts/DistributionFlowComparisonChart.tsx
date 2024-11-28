@@ -1,6 +1,6 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import {
   Card,
@@ -12,12 +12,11 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { DistributionFlowComparison } from "@/types/metrics";
+import React, { useState } from "react";
 
 const chartConfig = {
   export: {
@@ -26,7 +25,7 @@ const chartConfig = {
   },
   import: {
     label: "Import",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(var(--chart-3))",
   },
 } satisfies ChartConfig;
 
@@ -37,48 +36,57 @@ type DistributionFlowComparisonChartProps = {
 const DistributionFlowComparisonChart = ({
   data,
 }: DistributionFlowComparisonChartProps) => {
+  const [activeChart, setActiveChart] =
+    useState<keyof typeof chartConfig>("export");
+  const total = React.useMemo(
+    () => ({
+      export: data.reduce((acc, curr) => acc + curr.export, 0),
+      import: data.reduce((acc, curr) => acc + curr.import, 0),
+    }),
+    [],
+  );
+
   return (
     <Card>
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
-        <div className="grid flex-1 gap-1 text-center sm:text-left">
+      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>Distribution Flow Comparison</CardTitle>
-          <CardDescription>
-            Showing import/export montly trends over time
-          </CardDescription>
+          <CardDescription>Monthly flow of exports and import</CardDescription>
+        </div>
+        <div className="flex">
+          {["export", "import"].map((key) => {
+            const chart = key as keyof typeof chartConfig;
+            return (
+              <button
+                key={chart}
+                data-active={activeChart === chart}
+                className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-8 sm:py-6"
+                onClick={() => setActiveChart(chart)}
+              >
+                <span className="text-xs text-muted-foreground">
+                  {chartConfig[chart].label}
+                </span>
+                <span className="text-lg font-bold leading-none sm:text-3xl">
+                  {total[key as keyof typeof total].toLocaleString()}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="px-2 sm:p-6">
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
         >
-          <AreaChart data={data}>
-            <defs>
-              <linearGradient id="fillExport" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-export)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-export)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-              <linearGradient id="fillImport" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-import)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-import)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
+          <BarChart
+            accessibilityLayer
+            data={data}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
@@ -95,35 +103,22 @@ const DistributionFlowComparisonChart = ({
               }}
             />
             <ChartTooltip
-              cursor={false}
               content={
                 <ChartTooltipContent
+                  className="w-[150px]"
+                  nameKey="views"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
+                      year: "numeric",
                     });
                   }}
-                  indicator="dot"
                 />
               }
             />
-            <Area
-              dataKey="export"
-              type="natural"
-              fill="url(#fillExport)"
-              stroke="var(--color-export)"
-              stackId="a"
-            />
-            <Area
-              dataKey="import"
-              type="natural"
-              fill="url(#fillImport)"
-              stroke="var(--color-import)"
-              stackId="a"
-            />
-            <ChartLegend content={<ChartLegendContent />} />
-          </AreaChart>
+            <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
+          </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>

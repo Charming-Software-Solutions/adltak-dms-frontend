@@ -83,7 +83,7 @@ const HomeClient = ({
           <div className="flex items-center gap-2"></div>
         </div>
         <DistributionFlowComparisonChart data={distributionFlowComparison} />
-        <Card className="min-h-[100vh] flex-1 rounded-xl overflow-auto bg-muted/50 md:min-h-min">
+        <Card className="min-h-[100vh] flex-1 rounded-xl overflow-auto md:min-h-min">
           <CardHeader className="flex flex-row justify-between items-start">
             <div className="space-y-2">
               <CardTitle>Recent Distributions</CardTitle>
