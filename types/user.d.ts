@@ -46,4 +46,9 @@ export type EmployeeLogin = {
   profile_image?: string | undefined;
 };
 
+export type AccountSession = {
+  employee: Employee;
+  refresh: string;
+};
+
 export type UserRole = keyof typeof USER_ROLES;

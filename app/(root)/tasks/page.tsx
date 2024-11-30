@@ -1,23 +1,23 @@
-import TasksClient from "./TasksClient";
-import { getDistributions } from "@/lib/actions/distribution.actions";
-import { getSession } from "@/lib/session";
 import { UserRoleEnum } from "@/enums";
+import { getAccountSession } from "@/lib/actions/auth.actions";
+import { getDistributions } from "@/lib/actions/distribution.actions";
 import { getEmployees } from "@/lib/actions/employee.actions";
 import { getTasks } from "@/lib/actions/task.actions";
+import TasksClient from "./TasksClient";
 
 export default async function TasksPage() {
   const distributions = await getDistributions();
-  const user = (await getSession())!.user;
+  const employee = (await getAccountSession()).employee;
   const warehousePersons =
-    user.role === UserRoleEnum.ADMIN ||
-    user.role === UserRoleEnum.PROJECT_HANDLER
+    employee.user.role === UserRoleEnum.ADMIN ||
+    employee.user.role === UserRoleEnum.PROJECT_HANDLER
       ? await getEmployees()
       : [];
-  const tasks = await getTasks(user.id, user.role);
+  const tasks = await getTasks(employee.user.id, employee.user.role);
 
   return (
     <TasksClient
-      user={user}
+      employee={employee}
       tasks={tasks}
       distributions={distributions}
       warehousePersons={warehousePersons}
