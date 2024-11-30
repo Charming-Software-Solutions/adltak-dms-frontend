@@ -76,12 +76,11 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
         position: "top-center",
       });
     } else {
-      setOpen(false);
-      form.reset();
-      router.refresh();
-      if (result.data && mode === "edit") {
-        form.reset(result.data);
+      if (mode === "create") {
+        form.reset();
       }
+      setOpen(false);
+      router.refresh();
     }
   };
 
