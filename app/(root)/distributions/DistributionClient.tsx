@@ -29,7 +29,12 @@ import {
   useDistributionAssetStore,
   useDistributionProductStore,
 } from "@/lib/store";
-import { filterDataTable, formatFilterValue, toPSTDate } from "@/lib/utils";
+import {
+  filterDataTable,
+  filterProductsByExpiration,
+  formatFilterValue,
+  toPSTDate,
+} from "@/lib/utils";
 import { Asset } from "@/types/asset";
 import { Distribution } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
@@ -337,7 +342,7 @@ const DistributionClient = ({
                     <TabsContent value="products">
                       <Card className="p-4">
                         <DistributionAddItem
-                          items={products}
+                          items={filterProductsByExpiration(products).fresh}
                           type="product"
                           store={useDistributionProductStore}
                         />
