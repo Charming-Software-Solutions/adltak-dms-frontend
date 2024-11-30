@@ -79,15 +79,19 @@ export const visibleTaskColumns = (userRole: UserRoleEnum) => {
 export const TaskColumns: ColumnDef<Task>[] = [
   {
     accessorKey: "warehouse_person",
-    accessorFn: (row) => row.warehouse_person,
     header: "Warehouse Personnel",
     cell: ({ row }) => {
+      const warehousePerson = row.original.warehouse_person;
       const isDesktop = useResponsive("desktop");
 
       return (
         <div className="flex items-center space-x-2">
           {isDesktop && <PersonIcon className="size-4" />}
-          <span>{row.original.warehouse_person.name}</span>
+          <span>
+            {warehousePerson.user.role != UserRoleEnum.WAREHOUSE_WORKER
+              ? "Unassigned"
+              : warehousePerson.name}
+          </span>
         </div>
       );
     },
