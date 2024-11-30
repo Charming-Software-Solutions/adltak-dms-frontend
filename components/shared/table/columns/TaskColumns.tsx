@@ -30,6 +30,7 @@ import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { getEmployees } from "@/lib/actions/employee.actions";
 import DialogFormButton from "../../buttons/DialogFormButton";
+import { USER_ROLES } from "@/constants";
 
 export const visibleTaskColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -88,7 +89,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
         <div className="flex items-center space-x-2">
           {isDesktop && <PersonIcon className="size-4" />}
           <span>
-            {warehousePerson.user.role != UserRoleEnum.WAREHOUSE_WORKER
+            {warehousePerson.user.role != USER_ROLES["WAREHOUSE_WORKER"]
               ? "Unassigned"
               : warehousePerson.name}
           </span>

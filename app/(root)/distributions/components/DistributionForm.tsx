@@ -105,9 +105,11 @@ export const useDistributionForm = ({
         position: "top-center",
       });
     } else {
+      if (mode === "create") {
+        form.reset();
+      }
       setOpen(false);
       router.refresh();
-      form.reset();
       clearItems?.();
     }
   };

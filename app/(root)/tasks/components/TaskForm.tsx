@@ -60,9 +60,11 @@ export const useTaskForm = ({
         position: "top-center",
       });
     } else {
+      if (mode === "create") {
+        form.reset();
+      }
       setOpen(false);
       router.refresh();
-      form.reset();
     }
   };
   return { form, onSubmit };

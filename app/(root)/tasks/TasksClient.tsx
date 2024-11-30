@@ -23,21 +23,21 @@ import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
 import { Distribution } from "@/types/distribution";
 import { Task } from "@/types/task";
-import { Employee, UserSession } from "@/types/user";
+import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
 
 type Props = {
-  user: UserSession;
+  employee: Employee;
   tasks: Task[];
   distributions: Distribution[];
   warehousePersons: Employee[];
 };
 
 const TasksClient = ({
-  user,
+  employee,
   tasks,
   distributions,
   warehousePersons,
@@ -56,6 +56,7 @@ const TasksClient = ({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  console.log(tasks);
 
   return (
     <React.Fragment>
@@ -67,7 +68,7 @@ const TasksClient = ({
               Export
             </span>
           </Button>
-          {hasPermission(user.role, [
+          {hasPermission(employee.user.role, [
             UserRoleEnum.ADMIN,
             UserRoleEnum.PROJECT_HANDLER,
           ]) && (
@@ -122,8 +123,8 @@ const TasksClient = ({
             data={getFilteredItems()}
             visibleColumns={
               isDesktop
-                ? visibleTaskColumns(user.role).desktop
-                : visibleTaskColumns(user.role).mobile
+                ? visibleTaskColumns(employee.user.role).desktop
+                : visibleTaskColumns(employee.user.role).mobile
             }
             searchField={{
               placeholder: "Search distribution...",

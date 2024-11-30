@@ -84,7 +84,9 @@ export const useProductForm = ({
           position: "top-center",
         });
       } else {
-        form.reset();
+        if (mode === "create") {
+          form.reset();
+        }
         setOpen(false);
         router.refresh();
       }
