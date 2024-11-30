@@ -3,6 +3,7 @@
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import CustomFormField, {
   FormFieldType,
+  InputType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
@@ -49,6 +50,7 @@ export const useAssetForm = ({
       product: asset?.product?.id ?? "",
       area: asset?.area ?? "",
       baReferenceNumber: asset?.ba_reference_number ?? "",
+      stock: asset?.stock ?? 1,
     },
   });
 
@@ -64,6 +66,7 @@ export const useAssetForm = ({
     formData.append("product", values.product);
     formData.append("area", values.area);
     formData.append("ba_reference_number", values.baReferenceNumber);
+    formData.append("stock", values.stock.toString());
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
@@ -163,6 +166,15 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
             </SelectItem>
           ))}
         </CustomFormField>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          inputType={InputType.NUMBER}
+          control={form.control}
+          name="stock"
+          label="Asset stock"
+          placeholder="10"
+          disabled={form.formState.isSubmitting}
+        />
         <CustomFormField
           fieldType={FormFieldType.SELECT}
           control={form.control}
