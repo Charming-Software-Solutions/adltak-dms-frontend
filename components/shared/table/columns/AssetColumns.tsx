@@ -43,6 +43,7 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       identifiera: true,
       product: true,
       type: true,
+      stock: true,
       status: true,
       area: true,
       created_at: true,
@@ -52,9 +53,11 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       ]),
     },
     mobile: {
+      thumbnail: true,
       name: true,
       identifiera: true,
       type: true,
+      stock: true,
       area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
@@ -257,6 +260,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     accessorFn: (row) => row.type.name,
     header: "Type",
   },
+  { accessorKey: "stock", header: "Stock" },
   {
     accessorKey: "status",
     header: "Status",

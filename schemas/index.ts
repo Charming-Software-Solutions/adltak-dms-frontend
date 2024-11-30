@@ -83,6 +83,7 @@ export const assetFormSchema = z.object({
   name: z.string().min(1, {
     message: "Name is required.",
   }),
+  stock: z.coerce.number().positive(),
   thumbnail: z.union([z.instanceof(File), z.string()]).optional(),
   code: z.string().min(1, {
     message: "Code is required.",
