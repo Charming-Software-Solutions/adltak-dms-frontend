@@ -317,7 +317,7 @@ const ProductClient = ({
                       theme: "os-theme-dark",
                     },
                   }}
-                  className="max-h-[33rem] pb-2 md:pb-0"
+                  className="max-h-[38.7rem]"
                 >
                   <ProductForm
                     form={form}
