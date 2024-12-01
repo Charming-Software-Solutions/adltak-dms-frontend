@@ -5,12 +5,13 @@ import CustomFormField, {
 } from "@/components/shared/CustomFormField";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
+import { FormModeEnum } from "@/enums";
 import {
   createClassification,
   updateClassification,
 } from "@/lib/actions/classification.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { ClassificationFormData, classificationFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Classification, ClassificationType } from "@/types/generics";
@@ -101,6 +102,7 @@ export const useClassificationForm = ({
       if (mode === "create") {
         form.reset();
       }
+      showSuccessMessage(mode as FormModeEnum, "classification");
       setOpen(false);
       router.refresh();
     }

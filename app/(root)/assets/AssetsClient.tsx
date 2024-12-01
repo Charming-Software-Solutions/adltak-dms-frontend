@@ -89,7 +89,6 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                       Reset
                     </Button>
                     <DialogFormButton
-                      text="Add Asset"
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpenDialog),
                       )}
@@ -97,7 +96,9 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                         !form.formState.isValid || form.formState.isSubmitting
                       }
                       loading={form.formState.isSubmitting}
-                    />
+                    >
+                      Add Asset
+                    </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>

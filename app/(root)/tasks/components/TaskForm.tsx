@@ -2,9 +2,10 @@
 
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import { Form } from "@/components/ui/form";
+import { FormModeEnum } from "@/enums";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { TaskFormData, taskFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Distribution } from "@/types/distribution";
@@ -63,6 +64,7 @@ export const useTaskForm = ({
       if (mode === "create") {
         form.reset();
       }
+      showSuccessMessage(mode as FormModeEnum, "task");
       setOpen(false);
       router.refresh();
     }

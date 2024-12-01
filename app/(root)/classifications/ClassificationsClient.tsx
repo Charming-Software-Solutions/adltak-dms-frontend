@@ -120,14 +120,16 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
                       Reset
                     </Button>
                     <DialogFormButton
-                      text="Add Classification"
+                      loading={form.formState.isSubmitting}
                       disabled={
                         !form.formState.isValid || form.formState.isSubmitting
                       }
                       onClick={form.handleSubmit((values) =>
                         onSubmit(values, setOpenDialog),
                       )}
-                    />
+                    >
+                      Add Classification
+                    </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
               </ResponsiveDialogContent>

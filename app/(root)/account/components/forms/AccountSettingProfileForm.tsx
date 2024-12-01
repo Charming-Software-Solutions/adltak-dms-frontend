@@ -29,7 +29,7 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
     resolver: zodResolver(updateProfileFormSchema),
     defaultValues: {
       name: employee.name,
-      profileImage: employee.profile_image,
+      profileImage: employee.profile_image ?? "",
     },
   });
 

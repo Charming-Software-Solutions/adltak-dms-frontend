@@ -78,13 +78,14 @@ const DistributionActionsCell = React.memo(
                 Reset
               </Button>
               <DialogFormButton
-                text="Save Changes"
                 onClick={form.handleSubmit((values) =>
                   onSubmit(values, setOpenEditDialog),
                 )}
                 disabled={form.formState.isSubmitting}
                 loading={form.formState.isSubmitting}
-              />
+              >
+                Save Changes
+              </DialogFormButton>
             </div>
           </ResponsiveDialogFooter>
         </EditDialog>

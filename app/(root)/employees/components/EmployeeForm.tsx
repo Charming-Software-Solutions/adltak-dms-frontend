@@ -10,7 +10,7 @@ import { USER_ROLES } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { createEmployee, updateEmployee } from "@/lib/actions/employee.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { EmployeeFormData, employeeFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Employee } from "@/types/user";
@@ -79,6 +79,7 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       if (mode === "create") {
         form.reset();
       }
+      showSuccessMessage(mode as FormModeEnum, "employee");
       setOpen(false);
       router.refresh();
     }

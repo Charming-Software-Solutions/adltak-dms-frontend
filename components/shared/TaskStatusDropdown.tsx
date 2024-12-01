@@ -14,11 +14,12 @@ import {
   TASK_STATUS_IMPORT,
 } from "@/constants";
 import { updateTaskStatus } from "@/lib/actions/task.actions";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { TaskStatus } from "@/types/task";
 import { useMutation } from "@tanstack/react-query";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { FormModeEnum } from "@/enums";
 
 type Props = {
   id: string;
@@ -32,7 +33,10 @@ const TaskStatusDropdown = ({ id, currentStatus, type }: Props) => {
   const { mutate } = useMutation({
     mutationKey: ["update-order-status"],
     mutationFn: updateTaskStatus,
-    onSuccess: () => router.refresh(),
+    onSuccess: () => {
+      showSuccessMessage(FormModeEnum.EDIT, "status");
+      router.refresh();
+    },
   });
 
   const statusEnum =
