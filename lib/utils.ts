@@ -1,7 +1,9 @@
+import { FormModeEnum } from "@/enums";
 import { ApiResponse, ErrorResponse } from "@/types/api";
 import { SelectItemType } from "@/types/primitives";
 import { Product, ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -222,4 +224,16 @@ export function convertRecordsToArray(
     label,
     value: key,
   }));
+}
+
+export function showSuccessMessage(mode: FormModeEnum, object: string) {
+  if (mode === FormModeEnum.CREATE) {
+    toast.success(`Successfully created ${object}.`, {
+      position: "top-center",
+    });
+  } else {
+    toast.success(`Successfully updated ${object}.`, {
+      position: "top-center",
+    });
+  }
 }
