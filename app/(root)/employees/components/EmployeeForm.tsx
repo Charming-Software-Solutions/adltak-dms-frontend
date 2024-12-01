@@ -7,7 +7,7 @@ import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { USER_ROLES } from "@/constants";
-import { FormModeEnum } from "@/enums";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { createEmployee, updateEmployee } from "@/lib/actions/employee.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
@@ -127,11 +127,13 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
           placeholder="Select role"
           disabled={form.formState.isSubmitting}
         >
-          {Object.keys(USER_ROLES).map((role, key) => (
-            <SelectItem key={key} value={role}>
-              {USER_ROLES[role as keyof typeof USER_ROLES]}
-            </SelectItem>
-          ))}
+          {Object.keys(USER_ROLES)
+            .filter((role) => role !== UserRoleEnum.ADMIN)
+            .map((role, key) => (
+              <SelectItem key={key} value={role}>
+                {USER_ROLES[role as keyof typeof USER_ROLES]}
+              </SelectItem>
+            ))}
         </CustomFormField>
       </div>
     </Form>
