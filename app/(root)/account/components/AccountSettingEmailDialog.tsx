@@ -44,13 +44,14 @@ const AccountSettingEmailDialog = ({ user }: { user: User }) => {
             Reset
           </Button>
           <DialogFormButton
-            text={"Save Changes"}
             onClick={form.handleSubmit((values) =>
               onSubmit(values, setOpenDialog),
             )}
             disabled={form.formState.isSubmitting}
             loading={form.formState.isSubmitting}
-          />
+          >
+            Save Changes
+          </DialogFormButton>
         </ResponsiveDialogFooter>
       </ResponsiveDialogContent>
     </ResponsiveDialog>

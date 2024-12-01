@@ -56,9 +56,12 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       thumbnail: true,
       name: true,
       identifiera: true,
+      product: true,
       type: true,
       stock: true,
+      status: true,
       area: true,
+      created_at: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
         UserRoleEnum.LOGISTICS_SPECIALIST,
@@ -108,13 +111,14 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
               Reset
             </Button>
             <DialogFormButton
-              text="Save Changes"
               onClick={form.handleSubmit((values) =>
                 onSubmit(values, setOpenDialog),
               )}
               disabled={form.formState.isSubmitting}
               loading={form.formState.isSubmitting}
-            />
+            >
+              Save Changes
+            </DialogFormButton>
           </div>
         </ResponsiveDialogFooter>
       </EditDialog>

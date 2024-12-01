@@ -7,9 +7,10 @@ import CustomFormField, {
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
+import { FormModeEnum } from "@/enums";
 import { createProduct, updateProduct } from "@/lib/actions/product.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { ProductFormData, productFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Brand, Category, Product, Type } from "@/types/product";
@@ -87,6 +88,7 @@ export const useProductForm = ({
         if (mode === "create") {
           form.reset();
         }
+        showSuccessMessage(mode as FormModeEnum, "product");
         setOpen(false);
         router.refresh();
       }
@@ -194,16 +196,14 @@ const ProductForm = ({ form, brands, categories, types, className }: Props) => {
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />
-        <div className="pb-1">
-          <CustomFormField
-            fieldType={FormFieldType.DATE}
-            control={form.control}
-            name="expiration"
-            label="Product Expiration"
-            placeholder="Select date"
-            disabled={form.formState.isSubmitting}
-          />
-        </div>
+        <CustomFormField
+          fieldType={FormFieldType.DATE}
+          control={form.control}
+          name="expiration"
+          label="Product Expiration"
+          placeholder="Select date"
+          disabled={form.formState.isSubmitting}
+        />
       </div>
     </Form>
   );

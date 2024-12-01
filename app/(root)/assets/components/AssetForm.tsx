@@ -9,9 +9,10 @@ import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { ASSET_STATUS } from "@/constants";
+import { FormModeEnum } from "@/enums";
 import { createAsset, updateAsset } from "@/lib/actions/asset.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { AssetFormData, assetFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Asset } from "@/types/asset";
@@ -85,6 +86,7 @@ export const useAssetForm = ({
       if (mode === "create") {
         form.reset();
       }
+      showSuccessMessage(mode as FormModeEnum, "asset");
       setOpen(false);
       router.refresh();
     }

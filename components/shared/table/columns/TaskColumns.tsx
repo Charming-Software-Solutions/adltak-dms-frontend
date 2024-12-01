@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { getDistributions } from "@/lib/actions/distribution.actions";
+import { getEmployees } from "@/lib/actions/employee.actions";
 import { deleteTask } from "@/lib/actions/task.actions";
 import { hasPermission } from "@/lib/auth";
 import { cn, formatDateTime } from "@/lib/utils";
@@ -21,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import DialogFormButton from "../../buttons/DialogFormButton";
 import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
@@ -28,9 +30,6 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { getEmployees } from "@/lib/actions/employee.actions";
-import DialogFormButton from "../../buttons/DialogFormButton";
-import { USER_ROLES } from "@/constants";
 
 export const visibleTaskColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -89,7 +88,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
         <div className="flex items-center space-x-2">
           {isDesktop && <PersonIcon className="size-4" />}
           <span>
-            {warehousePerson.user.role != USER_ROLES["WAREHOUSE_WORKER"]
+            {warehousePerson.user.role != UserRoleEnum.WAREHOUSE_WORKER
               ? "Unassigned"
               : warehousePerson.name}
           </span>
@@ -244,13 +243,14 @@ export const TaskColumns: ColumnDef<Task>[] = [
                   Reset
                 </Button>
                 <DialogFormButton
-                  text="Save Changes"
                   onClick={form.handleSubmit((values) =>
                     onSubmit(values, setOpenDialog),
                   )}
                   disabled={form.formState.isSubmitting}
                   loading={form.formState.isSubmitting}
-                />
+                >
+                  Save Changes
+                </DialogFormButton>
               </div>
             </ResponsiveDialogFooter>
           </EditDialog>

@@ -98,11 +98,11 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
               theme: "os-theme-dark",
             },
           }}
-          className="max-h-[33rem] pb-4 md:pb-0"
+          className="max-h-[38.7rem]"
         >
           <ProductForm
             form={form}
-            className="px-4 md:px-1"
+            className="px-4 md:px-1 pb-2"
             brands={data?.brands ?? []}
             categories={data?.categories ?? []}
             types={data?.productTypes ?? []}
@@ -118,13 +118,14 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
               Reset
             </Button>
             <DialogFormButton
-              text="Save Changes"
               onClick={form.handleSubmit((values) =>
                 onSubmit(values, setOpenDialog),
               )}
               disabled={!form.formState.isValid || form.formState.isSubmitting}
               loading={form.formState.isSubmitting}
-            />
+            >
+              Save Changes
+            </DialogFormButton>
           </div>
         </ResponsiveDialogFooter>
       </EditDialog>

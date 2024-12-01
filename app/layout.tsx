@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>{children}</body>
-      <Toaster richColors theme="light" toastOptions={{}} />
+      <Toaster richColors theme="light" toastOptions={{ duration: 1500 }} />
     </html>
   );
 }

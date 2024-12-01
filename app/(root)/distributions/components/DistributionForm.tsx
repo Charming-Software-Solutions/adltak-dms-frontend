@@ -12,7 +12,7 @@ import {
 } from "@/lib/actions/distribution.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { QuantityItem } from "@/lib/store";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { DistributionFormData, distributionFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Asset } from "@/types/asset";
@@ -108,6 +108,7 @@ export const useDistributionForm = ({
       if (mode === "create") {
         form.reset();
       }
+      showSuccessMessage(mode as FormModeEnum, "distribution");
       setOpen(false);
       router.refresh();
       clearItems?.();

@@ -120,6 +120,7 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
                       Reset
                     </Button>
                     <DialogFormButton
+                      loading={form.formState.isSubmitting}
                       disabled={
                         !form.formState.isValid || form.formState.isSubmitting
                       }
