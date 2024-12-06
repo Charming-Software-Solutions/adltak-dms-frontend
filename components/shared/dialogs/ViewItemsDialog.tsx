@@ -58,15 +58,25 @@ const ViewItemsDialog = ({ items }: Props) => {
                 className="max-h-[31rem] pb-4 md:pb-0"
               >
                 <div className="flex flex-col gap-2">
-                  {items.products.map((item) => (
-                    <ItemCard
-                      key={item.id}
-                      thumbnail={item.product.thumbnail}
-                      name={item.product.name}
-                      classification={item.product.category.name}
-                      quantity={item.quantity}
-                    />
-                  ))}
+                  {items.products.map((item, index) => {
+                    const nextProduct = items.products[index + 1];
+                    const currentProductName = item.product.name;
+                    const nextName = nextProduct?.product.name;
+                    return (
+                      <ItemCard
+                        key={item.id}
+                        thumbnail={item.product.thumbnail}
+                        name={
+                          currentProductName === nextName
+                            ? `${currentProductName} ${index + 1}`
+                            : currentProductName
+                        }
+                        classification={item.product.category.name}
+                        quantity={item.quantity}
+                        expiration={item.expiration}
+                      />
+                    );
+                  })}
                 </div>
               </OverlayScrollbarsComponent>
             </div>

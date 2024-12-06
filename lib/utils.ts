@@ -3,6 +3,7 @@ import { ApiResponse, ErrorResponse } from "@/types/api";
 import { SelectItemType } from "@/types/primitives";
 import { Product, ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
+import { format } from "date-fns";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
@@ -236,4 +237,8 @@ export function showSuccessMessage(mode: FormModeEnum, object: string) {
       position: "top-center",
     });
   }
+}
+
+export function formatExpiration(expiration: string): string {
+  return format(new Date(expiration), "ddMMMyyyy").toUpperCase();
 }

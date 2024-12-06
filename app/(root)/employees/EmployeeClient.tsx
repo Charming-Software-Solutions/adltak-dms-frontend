@@ -115,7 +115,7 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
                 <span className="hidden sm:inline">Create Employee</span>
               </Button>
             </ResponsiveDialogTrigger>
-            <ResponsiveDialogContent>
+            <ResponsiveDialogContent className="max-w-xl">
               <ResponsiveDialogHeader>
                 <ResponsiveDialogTitle>Create Employee</ResponsiveDialogTitle>
               </ResponsiveDialogHeader>

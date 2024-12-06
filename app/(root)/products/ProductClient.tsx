@@ -321,10 +321,11 @@ const ProductClient = ({
                 >
                   <ProductForm
                     form={form}
-                    className="px-4 md:px-1"
+                    className="px-4 md:px-1 pb-2"
                     brands={brands}
                     categories={categories}
                     types={types}
+                    mode="create"
                   />
                 </OverlayScrollbarsComponent>
                 <ResponsiveDialogFooter className="px-1">
@@ -384,32 +385,7 @@ const ProductClient = ({
           )}
         </div>
       </Header>
-      <main className="main-container">
-        <Tabs defaultValue="all">
-          <TabsList className="min-w-[20rem]">
-            <TabsTrigger value="all" className="flex-grow">
-              All
-            </TabsTrigger>
-            <TabsTrigger value="fresh" className="flex-grow">
-              Fresh
-            </TabsTrigger>
-            <TabsTrigger value="near_expiration" className="flex-grow">
-              Near Expiration
-            </TabsTrigger>
-            <TabsTrigger value="expired" className="flex-grow">
-              Expired
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="all">{renderProductTable("all")}</TabsContent>
-          <TabsContent value="fresh">{renderProductTable("fresh")}</TabsContent>
-          <TabsContent value="near_expiration">
-            {renderProductTable("near_expiration")}
-          </TabsContent>
-          <TabsContent value="expired">
-            {renderProductTable("expired")}
-          </TabsContent>
-        </Tabs>
-      </main>
+      <main className="main-container">{renderProductTable("all")}</main>
     </React.Fragment>
   );
 };
