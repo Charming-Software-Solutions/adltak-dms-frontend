@@ -26,11 +26,13 @@ export interface ICreateDistribution {
   products: {
     product: string;
     quantity: number;
+    expiration: string;
   }[];
   assets?: {
     asset: string;
     quantity: number;
   }[];
+  ba_reference_number: string;
   type: string;
   status: string;
   client: string;

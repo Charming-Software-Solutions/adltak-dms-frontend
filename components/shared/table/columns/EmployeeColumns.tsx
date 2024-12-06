@@ -52,6 +52,7 @@ const EmployeeActionsCell = React.memo(
           title="Edit Employee"
           open={openDialog}
           setOpen={setOpenDialog}
+          className="max-w-xl"
         >
           <EmployeeForm
             className="px-1"
@@ -112,6 +113,11 @@ export const EmployeeColumns: ColumnDef<Employee>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => {
+      return (
+        <span>{`${row.original.first_name} ${row.original.last_name}`}</span>
+      );
+    },
   },
   {
     accessorKey: "role",

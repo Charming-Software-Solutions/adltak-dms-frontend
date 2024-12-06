@@ -4,6 +4,7 @@ import {
   UserRoleEnum,
   TaskStatusExportEnum,
   TaskStatusImportEnum,
+  DistributionTypeEnum,
 } from "@/enums";
 import { SelectItemType } from "@/types/primitives";
 
@@ -25,11 +26,11 @@ export const userRoles: SelectItemType[] = [
 ];
 export const distributionTypes: SelectItemType[] = [
   {
-    label: "Import",
+    label: "Incoming",
     value: "IMPORT",
   },
   {
-    label: "Export",
+    label: "Outgoing",
     value: "EXPORT",
   },
 ];
@@ -123,4 +124,9 @@ export const USER_ROLES: Record<UserRoleEnum, string> = {
   [UserRoleEnum.LOGISTICS_SPECIALIST]: "Logistics Team Member",
   [UserRoleEnum.WAREHOUSE_WORKER]: "Warehouse Personnel",
   [UserRoleEnum.PROJECT_HANDLER]: "Project Manager",
+} as const;
+
+export const DISTRIBUTION_TYPES: Record<DistributionTypeEnum, string> = {
+  [DistributionTypeEnum.IMPORT]: "Incoming",
+  [DistributionTypeEnum.EXPORT]: "Outgoing",
 } as const;
