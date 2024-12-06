@@ -23,12 +23,16 @@ import { DataTableColumnHeader } from "../data-table-column-header";
 import React from "react";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
-import { DISTRIBUTION_STATUSES } from "@/constants";
+import {
+  DISTRIBUTION_STATUSES,
+  DISTRIBUTION_TYPES,
+  distributionTypes,
+} from "@/constants";
 import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
   desktop: {
-    dist_id: true,
+    ba_reference_number: true,
     distribution_type: true,
     product_count: false,
     asset_count: false,
@@ -43,7 +47,7 @@ export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
     ]),
   },
   mobile: {
-    dist_id: true,
+    ba_reference_number: true,
     logistics_person: true,
     actions: hasPermission(userRole, [
       UserRoleEnum.ADMIN,
@@ -63,7 +67,7 @@ const DistributionActionsCell = React.memo(
     return (
       <div className="flex items-center gap-2">
         <EditDialog
-          title="Edit Distribution"
+          title="Edit Allocation"
           open={openEditDialog}
           setOpen={setOpenEditDialog}
         >
@@ -101,10 +105,10 @@ const DistributionActionsCell = React.memo(
 
 export const DistributionColumns: ColumnDef<Distribution>[] = [
   {
-    accessorKey: "dist_id",
-    header: "Distribuition ID",
+    accessorKey: "ba_reference_number",
+    header: "BA Ref Number",
     cell: ({ row }) => {
-      return <span>#{row.original.dist_id}</span>;
+      return <span>{row.original.ba_reference_number}</span>;
     },
   },
   {
@@ -129,7 +133,9 @@ export const DistributionColumns: ColumnDef<Distribution>[] = [
       return (
         <div className="flex items-center space-x-1">
           <TypeIcon type={distributionType} className="mr-1" />
-          <span className="font-semibold">{distributionType}</span>
+          <span className="font-semibold">
+            {DISTRIBUTION_TYPES[distributionType]}
+          </span>
         </div>
       );
     },

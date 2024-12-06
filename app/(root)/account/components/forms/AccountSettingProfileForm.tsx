@@ -5,9 +5,10 @@ import CustomFormField, {
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
+import { FormModeEnum } from "@/enums";
 import { updateEmployeeProfile } from "@/lib/actions/employee.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { UpdateProfileFormData, updateProfileFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Employee } from "@/types/user";
@@ -28,7 +29,8 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
   const form = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateProfileFormSchema),
     defaultValues: {
-      name: employee.name,
+      firstName: employee.first_name,
+      lastName: employee.last_name,
       profileImage: employee.profile_image ?? "",
     },
   });
@@ -38,7 +40,8 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
     setOpen: (value: boolean) => void,
   ) => {
     const formData = new FormData();
-    formData.append("name", values.name);
+    formData.append("first_name", values.firstName);
+    formData.append("last_name", values.lastName);
     if (values.profileImage instanceof File) {
       formData.append("profile_image", values.profileImage);
     }
@@ -50,14 +53,9 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
         position: "top-center",
       });
     } else {
-      if (result.data) {
-        toast.success("Profile successfully updated!", {
-          position: "top-center",
-        });
-        setOpen(false);
-        form.reset(result.data);
-        router.refresh();
-      }
+      showSuccessMessage(FormModeEnum.EDIT, "profile");
+      setOpen(false);
+      router.refresh();
     }
   };
   return { form, onSubmit };
@@ -81,9 +79,17 @@ const AccountSettingProfileForm = ({
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}
-          name="name"
-          label="Full Name"
-          placeholder="example@email.com"
+          name="firstName"
+          label="First Name"
+          placeholder="John"
+          disabled={form.formState.isSubmitting}
+        />
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="lastName"
+          label="Last Name"
+          placeholder="Doe"
           disabled={form.formState.isSubmitting}
         />
       </div>

@@ -40,7 +40,8 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
     desktop: {
       thumbnail: true,
       name: true,
-      identifiera: true,
+      code: true,
+      identifiera: false,
       product: true,
       type: true,
       stock: true,
@@ -55,7 +56,8 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
     mobile: {
       thumbnail: true,
       name: true,
-      identifiera: true,
+      code: true,
+      identifiera: false,
       product: true,
       type: true,
       stock: true,
@@ -162,6 +164,10 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     header: "Name",
   },
   {
+    accessorKey: "code",
+    header: "Code",
+  },
+  {
     accessorKey: "product",
     header: "Product",
     cell: ({ row }) => {
@@ -264,7 +270,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     accessorFn: (row) => row.type.name,
     header: "Type",
   },
-  { accessorKey: "stock", header: "Stock" },
+  { accessorKey: "stock", header: "Total QTY" },
   {
     accessorKey: "status",
     header: "Status",

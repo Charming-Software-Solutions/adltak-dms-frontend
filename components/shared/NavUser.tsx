@@ -45,7 +45,8 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg bg-card border text-card-foreground shadow-sm py-8"
             >
               <NavUserProfile
-                title={employee.name}
+                firstName={employee.first_name}
+                lastName={employee.last_name}
                 subtitle={USER_ROLES[user.role]}
                 alt={"profile-image"}
                 avatarImage={employee.profile_image}
@@ -61,7 +62,8 @@ export function NavUser({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <NavUserProfile
-                title={employee.name}
+                firstName={employee.first_name}
+                lastName={employee.last_name}
                 subtitle={user.email}
                 alt={"profile-image"}
                 avatarImage={employee.profile_image}

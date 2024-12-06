@@ -31,7 +31,8 @@ export type Employee = {
   id: string;
   created_at: string;
   updated_at: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   user: User;
   profile_image?: string;
 };

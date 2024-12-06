@@ -38,7 +38,8 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     resolver: zodResolver(employeeFormSchema),
     defaultValues: {
       email: employee?.user.email ?? "",
-      name: employee?.name ?? "",
+      firstName: employee?.first_name ?? "",
+      lastName: employee?.last_name ?? "",
       role: employee?.user.role ?? "",
       profile_image: employee?.profile_image ?? undefined,
     },
@@ -50,7 +51,8 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
   ) => {
     const formData = new FormData();
 
-    formData.append("name", values.name);
+    formData.append("first_name", values.firstName);
+    formData.append("last_name", values.lastName);
 
     const userData: { email?: string; role: string } = {
       role: values.role,
@@ -109,14 +111,28 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
                 mode === FormModeEnum.EDIT || form.formState.isSubmitting
               }
             />
-            <CustomFormField
-              fieldType={FormFieldType.INPUT}
-              control={form.control}
-              name="name"
-              label="Name"
-              placeholder="John Doe"
-              disabled={form.formState.isSubmitting}
-            />
+            <div className="flex space-x-2 items-center w-full">
+              <div className="flex-grow w-full">
+                <CustomFormField
+                  fieldType={FormFieldType.INPUT}
+                  control={form.control}
+                  name="firstName"
+                  label="First Name"
+                  placeholder="John"
+                  disabled={form.formState.isSubmitting}
+                />
+              </div>
+              <div className="flex-grow w-full">
+                <CustomFormField
+                  fieldType={FormFieldType.INPUT}
+                  control={form.control}
+                  name="lastName"
+                  label="Last Name"
+                  placeholder="Doe"
+                  disabled={form.formState.isSubmitting}
+                />
+              </div>
+            </div>
           </div>
         </div>
         <CustomFormField

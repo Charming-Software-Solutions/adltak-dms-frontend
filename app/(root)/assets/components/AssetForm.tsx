@@ -50,7 +50,6 @@ export const useAssetForm = ({
       thumbnail: asset?.thumbnail ?? undefined,
       product: asset?.product?.id ?? "",
       area: asset?.area ?? "",
-      baReferenceNumber: asset?.ba_reference_number ?? "",
       stock: asset?.stock ?? 1,
     },
   });
@@ -66,7 +65,6 @@ export const useAssetForm = ({
     formData.append("status", values.status);
     formData.append("product", values.product);
     formData.append("area", values.area);
-    formData.append("ba_reference_number", values.baReferenceNumber);
     formData.append("stock", values.stock.toString());
 
     if (values.thumbnail instanceof File) {

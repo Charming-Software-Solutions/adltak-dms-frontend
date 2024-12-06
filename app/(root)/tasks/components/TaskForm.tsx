@@ -49,8 +49,6 @@ export const useTaskForm = ({
     formData.append("warehouse_person", values.warehousePerson);
     formData.append("distribution", values.distribution);
 
-    console.log(values);
-
     const result: ApiResponse<Task> =
       mode === "create"
         ? await createTask(formData)
@@ -83,7 +81,7 @@ const TaskForm = ({
       <div className={cn("flex flex-col gap-4 px-1", className)}>
         <ComboBoxFormField
           items={warehousePersons.map((person) => ({
-            label: person.name,
+            label: `${person.first_name} ${person.last_name}`,
             value: person.id,
           }))}
           control={form.control}

@@ -9,13 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { imagePlaceholder } from "@/constants";
-import { cn } from "@/lib/utils";
+import { cn, formatExpiration } from "@/lib/utils";
 import { DistributionItemFormData, distributionItemSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import { Trash } from "lucide-react";
 import Image from "next/image";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -37,20 +39,23 @@ function createDistributionItem<T extends { id: string }>(
   item: T,
   quantity: number,
   key: string,
+  expiration?: string,
 ): DistributionBase<T> {
   return {
     id: item.id,
     [key]: item,
     quantity,
+    ...(expiration && { expiration }),
   };
 }
 
-const useDistributionItemForm = () => {
+const useDistributionItemForm = (type: "product" | "asset") => {
   return useForm<DistributionItemFormData>({
     resolver: zodResolver(distributionItemSchema),
     defaultValues: {
       item: "",
       quantity: 1,
+      type,
     },
   });
 };
@@ -61,7 +66,7 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
   store,
   className,
 }: Props<T>) => {
-  const form = useDistributionItemForm();
+  const form = useDistributionItemForm(type);
   const { addItem, clearItems, removeItem, updateQuantity } = store();
 
   const findItemById = (id: string): T | undefined => {
@@ -80,7 +85,9 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
         item,
         values.quantity,
         type,
+        values.expiration?.toISOString() || undefined,
       );
+      console.log(distributionItem);
       addItem(distributionItem);
     }
   };
@@ -114,6 +121,16 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />
+        {type === "product" && (
+          <CustomFormField
+            fieldType={FormFieldType.DATE}
+            control={form.control}
+            name="expiration"
+            label="Expiration"
+            placeholder="Select date"
+            disabled={form.formState.isSubmitting}
+          />
+        )}
         <div className="flex w-full gap-2">
           <Button
             variant={"outline"}
@@ -149,12 +166,16 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
               type === "product"
                 ? storeItem.item.product.brand.name
                 : storeItem.item.asset.type.name;
+            const productExpiration =
+              type === "product"
+                ? formatExpiration(storeItem.item.expiration)
+                : undefined;
             return (
               <Card
                 className="flex items-center justify-between px-3 py-2"
                 key={storeItem.id}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <Image
                     src={itemThumbnail || imagePlaceholder}
                     alt={`${type}-thumbnail`}
@@ -163,13 +184,24 @@ const DistributionAddItem = <T extends { id: string; name: string }>({
                     width={100}
                     height={100}
                   />
-                  <div className="grid flex-1 text-left text-sm leading-tight">
+                  <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
                     <span className="truncate max-w-[12rem] font-semibold">
                       {itemName}
                     </span>
-                    <span className="truncate text-xs">
-                      {itemClassification}
-                    </span>
+                    <div className="flex space-x-2 items-center">
+                      <span className="truncate text-xs">
+                        {itemClassification}
+                      </span>
+                      {productExpiration && (
+                        <React.Fragment>
+                          <Separator orientation="vertical" className="h-2" />
+                          <span className="truncate text-xs">
+                            <strong>EXP: </strong>
+                            {productExpiration}
+                          </span>
+                        </React.Fragment>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2">

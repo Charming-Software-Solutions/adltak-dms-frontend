@@ -36,7 +36,7 @@ const NAV_LINKS: NavLink[] = [
     isActive: true,
   },
   {
-    label: "Distributions",
+    label: "Allocations",
     icon: <ArrowDownUp className="size-4" />,
     route: "/distributions",
   },

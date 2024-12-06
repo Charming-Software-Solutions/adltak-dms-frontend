@@ -27,14 +27,8 @@ export const productFormSchema = z.object({
   //   message: "Status is required.",
   // }),
   stock: z.coerce.number().positive(),
-  expiration: z.coerce.date({
-    required_error: "A date of expiration is required.",
-  }),
   area: z.string().min(1, {
     message: "Area is required.",
-  }),
-  baReferenceNumber: z.string().min(1, {
-    message: "BA reference number is required.",
   }),
 });
 
@@ -42,8 +36,11 @@ export const employeeFormSchema = z.object({
   email: z.string().min(2, {
     message: "Email is required.",
   }),
-  name: z.string().min(1, {
-    message: "Name is required.",
+  firstName: z.string().min(1, {
+    message: "First name is required.",
+  }),
+  lastName: z.string().min(1, {
+    message: "Last name is required.",
   }),
   role: z.string().min(2, {
     message: "User role is required.",
@@ -51,14 +48,26 @@ export const employeeFormSchema = z.object({
   profile_image: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
-export const distributionItemSchema = z.object({
-  item: z.string().uuid({
-    message: "Item is required.",
-  }),
-  quantity: z.coerce.number().positive(),
-});
+export const distributionItemSchema = z
+  .object({
+    item: z.string().uuid({
+      message: "Item is required.",
+    }),
+    quantity: z.coerce.number().positive({
+      message: "Quantity must be a positive number.",
+    }),
+    expiration: z.coerce.date().optional(),
+    type: z.enum(["product", "asset"]),
+  })
+  .refine((data) => data.type !== "product" || !!data.expiration, {
+    message: "Expiration date is required for products.",
+    path: ["expiration"],
+  });
 
 export const distributionFormSchema = z.object({
+  baReferenceNumber: z.string().min(1, {
+    message: "BA reference number is required.",
+  }),
   type: z.string().min(1, {
     message: "Product type is required.",
   }),
@@ -100,9 +109,6 @@ export const assetFormSchema = z.object({
   area: z.string().min(1, {
     message: "Area is required.",
   }),
-  baReferenceNumber: z.string().min(1, {
-    message: "BA reference number is required.",
-  }),
 });
 
 export const classificationFormSchema = z.object({
@@ -143,7 +149,8 @@ export const changePasswordFormSchema = z
   });
 
 export const updateProfileFormSchema = z.object({
-  name: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
   profileImage: z.union([z.instanceof(File), z.string()]).optional(),
 });
 

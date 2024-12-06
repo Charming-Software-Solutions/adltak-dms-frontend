@@ -3,7 +3,7 @@ import CustomFormField, {
 } from "@/components/shared/CustomFormField";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
-import { DISTRIBUTION_STATUSES } from "@/constants";
+import { DISTRIBUTION_STATUSES, distributionTypes } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { ICreateDistribution } from "@/interfaces";
 import {
@@ -17,7 +17,6 @@ import { DistributionFormData, distributionFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Asset } from "@/types/asset";
 import { Distribution, DistributionItem } from "@/types/distribution";
-import { SelectItemType } from "@/types/primitives";
 import { Product } from "@/types/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -30,17 +29,6 @@ type Props = {
   mode?: FormModeEnum;
   className?: string;
 };
-
-const distributionTypes: SelectItemType[] = [
-  {
-    label: "Import",
-    value: "IMPORT",
-  },
-  {
-    label: "Export",
-    value: "EXPORT",
-  },
-];
 
 export const useDistributionForm = ({
   distribution = undefined,
@@ -56,6 +44,7 @@ export const useDistributionForm = ({
   const form = useForm<DistributionFormData>({
     resolver: zodResolver(distributionFormSchema),
     defaultValues: {
+      baReferenceNumber: distribution?.ba_reference_number ?? "",
       client: distribution?.client ?? "",
       type: distribution?.type ?? "",
       status: distribution?.status ?? "",
@@ -77,14 +66,16 @@ export const useDistributionForm = ({
     if (mode === "create" && items && items.products.length > 0) {
       distributionCreate = {
         employee: employee!,
-        products: items.products.map((product) => ({
-          product: product.id,
-          quantity: product.quantity,
+        products: items.products.map((object) => ({
+          product: object.item.id,
+          quantity: object.quantity,
+          expiration: object.expiration!,
         })),
         assets: items.assets?.map((asset) => ({
           asset: asset.id,
           quantity: asset.quantity,
         })),
+        ba_reference_number: values.baReferenceNumber,
         type: values.type,
         status: values.status,
         client: values.client,
@@ -126,12 +117,20 @@ const DistributionForm = ({
   return (
     <Form {...form}>
       <div className={cn("space-y-2 px-1", className)}>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="baReferenceNumber"
+          label="BA Reference Number"
+          placeholder="BA1234"
+          disabled={form.formState.isSubmitting}
+        />
         {mode === FormModeEnum.CREATE && (
           <CustomFormField
             fieldType={FormFieldType.SELECT}
             control={form.control}
             name="type"
-            label="Distribution Type"
+            label="Allocation Type"
             placeholder="Select Type"
             disabled={form.formState.isSubmitting}
           >
