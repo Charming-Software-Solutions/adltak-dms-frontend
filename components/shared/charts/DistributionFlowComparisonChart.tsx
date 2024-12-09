@@ -1,6 +1,6 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 
 import {
   Card,
@@ -19,12 +19,15 @@ import { DistributionFlowComparison } from "@/types/metrics";
 import React, { useState } from "react";
 
 const chartConfig = {
+  allocations: {
+    label: "Total Allocations",
+  },
   export: {
-    label: "Export",
+    label: "Outgoing",
     color: "hsl(var(--chart-1))",
   },
   import: {
-    label: "Import",
+    label: "Incoming",
     color: "hsl(var(--chart-3))",
   },
 } satisfies ChartConfig;
@@ -43,15 +46,17 @@ const DistributionFlowComparisonChart = ({
       export: data.reduce((acc, curr) => acc + curr.export, 0),
       import: data.reduce((acc, curr) => acc + curr.import, 0),
     }),
-    [],
+    [data],
   );
 
   return (
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>Distribution Flow Comparison</CardTitle>
-          <CardDescription>Monthly flow of exports and import</CardDescription>
+          <CardTitle>Allocation Flow Comparison</CardTitle>
+          <CardDescription>
+            Daily flow of outgoing and incoming allocations
+          </CardDescription>
         </div>
         <div className="flex">
           {["export", "import"].map((key) => {
@@ -85,6 +90,7 @@ const DistributionFlowComparisonChart = ({
             margin={{
               left: 12,
               right: 12,
+              top: 40,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -106,7 +112,7 @@ const DistributionFlowComparisonChart = ({
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
-                  nameKey="views"
+                  nameKey="allocations"
                   labelFormatter={(value) => {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
@@ -117,7 +123,14 @@ const DistributionFlowComparisonChart = ({
                 />
               }
             />
-            <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
+            <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`}>
+              <LabelList
+                dataKey={activeChart}
+                position="top"
+                formatter={(value: number) => value.toLocaleString()}
+                style={{ fill: "var(--foreground)", fontSize: "12px" }}
+              />
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>
