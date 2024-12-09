@@ -187,7 +187,7 @@ const ProductForm = ({
           inputType={InputType.NUMBER}
           control={form.control}
           name="stock"
-          label="Product stock"
+          label="Product Total Quantity"
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />
