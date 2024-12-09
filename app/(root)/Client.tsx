@@ -71,7 +71,7 @@ const HomeClient = ({
           <MetricCard
             title={"Products about to expire count"}
             value={metrics.productsAboutToExpireCount.toString()}
-            subtitle={"Total number of products xxpiring in 1 month"}
+            subtitle={"Total number of products expiring in 1 month"}
             icon={<TriangleAlert className="size-4" />}
           />
           <MetricCard
