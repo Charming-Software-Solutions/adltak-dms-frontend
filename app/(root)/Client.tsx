@@ -54,61 +54,63 @@ const HomeClient = ({
   return (
     <React.Fragment>
       <Header>{null}</Header>
-      <main className="flex flex-1 flex-col p-4 gap-4 lg:px-6">
-        <div className="grid auto-rows-min gap-4 md:grid-cols-4">
+      <main className="flex flex-1 flex-col p-4 lg:px-6">
+        <div className="grid auto-rows-min gap-6 md:grid-cols-4 pb-2">
           <MetricCard
-            title={"Total Product Stock"}
-            value={metrics.totalItemStock.toString()}
-            subtitle={"Total stock of products"}
-            icon={<Package className="size-4" />}
-          />
-          <MetricCard
-            title={"Monthly Distribution Flow"}
+            title={"Monthly distribution count"}
             value={metrics.monthlyDistributionFlow.toString()}
-            subtitle={"Distributions per month"}
+            subtitle={"Total distributions per month"}
             icon={<ArrowUpDown className="size-4" />}
           />
           <MetricCard
-            title={"Remaining Tasks"}
+            title={"Remaining tasks count"}
             value={metrics.remainingTaskCount.toString()}
-            subtitle={"Overall remaining tasks"}
+            subtitle={"Total remaining tasks"}
             icon={<ClipboardCheck className="size-4" />}
           />
           <MetricCard
-            title={"Products about to expire"}
+            title={"Products about to expire count"}
             value={metrics.productsAboutToExpireCount.toString()}
-            subtitle={"Expiring in 1 month"}
+            subtitle={"Total number of products xxpiring in 1 month"}
+            icon={<TriangleAlert className="size-4" />}
+          />
+          <MetricCard
+            title={"Products expired count"}
+            value={metrics.productsAboutToExpireCount.toString()}
+            subtitle={"Total number expired products"}
             icon={<TriangleAlert className="size-4" />}
           />
           <div className="flex items-center gap-2"></div>
         </div>
-        <DistributionFlowComparisonChart data={distributionFlowComparison} />
-        <Card className="min-h-[100vh] flex-1 rounded-xl overflow-auto md:min-h-min">
-          <CardHeader className="flex flex-row justify-between items-start">
-            <div className="space-y-2">
-              <CardTitle>Recent Distributions</CardTitle>
-              <CardDescription>Latest distributions</CardDescription>
-            </div>
-            <Button>
-              <Link href={"/distributions"}>View All</Link>
-              <ExternalLinkIcon className="size-4 ml-2" />
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {isMounted ? (
-              <DataTable
-                columns={DistributionColumns}
-                data={distributions.slice(0, 5)}
-                showPagination={false}
-                visibleColumns={
-                  isDesktop
-                    ? visibleDistributionColumns(user.role).desktop
-                    : visibleDistributionColumns(user.role).mobile
-                }
-              />
-            ) : null}
-          </CardContent>
-        </Card>
+        <div className="flex flex-1 flex-col gap-8">
+          <DistributionFlowComparisonChart data={distributionFlowComparison} />
+          <Card className="min-h-[100vh] flex-1 rounded-xl overflow-auto md:min-h-min pb-10">
+            <CardHeader className="flex flex-row justify-between items-start">
+              <div className="space-y-2">
+                <CardTitle>Recent Allocations</CardTitle>
+                <CardDescription>Latest Allocations</CardDescription>
+              </div>
+              <Button>
+                <Link href={"/distributions"}>View All</Link>
+                <ExternalLinkIcon className="size-4 ml-2" />
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {isMounted ? (
+                <DataTable
+                  columns={DistributionColumns}
+                  data={distributions.slice(0, 5)}
+                  showPagination={false}
+                  visibleColumns={
+                    isDesktop
+                      ? visibleDistributionColumns(user.role).desktop
+                      : visibleDistributionColumns(user.role).mobile
+                  }
+                />
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </React.Fragment>
   );
