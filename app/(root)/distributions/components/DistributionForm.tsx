@@ -81,6 +81,10 @@ export const useDistributionForm = ({
         client: values.client,
       };
     } else {
+      distributionUpdate.append(
+        "ba_reference_number",
+        values.baReferenceNumber,
+      );
       distributionUpdate.append("type", values.type);
       distributionUpdate.append("status", values.status);
       distributionUpdate.append("client", values.client);
