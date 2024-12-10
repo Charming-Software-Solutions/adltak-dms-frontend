@@ -1,5 +1,6 @@
 "use client";
 
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 import FilterBadge from "@/components/shared/filter/FilterBadge";
 import FilterDialog from "@/components/shared/filter/FilterDialog";
 import FilterSelect from "@/components/shared/filter/FilterSelect";
@@ -12,6 +13,10 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
+import {
+  AllocationProductColumns,
+  visibleAllocationProductColumns,
+} from "@/components/shared/table/columns/AllocationProductColumns";
 import {
   ProductColumns,
   visibleProductColumns,
@@ -32,6 +37,7 @@ import {
   formatFilterValue,
   generateProductSKU,
 } from "@/lib/utils";
+import { DistributionProduct } from "@/types/distribution";
 import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
 import { UserSession } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
@@ -42,12 +48,6 @@ import { Separator } from "react-aria-components";
 import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import ProductForm, { useProductForm } from "./components/ProductForm";
-import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
-import { DistributionProduct } from "@/types/distribution";
-import {
-  AllocationProductColumns,
-  visibleAllocationProductColumns,
-} from "@/components/shared/table/columns/AllocationProductColumns";
 
 type Props = {
   user: UserSession;
@@ -177,24 +177,26 @@ const ProductClient = ({
                 : visibleProductColumns(user.role).mobile
             }
             searchField={{ column: "name", placeholder: "Search product..." }}
+            filterOnBottom={
+              <div className="flex items-start gap-2 flex-wrap w-full flex-grow">
+                {Object.entries(productFilters).map(([key, value]) => {
+                  if (key !== "expiration" && value) {
+                    return (
+                      <FilterBadge
+                        key={key}
+                        label={key.charAt(0).toUpperCase() + key.slice(1)}
+                        value={formatFilterValue(value.toString())}
+                        onRemove={() => {
+                          setProductFilters({ [key]: "" });
+                        }}
+                      />
+                    );
+                  }
+                })}
+              </div>
+            }
             filters={
-              <div className="flex gap-2">
-                <div className="flex items-center gap-2">
-                  {Object.entries(productFilters).map(([key, value]) => {
-                    if (key !== "expiration" && value) {
-                      return (
-                        <FilterBadge
-                          key={key}
-                          label={key.charAt(0).toUpperCase() + key.slice(1)}
-                          value={formatFilterValue(value.toString())}
-                          onRemove={() => {
-                            setProductFilters({ [key]: "" });
-                          }}
-                        />
-                      );
-                    }
-                  })}
-                </div>
+              <div className="flex ml-2 gap-2">
                 <FilterDialog
                   open={openFilterDialog}
                   setOpen={setOpenFilterDialog}
@@ -268,6 +270,19 @@ const ProductClient = ({
                 </FilterDialog>
               </div>
             }
+            tabsList={
+              <TabsList className="min-w-[20rem]">
+                <TabsTrigger value="all" className="flex-grow">
+                  All
+                </TabsTrigger>
+                <TabsTrigger value="near_expiration" className="flex-grow">
+                  Near Expiration
+                </TabsTrigger>
+                <TabsTrigger value="expired" className="flex-grow">
+                  Expired
+                </TabsTrigger>
+              </TabsList>
+            }
           />
         );
       case "near_expiration":
@@ -284,6 +299,19 @@ const ProductClient = ({
               column: "ba_reference_number",
               placeholder: "Search BA ref number...",
             }}
+            tabsList={
+              <TabsList className="min-w-[20rem]">
+                <TabsTrigger value="all" className="flex-grow">
+                  All
+                </TabsTrigger>
+                <TabsTrigger value="near_expiration" className="flex-grow">
+                  Near Expiration
+                </TabsTrigger>
+                <TabsTrigger value="expired" className="flex-grow">
+                  Expired
+                </TabsTrigger>
+              </TabsList>
+            }
           />
         );
 
@@ -301,6 +329,19 @@ const ProductClient = ({
               column: "ba_reference_number",
               placeholder: "Search BA ref number...",
             }}
+            tabsList={
+              <TabsList className="min-w-[20rem]">
+                <TabsTrigger value="all" className="flex-grow">
+                  All
+                </TabsTrigger>
+                <TabsTrigger value="near_expiration" className="flex-grow">
+                  Near Expiration
+                </TabsTrigger>
+                <TabsTrigger value="expired" className="flex-grow">
+                  Expired
+                </TabsTrigger>
+              </TabsList>
+            }
           />
         );
       default:
@@ -419,17 +460,6 @@ const ProductClient = ({
       </Header>
       <main className="main-container">
         <Tabs defaultValue="all">
-          <TabsList className="min-w-[20rem]">
-            <TabsTrigger value="all" className="flex-grow">
-              All
-            </TabsTrigger>
-            <TabsTrigger value="near_expiration" className="flex-grow">
-              Near Expiration
-            </TabsTrigger>
-            <TabsTrigger value="expired" className="flex-grow">
-              Expired
-            </TabsTrigger>
-          </TabsList>
           <TabsContent value="all">
             {renderAllocationProductTable("all")}
           </TabsContent>
