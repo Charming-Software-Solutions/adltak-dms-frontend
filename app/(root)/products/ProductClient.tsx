@@ -43,10 +43,16 @@ import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import ProductForm, { useProductForm } from "./components/ProductForm";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
+import { DistributionProduct } from "@/types/distribution";
+import {
+  AllocationProductColumns,
+  visibleAllocationProductColumns,
+} from "@/components/shared/table/columns/AllocationProductColumns";
 
 type Props = {
   user: UserSession;
   products: Product[];
+  allocationProducts: DistributionProduct[];
   brands: Brand[];
   categories: Category[];
   types: Type[];
@@ -62,10 +68,12 @@ type AppliedFilters = {
 const ProductClient = ({
   user,
   products,
+  allocationProducts,
   brands,
   categories,
   types,
 }: Props) => {
+  console.log(allocationProducts);
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
@@ -148,132 +156,156 @@ const ProductClient = ({
     });
   };
 
-  const renderProductTable = (
-    condition: "all" | "fresh" | "near_expiration" | "expired",
+  const renderAllocationProductTable = (
+    condition: "all" | "near_expiration" | "expired",
   ) => {
     if (!isMounted) return null;
 
     const data = hasActiveFilters() ? getFilteredProducts() : products;
 
-    const categorizedProducts = filterProductsByExpiration(data);
-
-    let filteredProducts: Product[] = [];
+    const categorizedProducts = filterProductsByExpiration(allocationProducts);
 
     switch (condition) {
       case "all":
-        filteredProducts = data;
-        break;
-      case "fresh":
-        filteredProducts = categorizedProducts.fresh;
-        break;
-      case "near_expiration":
-        filteredProducts = categorizedProducts.nearExpiration;
-        break;
-      case "expired":
-        filteredProducts = categorizedProducts.expired;
-        break;
-    }
-
-    return (
-      <DataTable
-        columns={ProductColumns}
-        data={filteredProducts}
-        visibleColumns={
-          isDesktop
-            ? visibleProductColumns(user.role).desktop
-            : visibleProductColumns(user.role).mobile
-        }
-        searchField={{ column: "name", placeholder: "Search product..." }}
-        filters={
-          <div className="flex gap-2">
-            <div className="flex items-center gap-2">
-              {Object.entries(productFilters).map(([key, value]) => {
-                if (key !== "expiration" && value) {
-                  return (
-                    <FilterBadge
-                      key={key}
-                      label={key.charAt(0).toUpperCase() + key.slice(1)}
-                      value={formatFilterValue(value.toString())}
-                      onRemove={() => {
-                        setProductFilters({ [key]: "" });
-                      }}
-                    />
-                  );
-                }
-              })}
-            </div>
-            <FilterDialog open={openFilterDialog} setOpen={setOpenFilterDialog}>
-              <FilterSelect
-                name="Stock Status"
-                items={productStockStatuses}
-                placeholder="Select status"
-                onChange={(value) => updateFilter("stock", value)}
-                onRemove={() => updateFilter("stock", "")}
-                value={appliedFilters.stock}
-                className="px-4"
-                isObject={true}
-              />
-              <FilterSelect
-                name="Brand"
-                items={brands}
-                placeholder="Select brand"
-                onChange={(value) => updateFilter("brand", value)}
-                onRemove={() => updateFilter("brand", "")}
-                value={appliedFilters.brand}
-                className="px-4"
-                isObject={true}
-              />
-              <FilterSelect
-                name="Category"
-                items={categories}
-                placeholder="Select category"
-                onChange={(value) => updateFilter("category", value)}
-                onRemove={() => updateFilter("category", "")}
-                value={appliedFilters.category}
-                className="px-4"
-                isObject={true}
-              />
-              <FilterSelect
-                name="Type"
-                items={types}
-                placeholder="Select type"
-                onChange={(value) => updateFilter("type", value)}
-                onRemove={() => updateFilter("type", "")}
-                value={appliedFilters.type}
-                className="px-4"
-                isObject={true}
-              />
-              <Separator className="mt-4" />
-              <ResponsiveDialogFooter className="px-4">
-                <div className="flex flex-row flex-grow w-full gap-2">
-                  <Button
-                    variant="outline"
-                    className="flex-grow w-full"
-                    onClick={handleClearFilters}
-                  >
-                    Clear Filters
-                  </Button>
-                  <Button
-                    className="flex-grow w-full"
-                    onClick={() => {
-                      setProductFilters({
-                        stock: appliedFilters.stock || "",
-                        brand: appliedFilters.brand || "",
-                        category: appliedFilters.category || "",
-                        type: appliedFilters.type || "",
-                      });
-                      setOpenFilterDialog(false);
-                    }}
-                  >
-                    Apply Filters
-                  </Button>
+        return (
+          <DataTable
+            columns={ProductColumns}
+            data={data}
+            visibleColumns={
+              isDesktop
+                ? visibleProductColumns(user.role).desktop
+                : visibleProductColumns(user.role).mobile
+            }
+            searchField={{ column: "name", placeholder: "Search product..." }}
+            filters={
+              <div className="flex gap-2">
+                <div className="flex items-center gap-2">
+                  {Object.entries(productFilters).map(([key, value]) => {
+                    if (key !== "expiration" && value) {
+                      return (
+                        <FilterBadge
+                          key={key}
+                          label={key.charAt(0).toUpperCase() + key.slice(1)}
+                          value={formatFilterValue(value.toString())}
+                          onRemove={() => {
+                            setProductFilters({ [key]: "" });
+                          }}
+                        />
+                      );
+                    }
+                  })}
                 </div>
-              </ResponsiveDialogFooter>
-            </FilterDialog>
-          </div>
-        }
-      />
-    );
+                <FilterDialog
+                  open={openFilterDialog}
+                  setOpen={setOpenFilterDialog}
+                >
+                  <FilterSelect
+                    name="Stock Status"
+                    items={productStockStatuses}
+                    placeholder="Select status"
+                    onChange={(value) => updateFilter("stock", value)}
+                    onRemove={() => updateFilter("stock", "")}
+                    value={appliedFilters.stock}
+                    className="px-4"
+                    isObject={true}
+                  />
+                  <FilterSelect
+                    name="Brand"
+                    items={brands}
+                    placeholder="Select brand"
+                    onChange={(value) => updateFilter("brand", value)}
+                    onRemove={() => updateFilter("brand", "")}
+                    value={appliedFilters.brand}
+                    className="px-4"
+                    isObject={true}
+                  />
+                  <FilterSelect
+                    name="Category"
+                    items={categories}
+                    placeholder="Select category"
+                    onChange={(value) => updateFilter("category", value)}
+                    onRemove={() => updateFilter("category", "")}
+                    value={appliedFilters.category}
+                    className="px-4"
+                    isObject={true}
+                  />
+                  <FilterSelect
+                    name="Type"
+                    items={types}
+                    placeholder="Select type"
+                    onChange={(value) => updateFilter("type", value)}
+                    onRemove={() => updateFilter("type", "")}
+                    value={appliedFilters.type}
+                    className="px-4"
+                    isObject={true}
+                  />
+                  <Separator className="mt-4" />
+                  <ResponsiveDialogFooter className="px-4">
+                    <div className="flex flex-row flex-grow w-full gap-2">
+                      <Button
+                        variant="outline"
+                        className="flex-grow w-full"
+                        onClick={handleClearFilters}
+                      >
+                        Clear Filters
+                      </Button>
+                      <Button
+                        className="flex-grow w-full"
+                        onClick={() => {
+                          setProductFilters({
+                            stock: appliedFilters.stock || "",
+                            brand: appliedFilters.brand || "",
+                            category: appliedFilters.category || "",
+                            type: appliedFilters.type || "",
+                          });
+                          setOpenFilterDialog(false);
+                        }}
+                      >
+                        Apply Filters
+                      </Button>
+                    </div>
+                  </ResponsiveDialogFooter>
+                </FilterDialog>
+              </div>
+            }
+          />
+        );
+      case "near_expiration":
+        return (
+          <DataTable
+            columns={AllocationProductColumns}
+            data={categorizedProducts.nearExpiration}
+            visibleColumns={
+              isDesktop
+                ? visibleAllocationProductColumns().desktop
+                : visibleAllocationProductColumns().mobile
+            }
+            searchField={{
+              column: "ba_reference_number",
+              placeholder: "Search BA ref number...",
+            }}
+          />
+        );
+
+      case "expired":
+        return (
+          <DataTable
+            columns={AllocationProductColumns}
+            data={categorizedProducts.expired}
+            visibleColumns={
+              isDesktop
+                ? visibleAllocationProductColumns().desktop
+                : visibleAllocationProductColumns().mobile
+            }
+            searchField={{
+              column: "ba_reference_number",
+              placeholder: "Search BA ref number...",
+            }}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   useEffect(() => {
@@ -385,7 +417,30 @@ const ProductClient = ({
           )}
         </div>
       </Header>
-      <main className="main-container">{renderProductTable("all")}</main>
+      <main className="main-container">
+        <Tabs defaultValue="all">
+          <TabsList className="min-w-[20rem]">
+            <TabsTrigger value="all" className="flex-grow">
+              All
+            </TabsTrigger>
+            <TabsTrigger value="near_expiration" className="flex-grow">
+              Near Expiration
+            </TabsTrigger>
+            <TabsTrigger value="expired" className="flex-grow">
+              Expired
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="all">
+            {renderAllocationProductTable("all")}
+          </TabsContent>
+          <TabsContent value="near_expiration">
+            {renderAllocationProductTable("near_expiration")}
+          </TabsContent>
+          <TabsContent value="expired">
+            {renderAllocationProductTable("expired")}
+          </TabsContent>
+        </Tabs>
+      </main>
     </React.Fragment>
   );
 };
