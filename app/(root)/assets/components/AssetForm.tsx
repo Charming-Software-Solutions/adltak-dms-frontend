@@ -171,7 +171,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           inputType={InputType.NUMBER}
           control={form.control}
           name="stock"
-          label="Asset stock"
+          label="Total Quantity"
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />
