@@ -170,8 +170,8 @@ const DistributionClient = ({
             : visibleDistributionColumns(user.role).mobile
         }
         searchField={{
-          column: "dist_id",
-          placeholder: "Search by BA ref number",
+          column: "ba_reference_number",
+          placeholder: "Search by BA reference number...",
         }}
         filters={
           <div className="flex gap-2">

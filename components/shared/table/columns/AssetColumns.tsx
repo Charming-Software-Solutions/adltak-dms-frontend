@@ -290,7 +290,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
         <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
           <ResponsiveDialogTrigger>
             <Button variant={"outline"} size={"icon"}>
-              <Eye className="size-6" />
+              <ExternalLink className="size-4" />
             </Button>
           </ResponsiveDialogTrigger>
           <ResponsiveDialogContent className="md:max-w-md">
