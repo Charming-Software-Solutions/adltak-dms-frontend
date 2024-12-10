@@ -2,6 +2,7 @@
 
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import { Form } from "@/components/ui/form";
+import { DISTRIBUTION_TYPES } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
@@ -96,16 +97,16 @@ const TaskForm = ({
         />
         <ComboBoxFormField
           items={distributions.map((distribution) => ({
-            label: `ID: ${distribution.dist_id} | Client: ${distribution.client} | Type: ${distribution.type}`,
+            label: `ID: ${distribution.ba_reference_number} | Client: ${distribution.client} | Type: ${DISTRIBUTION_TYPES[distribution.type]}`,
             value: distribution.id,
           }))}
           control={form.control}
           name="distribution"
           placeholder={{
-            triggerPlaceholder: "Select distribution...",
-            searchPlaceholder: "Search distribution...",
+            triggerPlaceholder: "Select allocation...",
+            searchPlaceholder: "Search allocation...",
           }}
-          label="Distribution"
+          label="Allocation"
           popOverSize="md:min-w-[28.5rem]"
           disabled={form.formState.isSubmitting}
         />
