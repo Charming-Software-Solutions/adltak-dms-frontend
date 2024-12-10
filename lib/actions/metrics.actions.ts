@@ -47,6 +47,15 @@ async function getProductsAboutToExpireCount(): Promise<number> {
   return parseMetricValue(response.data?.value);
 }
 
+async function getProductsExpiredCount(): Promise<number> {
+  const response = await fetchAndHandleResponse<Metric>({
+    url: `${METRICS_URL}/products-expired-count/`,
+    jwt: (await getSession())?.access,
+    method: "GET",
+  });
+  return parseMetricValue(response.data?.value);
+}
+
 async function getDistributionFlowComparison(): Promise<
   DistributionFlowComparison[]
 > {
@@ -63,5 +72,6 @@ export {
   getMonthlyDistributionFlow,
   getRemainingTaskCount,
   getProductsAboutToExpireCount,
+  getProductsExpiredCount,
   getDistributionFlowComparison,
 };
