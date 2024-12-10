@@ -30,13 +30,14 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { DISTRIBUTION_TYPES } from "@/constants";
 
 export const visibleTaskColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
     desktop: {
       warehouse_person: true,
       distribution_client: true,
-      distribution_id: true,
+      allocation: true,
       distribution_type: true,
       distribution_items: true,
       status_dropdown: hasPermission(userRole, [
@@ -55,7 +56,7 @@ export const visibleTaskColumns = (userRole: UserRoleEnum) => {
     },
     mobile: {
       distribution_client: true,
-      distribution_id: true,
+      allocation: true,
       distribution_type: true,
       distribution_items: true,
       status_dropdown: hasPermission(userRole, [
@@ -90,7 +91,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
           <span>
             {warehousePerson.user.role != UserRoleEnum.WAREHOUSE_WORKER
               ? "Unassigned"
-              : warehousePerson.name}
+              : `${warehousePerson.first_name} ${warehousePerson.last_name}`}
           </span>
         </div>
       );
@@ -112,12 +113,9 @@ export const TaskColumns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "distribution_id",
-    accessorFn: (row) => row.distribution.dist_id,
-    header: "Distribution",
-    cell: ({ row }) => {
-      return <span>#{row.original.distribution.dist_id}</span>;
-    },
+    accessorKey: "allocation",
+    accessorFn: (row) => row.distribution.ba_reference_number,
+    header: "Allocation",
   },
   {
     accessorKey: "distribution_type",
@@ -142,7 +140,9 @@ export const TaskColumns: ColumnDef<Task>[] = [
       return (
         <div className="flex items-center space-x-1">
           <TypeIcon type={distributionType} className="mr-1" />
-          <span className="font-semibold">{distributionType}</span>
+          <span className="font-semibold">
+            {DISTRIBUTION_TYPES[distributionType]}
+          </span>
         </div>
       );
     },
