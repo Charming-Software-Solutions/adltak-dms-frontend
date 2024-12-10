@@ -20,12 +20,7 @@ import { Distribution } from "@/types/distribution";
 import { DistributionFlowComparison, InsightsMetrics } from "@/types/metrics";
 import { UserSession } from "@/types/user";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
-import {
-  ArrowUpDown,
-  ClipboardCheck,
-  Package,
-  TriangleAlert,
-} from "lucide-react";
+import { ArrowUpDown, ClipboardCheck, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -57,27 +52,27 @@ const HomeClient = ({
       <main className="flex flex-1 flex-col p-4 lg:px-6">
         <div className="grid auto-rows-min gap-6 md:grid-cols-4 pb-2">
           <MetricCard
-            title={"Monthly distribution count"}
+            title={"Monthly allocations"}
             value={metrics.monthlyDistributionFlow.toString()}
-            subtitle={"Total distributions per month"}
+            subtitle={"Number of allocations per month"}
             icon={<ArrowUpDown className="size-4" />}
           />
           <MetricCard
-            title={"Remaining tasks count"}
+            title={"Remaining tasks"}
             value={metrics.remainingTaskCount.toString()}
-            subtitle={"Total remaining tasks"}
+            subtitle={"Number of remaining tasks"}
             icon={<ClipboardCheck className="size-4" />}
           />
           <MetricCard
-            title={"Products about to expire count"}
+            title={"Products near expiration"}
             value={metrics.productsAboutToExpireCount.toString()}
-            subtitle={"Total number of products expiring in 1 month"}
+            subtitle={"Number of products near expiration"}
             icon={<TriangleAlert className="size-4" />}
           />
           <MetricCard
-            title={"Products expired count"}
-            value={metrics.productsAboutToExpireCount.toString()}
-            subtitle={"Total number expired products"}
+            title={"Products expired"}
+            value={metrics.productsExpiredCount.toString()}
+            subtitle={"Number of products expired"}
             icon={<TriangleAlert className="size-4" />}
           />
           <div className="flex items-center gap-2"></div>
