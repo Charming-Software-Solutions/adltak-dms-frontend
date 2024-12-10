@@ -70,7 +70,7 @@ const HomeClient = ({
             icon={<TriangleAlert className="size-4" />}
           />
           <MetricCard
-            title={"Products expired"}
+            title={"Expired products"}
             value={metrics.productsExpiredCount.toString()}
             subtitle={"Number of products expired"}
             icon={<TriangleAlert className="size-4" />}
