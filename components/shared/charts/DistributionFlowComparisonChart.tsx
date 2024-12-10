@@ -28,7 +28,7 @@ const chartConfig = {
   },
   import: {
     label: "Incoming",
-    color: "hsl(var(--chart-3))",
+    color: "hsl(var(--chart-5))",
   },
 } satisfies ChartConfig;
 
@@ -90,7 +90,6 @@ const DistributionFlowComparisonChart = ({
             margin={{
               left: 12,
               right: 12,
-              top: 40,
             }}
           >
             <CartesianGrid vertical={false} />
@@ -123,14 +122,7 @@ const DistributionFlowComparisonChart = ({
                 />
               }
             />
-            <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`}>
-              <LabelList
-                dataKey={activeChart}
-                position="top"
-                formatter={(value: number) => value.toLocaleString()}
-                style={{ fill: "var(--foreground)", fontSize: "12px" }}
-              />
-            </Bar>
+            <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
           </BarChart>
         </ChartContainer>
       </CardContent>
