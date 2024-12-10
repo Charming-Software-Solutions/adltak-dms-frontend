@@ -124,14 +124,6 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}
-          name="baReferenceNumber"
-          label="BA Reference Number"
-          placeholder="BA1234567890"
-          disabled={form.formState.isSubmitting}
-        />
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
           name="area"
           label="Area"
           placeholder="Quezon City"
