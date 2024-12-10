@@ -2,7 +2,7 @@
 
 import { ICreateDistribution } from "@/interfaces";
 import { ApiResponse } from "@/types/api";
-import { Distribution } from "@/types/distribution";
+import { Distribution, DistributionProduct } from "@/types/distribution";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "../session";
 
@@ -24,6 +24,15 @@ async function getDistributions(): Promise<Distribution[]> {
   const response = await fetchAndHandleResponse<Distribution[]>({
     jwt: (await getSession())?.access,
     url: DISTRIBUTION_URL,
+    method: "GET",
+  });
+  return response.data ?? [];
+}
+
+async function getDistributionProducts(): Promise<DistributionProduct[]> {
+  const response = await fetchAndHandleResponse<DistributionProduct[]>({
+    jwt: (await getSession())?.access,
+    url: `${DISTRIBUTION_URL}get-distribution-products/`,
     method: "GET",
   });
   return response.data ?? [];
@@ -52,6 +61,7 @@ async function deleteDistribution(id: string): Promise<ApiResponse<string>> {
 export {
   createDistribution,
   getDistributions,
+  getDistributionProducts,
   updateDistribution,
   deleteDistribution,
 };
