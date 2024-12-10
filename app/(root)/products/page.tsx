@@ -15,7 +15,6 @@ export default async function Products() {
   const categories = await getCategories();
   const types = await getTypes();
   const user = (await getSession())!.user;
-  console.log(allocationProducts);
 
   return (
     <ProductClient
