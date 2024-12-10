@@ -36,15 +36,15 @@ export const distributionTypes: SelectItemType[] = [
 ];
 export const productStockStatuses: SelectItemType[] = [
   {
-    label: "Out of Stock",
+    label: "Out of Quantity",
     value: "OUT_OF_STOCK",
   },
   {
-    label: "Low Stock",
+    label: "Low Quantity",
     value: "LOW_STOCK",
   },
   {
-    label: "In Stock",
+    label: "In Quantity",
     value: "IN_STOCK",
   },
 ];

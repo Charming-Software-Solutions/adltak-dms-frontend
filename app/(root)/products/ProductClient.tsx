@@ -202,7 +202,7 @@ const ProductClient = ({
                   setOpen={setOpenFilterDialog}
                 >
                   <FilterSelect
-                    name="Stock Status"
+                    name="Total Quantity Status"
                     items={productStockStatuses}
                     placeholder="Select status"
                     onChange={(value) => updateFilter("stock", value)}
