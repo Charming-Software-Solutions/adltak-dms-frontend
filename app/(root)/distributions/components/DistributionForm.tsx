@@ -126,7 +126,7 @@ const DistributionForm = ({
           control={form.control}
           name="baReferenceNumber"
           label="BA Reference Number"
-          placeholder="BA1234"
+          placeholder="BAmmddyyxx"
           disabled={form.formState.isSubmitting}
         />
         {mode === FormModeEnum.CREATE && (
