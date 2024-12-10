@@ -4,7 +4,10 @@ import DistributionForm, {
 } from "@/app/(root)/distributions/components/DistributionForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DISTRIBUTION_STATUSES, DISTRIBUTION_TYPES } from "@/constants";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { deleteDistribution } from "@/lib/actions/distribution.actions";
+import { hasPermission } from "@/lib/auth";
 import { cn, formatDateTime } from "@/lib/utils";
 import { Distribution, DistributionType } from "@/types/distribution";
 import {
@@ -14,21 +17,13 @@ import {
   UploadIcon,
 } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
+import React, { useState } from "react";
+import DialogFormButton from "../../buttons/DialogFormButton";
 import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import React from "react";
-import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { hasPermission } from "@/lib/auth";
-import {
-  DISTRIBUTION_STATUSES,
-  DISTRIBUTION_TYPES,
-  distributionTypes,
-} from "@/constants";
-import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
   desktop: {
@@ -94,9 +89,9 @@ const DistributionActionsCell = React.memo(
           </ResponsiveDialogFooter>
         </EditDialog>
         <DeleteDialog
-          title="Delete Distribution"
+          title="Delete Allocation"
           deleteAction={async () => await deleteDistribution(distribution.id)}
-          placeholder="Are you sure you want to delete the distribution?"
+          placeholder="Are you sure you want to delete the allocation?"
         />
       </div>
     );
