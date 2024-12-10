@@ -8,11 +8,7 @@ export type Task = {
   id: string;
   created_at: string;
   updated_at: string;
-  warehouse_person: {
-    user: User;
-    id: string;
-    name: string;
-  };
+  warehouse_person: Employee;
   distribution: Distribution;
   status: TaskStatus;
 };
