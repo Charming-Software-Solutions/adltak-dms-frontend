@@ -49,7 +49,7 @@ async function getProductsAboutToExpireCount(): Promise<number> {
 
 async function getProductsExpiredCount(): Promise<number> {
   const response = await fetchAndHandleResponse<Metric>({
-    url: `${METRICS_URL}/products-expire-count/`,
+    url: `${METRICS_URL}/products-expired-count/`,
     jwt: (await getSession())?.access,
     method: "GET",
   });
