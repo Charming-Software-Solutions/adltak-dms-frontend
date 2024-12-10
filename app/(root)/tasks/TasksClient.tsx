@@ -127,8 +127,8 @@ const TasksClient = ({
                 : visibleTaskColumns(employee.user.role).mobile
             }
             searchField={{
-              placeholder: "Search distribution...",
-              column: "distribution_id",
+              column: "allocation",
+              placeholder: "Search allocation...",
             }}
             filters={<FilterTaskAsset items={tasks} type="task" />}
           />
