@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ApiResponse } from "@/types/api";
 import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ApiResponse } from "@/types/api";
+import { useState } from "react";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -13,6 +13,7 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "../ResponsiveDialog";
+import IconButton from "../buttons/IconButton";
 
 type Props = {
   title: string;
@@ -27,9 +28,9 @@ const DeleteDialog = ({ title, deleteAction, placeholder }: Props) => {
   return (
     <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
       <ResponsiveDialogTrigger>
-        <Button size={"icon"} variant={"outline"} className="w-10">
+        <IconButton tooltip="Delete">
           <Trash className="h-4 w-4 text-red-500" />
-        </Button>
+        </IconButton>
       </ResponsiveDialogTrigger>
       <ResponsiveDialogContent>
         <ResponsiveDialogHeader>
