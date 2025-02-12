@@ -1,6 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { forwardRef } from "react";
+import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -8,24 +9,30 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-type IconButtonProps = {
-  children: React.ReactNode;
-  tooltip: string;
+type IconButtonProps = ButtonProps & {
+  tooltip?: string;
 };
 
-const IconButton = ({ children, tooltip }: IconButtonProps) => {
-  return (
-    <TooltipProvider delayDuration={300}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button size={"icon"} variant={"outline"}>
-            {children}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>{tooltip}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
+const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+  ({ tooltip, children, ...props }, ref) => {
+    const button = (
+      <Button ref={ref} size="icon" variant="outline" {...props}>
+        {children}
+      </Button>
+    );
 
+    if (!tooltip) return button;
+
+    return (
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipContent>{tooltip}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  },
+);
+
+IconButton.displayName = "IconButton";
 export default IconButton;
