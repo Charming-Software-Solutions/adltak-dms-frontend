@@ -23,6 +23,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { PasswordInput } from "../ui/password-input";
+import React from "react";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -45,7 +46,7 @@ export enum InputType {
 interface BaseCustomProps {
   control: Control<any>;
   name: string;
-  label?: string;
+  label?: string | React.ReactNode;
   placeholder?: string;
   iconSrc?: React.ReactNode;
   disabled?: boolean;
