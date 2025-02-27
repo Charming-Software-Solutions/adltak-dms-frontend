@@ -148,6 +148,18 @@ export const changePasswordFormSchema = z
     path: ["confirmPassword"],
   });
 
+export const resetPasswordSchema = z
+  .object({
+    newPassword: z.string().min(8, {
+      message: "Password length should be at least 6 characters.",
+    }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
 export const updateProfileFormSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
@@ -168,4 +180,5 @@ export type AssetFormData = z.infer<typeof assetFormSchema>;
 export type ClassificationFormData = z.infer<typeof classificationFormSchema>;
 export type ChangeEmailFormData = z.infer<typeof changeEmailFormSchema>;
 export type ChangePasswordFormData = z.infer<typeof changePasswordFormSchema>;
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export type UpdateProfileFormData = z.infer<typeof updateProfileFormSchema>;

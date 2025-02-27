@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { createSession, deleteSession, getSession } from "../session";
 import { fetchAndHandleResponse } from "../utils";
 import { getEmployeeProfile } from "./employee.actions";
+import { formatErrorResponse } from "../formatters";
 
 const authUrl = `${process.env.DOMAIN}/auth`;
 
@@ -95,4 +96,50 @@ async function changePassword(
   });
 }
 
-export { changeEmail, changePassword, getAccountSession, login, logout };
+async function sendPasswordResetLink(
+  email: string,
+): Promise<ApiResponse<{ message: string }>> {
+  return fetchAndHandleResponse({
+    url: `${authUrl}/send-password-reset-link/`,
+    method: "POST",
+    body: JSON.stringify({
+      email: email,
+    }),
+    contentType: "application/json",
+  });
+}
+
+async function resetPassword(
+  formData: FormData,
+  token: string,
+): Promise<ApiResponse<{ message: string }>> {
+  return fetchAndHandleResponse({
+    url: `${authUrl}/reset-password/${token}/`,
+    method: "POST",
+    body: formData,
+  });
+}
+
+async function validateResetPasswordToken(
+  token: string,
+): Promise<ApiResponse<{ message: string }>> {
+  return fetchAndHandleResponse({
+    url: `${authUrl}/validate-reset-password-token/`,
+    method: "POST",
+    body: JSON.stringify({
+      token: token,
+    }),
+    contentType: "application/json",
+  });
+}
+
+export {
+  changeEmail,
+  changePassword,
+  getAccountSession,
+  login,
+  logout,
+  sendPasswordResetLink,
+  resetPassword,
+  validateResetPasswordToken,
+};
