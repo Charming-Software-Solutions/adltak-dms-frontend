@@ -25,7 +25,7 @@ export async function createSession(userDataLogin: UserLogin) {
     expiresAt,
   });
 
-  cookies().set("session", session, {
+  (await cookies()).set("session", session, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     expires: expiresAt,
@@ -33,7 +33,7 @@ export async function createSession(userDataLogin: UserLogin) {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-  const cookie = cookies().get("session")?.value;
+  const cookie = (await cookies()).get("session")?.value;
   if (!cookie) {
     redirect("/login");
   }
@@ -54,7 +54,7 @@ export async function getSession(): Promise<SessionPayload | null> {
 }
 
 export async function deleteSession() {
-  cookies().delete("session");
+  (await cookies()).delete("session");
 }
 
 export async function encrypt(payload: SessionPayload) {
