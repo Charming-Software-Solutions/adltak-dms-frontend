@@ -2,7 +2,7 @@ import { FormModeEnum } from "@/enums";
 import { ApiResponse, ErrorResponse } from "@/types/api";
 import { DistributionProduct } from "@/types/distribution";
 import { SelectItemType } from "@/types/primitives";
-import { Product, ProductSKU } from "@/types/product";
+import { ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -74,7 +74,6 @@ export async function fetchAndHandleResponse<T>({
     }
 
     const requestOptions: RequestInit = {
-      cache: "no-store",
       method,
       headers,
       body,
