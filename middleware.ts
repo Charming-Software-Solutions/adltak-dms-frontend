@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import { decrypt } from "./lib/session";
 import { UserRoleEnum } from "./enums";
+import { getSession } from "./auth/session";
 
 const protectedRoutes = [
   "/",
@@ -21,19 +20,18 @@ export default async function middleware(req: NextRequest) {
   const isPublicRoute = publicRoutes.includes(path);
   const isAdminRoute = adminRoutes.includes(path);
 
-  const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
+  const session = await getSession();
+  const user = session?.user;
 
-  if (isProtectedRoute && !session?.user) {
+  if (isProtectedRoute && !user) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  if (isPublicRoute && session?.user) {
+  if (isPublicRoute && user) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
-  if (isAdminRoute && session?.user.role !== UserRoleEnum.ADMIN) {
-    console.log(session?.user.role);
+  if (isAdminRoute && user?.role !== UserRoleEnum.ADMIN) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
