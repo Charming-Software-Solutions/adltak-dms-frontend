@@ -1,9 +1,9 @@
 "use server";
 
+import { getSession } from "@/auth/session";
 import { fetchAndHandleResponse } from "../utils";
 import { ApiResponse } from "@/types/api";
 import { User } from "@/types/user";
-import { getSession } from "../session";
 
 const USER_URL = `${process.env.DOMAIN}/user/`;
 
