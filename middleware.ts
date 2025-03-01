@@ -23,11 +23,11 @@ export default async function middleware(req: NextRequest) {
   const session = await getSession();
   const user = session?.user;
 
-  if (isProtectedRoute && !user) {
+  if (isProtectedRoute && !session) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  if (isPublicRoute && user) {
+  if (isPublicRoute && session) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
@@ -40,7 +40,7 @@ export default async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
+    /user*
      * Match all request paths except for the ones starting with:
      * - api (API routes)
      * - _next/static (static files)
