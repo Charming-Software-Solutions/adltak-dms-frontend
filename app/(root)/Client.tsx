@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/card";
 import { Distribution } from "@/types/distribution";
 import { DistributionFlowComparison, InsightsMetrics } from "@/types/metrics";
-import { UserSession } from "@/types/user";
+import { User } from "@/types/user";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { ArrowUpDown, ClipboardCheck, TriangleAlert } from "lucide-react";
 import Link from "next/link";
@@ -26,7 +26,7 @@ import React, { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 type Props = {
-  user: UserSession;
+  user: User;
   distributions: Distribution[];
   metrics: InsightsMetrics;
   distributionFlowComparison: DistributionFlowComparison[];

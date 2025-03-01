@@ -1,5 +1,6 @@
 "use client";
 
+import { login } from "@/auth/actions";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 import CustomFormField, {
   FormFieldType,
@@ -14,7 +15,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { login } from "@/lib/actions/auth.actions";
 import { loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";

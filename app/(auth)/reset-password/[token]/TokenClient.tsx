@@ -1,5 +1,6 @@
 "use client";
 
+import { resetPassword } from "@/auth/actions";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 import CustomFormField, {
   FormFieldType,
@@ -13,13 +14,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { resetPassword } from "@/lib/actions/auth.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { ResetPasswordFormData, resetPasswordSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";

@@ -2,8 +2,8 @@
 
 import { ApiResponse } from "@/types/api";
 import { Employee } from "@/types/user";
-import { getSession } from "../session";
 import { fetchAndHandleResponse } from "../utils";
+import { getSession } from "@/auth/session";
 
 const EMPLOYEE_URL = `${process.env.DOMAIN}/employee/`;
 

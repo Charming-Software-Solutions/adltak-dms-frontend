@@ -34,7 +34,6 @@ import { filterDataTable, formatFilterValue, toPSTDate } from "@/lib/utils";
 import { Asset } from "@/types/asset";
 import { Distribution } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
-import { UserSession } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { parseAsIsoDate, parseAsString, useQueryStates } from "nuqs";
@@ -45,9 +44,10 @@ import DistributionAddItem from "./components/DistributionAddItem";
 import DistributionForm, {
   useDistributionForm,
 } from "./components/DistributionForm";
+import { User } from "@/types/user";
 
 type Props = {
-  user: UserSession;
+  user: User;
   employee: string;
   distributions: Distribution[];
   brands: Brand[];

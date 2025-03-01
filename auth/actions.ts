@@ -1,17 +1,14 @@
 "use server";
 
+import { fetchAndHandleResponse } from "@/lib/utils";
 import { ApiResponse } from "@/types/api";
-import { Employee, UserLogin } from "@/types/user";
-import { redirect } from "next/navigation";
-import { createSession, deleteSession, getSession } from "../session";
-import { fetchAndHandleResponse } from "../utils";
-import { getEmployeeProfile } from "./employee.actions";
-import { formatErrorResponse } from "../formatters";
+import { SessionPayload } from "@/types/auth";
+import { createSession, deleteSession, getSession } from "./session";
 
 const authUrl = `${process.env.DOMAIN}/auth`;
 
-async function login(email: string, password: string): Promise<UserLogin> {
-  const response = await fetchAndHandleResponse<UserLogin>({
+async function login(email: string, password: string): Promise<SessionPayload> {
+  const response = await fetchAndHandleResponse<SessionPayload>({
     url: `${authUrl}/login/`,
     method: "POST",
     contentType: "application/json",
@@ -26,21 +23,20 @@ async function login(email: string, password: string): Promise<UserLogin> {
       response.errors ? JSON.stringify(response.errors) : "Unknown error",
     );
   }
-  const userDataLogin = response.data as UserLogin;
 
-  await createSession(userDataLogin);
-
-  return userDataLogin;
+  const sessionPayload = response.data as SessionPayload;
+  await createSession(sessionPayload);
+  return sessionPayload;
 }
 
-async function logout(refresh: string) {
+async function logout() {
   try {
     const response = await fetchAndHandleResponse<string>({
       url: `${authUrl}/logout/`,
       method: "POST",
       contentType: "application/json",
       body: JSON.stringify({
-        refresh: refresh,
+        refresh: (await getSession())?.refresh,
       }),
     });
 
@@ -52,26 +48,6 @@ async function logout(refresh: string) {
   } catch (error) {
     console.error("Error during logout:", error);
   }
-}
-
-async function getAccountSession(): Promise<{
-  employee: Employee;
-  refresh: string;
-}> {
-  const session = await getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  const employeeData = await getEmployeeProfile();
-  if (employeeData.errors) {
-    throw new Error("An error have occured.");
-  }
-  const employee = employeeData.data as Employee;
-  const refresh = session.refresh;
-
-  return { employee, refresh };
 }
 
 async function changeEmail(
@@ -136,7 +112,6 @@ async function validateResetPasswordToken(
 export {
   changeEmail,
   changePassword,
-  getAccountSession,
   login,
   logout,
   sendPasswordResetLink,

@@ -4,7 +4,7 @@ import { ICreateDistribution } from "@/interfaces";
 import { ApiResponse } from "@/types/api";
 import { Distribution, DistributionProduct } from "@/types/distribution";
 import { fetchAndHandleResponse } from "../utils";
-import { getSession } from "../session";
+import { getSession } from "@/auth/session";
 
 const DISTRIBUTION_URL = `${process.env.DOMAIN}/distribution/`;
 

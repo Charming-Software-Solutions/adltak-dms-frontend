@@ -39,7 +39,6 @@ import {
 } from "@/lib/utils";
 import { DistributionProduct } from "@/types/distribution";
 import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
-import { UserSession } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
@@ -48,9 +47,10 @@ import { Separator } from "react-aria-components";
 import { CSVLink } from "react-csv";
 import { useMediaQuery } from "react-responsive";
 import ProductForm, { useProductForm } from "./components/ProductForm";
+import { User } from "@/types/user";
 
 type Props = {
-  user: UserSession;
+  user: User;
   products: Product[];
   allocationProducts: DistributionProduct[];
   brands: Brand[];

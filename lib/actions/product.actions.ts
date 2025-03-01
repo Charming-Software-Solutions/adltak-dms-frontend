@@ -3,7 +3,7 @@
 import { ApiResponse } from "@/types/api";
 import { Product } from "@/types/product";
 import { fetchAndHandleResponse } from "../utils";
-import { getSession } from "../session";
+import { getSession } from "@/auth/session";
 
 const PRODUCT_URL = `${process.env.DOMAIN}/product/`;
 

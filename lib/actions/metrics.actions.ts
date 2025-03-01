@@ -1,8 +1,8 @@
 "use server";
 
 import { DistributionFlowComparison, Metric } from "@/types/metrics";
-import { getSession } from "../session";
 import { fetchAndHandleResponse } from "../utils";
+import { getSession } from "@/auth/session";
 
 const METRICS_URL = `${process.env.DOMAIN}/metrics`;
 
