@@ -3,7 +3,7 @@
 import { Asset, AssetStatus } from "@/types/asset";
 import { fetchAndHandleResponse } from "../utils";
 import { ApiResponse } from "@/types/api";
-import { getSession } from "../session";
+import { getSession } from "@/auth/session";
 
 const ASSET_URL = `${process.env.DOMAIN}/asset/`;
 

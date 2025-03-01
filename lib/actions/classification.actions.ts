@@ -3,7 +3,7 @@
 import { ApiResponse } from "@/types/api";
 import { Classification, ClassificationType } from "@/types/generics";
 import { fetchAndHandleResponse } from "../utils";
-import { getSession } from "../session";
+import { getSession } from "@/auth/session";
 
 function getClassificationUrl(classificationType: ClassificationType): string {
   let url = `${process.env.DOMAIN}`;
