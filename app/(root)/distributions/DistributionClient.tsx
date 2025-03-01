@@ -44,10 +44,10 @@ import DistributionAddItem from "./components/DistributionAddItem";
 import DistributionForm, {
   useDistributionForm,
 } from "./components/DistributionForm";
-import { JwtUser } from "@/types/auth";
+import { User } from "@/types/user";
 
 type Props = {
-  user: JwtUser;
+  user: User;
   employee: string;
   distributions: Distribution[];
   brands: Brand[];
