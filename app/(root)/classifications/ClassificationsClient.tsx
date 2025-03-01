@@ -20,16 +20,16 @@ import { useResponsive } from "@/hooks";
 import { useDataTable } from "@/hooks/use-datatable";
 import { hasPermission } from "@/lib/auth";
 import { Classification, ClassificationType } from "@/types/generics";
-import { UserSession } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
 import ClassificationForm, {
   useClassificationForm,
 } from "./components/ClassificationForm";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
+import { User } from "@/types/user";
 
 type Props = {
-  user: UserSession;
+  user: User;
   classifications: {
     productBrands: Classification[];
     productCategories: Classification[];

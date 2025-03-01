@@ -1,15 +1,10 @@
 import { getEmployees } from "@/lib/actions/employee.actions";
 import EmployeeClient from "./EmployeeClient";
-import { getAccountSession } from "@/lib/actions/auth.actions";
+import { getCurrentUser } from "@/auth/currentUser";
 
 export default async function EmployeesPage() {
   const employees = await getEmployees();
-  const accountSession = await getAccountSession();
+  const employee = await getCurrentUser({ withEmployeeProfile: true });
 
-  return (
-    <EmployeeClient
-      employees={employees}
-      currentAdmin={accountSession.employee}
-    />
-  );
+  return <EmployeeClient employees={employees} currentAdmin={employee} />;
 }

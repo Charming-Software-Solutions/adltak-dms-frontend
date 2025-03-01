@@ -21,7 +21,7 @@ import { Classification } from "@/types/generics";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import AssetForm, { useAssetForm } from "./components/AssetForm";
-import { UserSession } from "@/types/user";
+import { User } from "@/types/user";
 import { hasPermission } from "@/lib/auth";
 import { UserRoleEnum } from "@/enums";
 import { Product } from "@/types/product";
@@ -31,7 +31,7 @@ import FilterTaskAsset, {
 } from "@/components/shared/filter/FilterAssetTask";
 
 type Props = {
-  user: UserSession;
+  user: User;
   assets: Asset[];
   assetTypes: Classification[];
   products: Product[];
@@ -97,7 +97,7 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                       }
                       loading={form.formState.isSubmitting}
                     >
-                      Add Asset
+                      Add Task
                     </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
