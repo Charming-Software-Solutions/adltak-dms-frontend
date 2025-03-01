@@ -1,12 +1,10 @@
 import React from "react";
 import TokenClient from "./TokenClient";
-import { validateResetPasswordToken } from "@/lib/actions/auth.actions";
+import { validateResetPasswordToken } from "@/auth/actions";
 
-export default async function ResetPasswordToken(
-  props: {
-    params: Promise<{ token: string }>;
-  }
-) {
+export default async function ResetPasswordToken(props: {
+  params: Promise<{ token: string }>;
+}) {
   const params = await props.params;
   const tokenValidation = await validateResetPasswordToken(params.token);
 
