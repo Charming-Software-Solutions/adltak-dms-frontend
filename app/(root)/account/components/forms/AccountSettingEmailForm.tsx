@@ -1,11 +1,11 @@
 "use client";
 
+import { changeEmail } from "@/auth/actions";
 import CustomFormField, {
   FormFieldType,
   InputType,
 } from "@/components/shared/CustomFormField";
 import { Form } from "@/components/ui/form";
-import { changeEmail } from "@/lib/actions/auth.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { ChangeEmailFormData, changeEmailFormSchema } from "@/schemas";

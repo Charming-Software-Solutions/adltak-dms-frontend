@@ -1,13 +1,13 @@
 import { UserRoleEnum } from "@/enums";
-import { getAccountSession } from "@/lib/actions/auth.actions";
 import { getDistributions } from "@/lib/actions/distribution.actions";
 import { getEmployees } from "@/lib/actions/employee.actions";
 import { getTasks } from "@/lib/actions/task.actions";
 import TasksClient from "./TasksClient";
+import { getCurrentUser } from "@/auth/currentUser";
 
 export default async function TasksPage() {
   const distributions = await getDistributions();
-  const employee = (await getAccountSession()).employee;
+  const employee = await getCurrentUser({ withEmployeeProfile: true });
   const warehousePersons =
     employee.user.role === UserRoleEnum.ADMIN ||
     employee.user.role === UserRoleEnum.PROJECT_HANDLER

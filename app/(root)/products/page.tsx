@@ -5,8 +5,8 @@ import {
   getTypes,
 } from "@/lib/actions/product.classications.actions";
 import ProductClient from "./ProductClient";
-import { getSession } from "@/lib/session";
 import { getDistributionProducts } from "@/lib/actions/distribution.actions";
+import { getCurrentUser } from "@/auth/currentUser";
 
 export default async function Products() {
   const products = await getProducts();
@@ -14,11 +14,11 @@ export default async function Products() {
   const brands = await getBrands();
   const categories = await getCategories();
   const types = await getTypes();
-  const user = (await getSession())!.user;
+  const user = await getCurrentUser();
 
   return (
     <ProductClient
-      user={user}
+      user={user!}
       products={products}
       allocationProducts={allocationProducts}
       brands={brands}
