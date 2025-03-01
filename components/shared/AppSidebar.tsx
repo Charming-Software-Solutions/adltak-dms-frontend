@@ -11,10 +11,10 @@ import Link from "next/link";
 import NavMain from "./NavMain";
 import { NavUser } from "./NavUser";
 import ThemeToggle from "./ThemeToggle";
-import { getAccountSession } from "@/lib/actions/auth.actions";
+import { getCurrentUser } from "@/auth/currentUser";
 
 const AppSidebar = async () => {
-  const accountSession = await getAccountSession();
+  const employee = await getCurrentUser({ withEmployeeProfile: true });
 
   return (
     <Sidebar>
@@ -41,16 +41,12 @@ const AppSidebar = async () => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <NavMain user={accountSession.employee.user} />
+            <NavMain user={employee!.user} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser
-          user={accountSession.employee.user}
-          refresh={accountSession.refresh}
-          employee={accountSession.employee}
-        />
+        <NavUser user={employee!.user} employee={employee!} />
       </SidebarFooter>
     </Sidebar>
   );

@@ -18,18 +18,16 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { USER_ROLES } from "@/constants";
-import { logout } from "@/lib/actions/auth.actions";
 import { Employee, User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import NavUserProfile from "./NavUserProfile";
+import { logout } from "@/auth/actions";
 
 export function NavUser({
   user,
-  refresh,
   employee,
 }: {
   user: User;
-  refresh: string;
   employee: Employee;
 }) {
   const { isMobile } = useSidebar();
@@ -79,7 +77,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                logout(refresh);
+                logout();
               }}
             >
               <LogOut className="size-4 mr-2" />
