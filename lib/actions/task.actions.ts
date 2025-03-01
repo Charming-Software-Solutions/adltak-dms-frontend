@@ -3,8 +3,8 @@
 import { ApiResponse } from "@/types/api";
 import { Task, TaskStatus } from "@/types/task";
 import { fetchAndHandleResponse } from "../utils";
-import { getSession } from "../session";
 import { UserRoleEnum } from "@/enums";
+import { getSession } from "@/auth/session";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
 

@@ -4,7 +4,7 @@ import { Brand, Category, Type } from "@/types/product";
 import { fetchAndHandleResponse } from "../utils";
 import { domain } from "@/constants";
 import { ApiResponse } from "@/types/api";
-import { getSession } from "../session";
+import { getSession } from "@/auth/session";
 
 const BRAND_URL = `${domain}/product/brand/`;
 const CATEGORY_URL = `${domain}/product/category/`;

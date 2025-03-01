@@ -2,7 +2,7 @@
 
 import { Classification } from "@/types/generics";
 import { fetchAndHandleResponse } from "../utils";
-import { getSession } from "../session";
+import { getSession } from "@/auth/session";
 
 const ASSET_TYPES_URL = `${process.env.DOMAIN}/asset/type/`;
 
