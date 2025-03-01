@@ -62,7 +62,7 @@ export function NavUser({
               <NavUserProfile
                 firstName={employee.first_name}
                 lastName={employee.last_name}
-                subtitle={user.email}
+                subtitle={user.email!}
                 alt={"profile-image"}
                 avatarImage={employee.profile_image}
               />
