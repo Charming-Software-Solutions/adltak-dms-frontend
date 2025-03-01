@@ -34,7 +34,7 @@ export async function getSession() {
   const access = cookieStore.get("access-token")?.value;
   const refresh = cookieStore.get("refresh-token")?.value;
 
-  if (!access) return null;
+  if (!access || !refresh) return null;
 
   const user = jwtDecode(access) as User;
   return { access, refresh, user };
