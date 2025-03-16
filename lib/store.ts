@@ -3,7 +3,6 @@ import { DistributionItem } from "@/types/distribution";
 import { Product } from "@/types/product";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { useShallow } from "zustand/shallow";
 
 type BaseItem = {
   id: string;
@@ -36,8 +35,6 @@ export const createItemStore = <T extends BaseItem>(storeName: string) =>
             const itemId = item.expiration
               ? `${item.id}-${item.expiration}`
               : item.id;
-
-            console.log(item);
             const existingItemIndex = state.items.findIndex(
               (quantityItem) => quantityItem.id === itemId,
             );

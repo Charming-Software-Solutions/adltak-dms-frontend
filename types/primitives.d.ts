@@ -12,3 +12,11 @@ export type NavItem = {
   route: string;
   icon: React.ReactNode;
 };
+
+type RadioGroupFilter = {
+  group: {
+    title: string;
+    defaultValue: string;
+    items: { label: string; value: string }[];
+  }[];
+};

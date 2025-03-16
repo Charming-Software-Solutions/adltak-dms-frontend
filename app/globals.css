@@ -86,7 +86,15 @@ body {
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+}
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
   ::-webkit-scrollbar {
     width: 5px;
   }
@@ -100,34 +108,6 @@ body {
   * {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--border)) transparent;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-    border-radius: 50px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #09090a;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #2e3d5b;
-    border-radius: 50px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #7878a3;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }
 
@@ -151,15 +131,12 @@ body {
   .dialog-footer {
     @apply flex flex-row w-full gap-2;
   }
-}
-
-
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-  body {
-    @apply bg-background text-foreground;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }

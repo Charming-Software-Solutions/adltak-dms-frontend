@@ -7,6 +7,7 @@ import {
   ArrowDownUp,
   ClipboardCheck,
   LayoutDashboard,
+  NotepadText,
   Package,
   Tags,
   Users,
@@ -66,6 +67,11 @@ const NAV_LINKS: NavLink[] = [
     route: "/employees",
     allowedRoles: [UserRoleEnum.ADMIN],
   },
+  {
+    label: "Activity Logs",
+    icon: <NotepadText className="size-4" />,
+    route: "/activity-logs",
+  },
 ];
 
 const NavMain = ({ user }: NavMainProps) => {
@@ -75,7 +81,7 @@ const NavMain = ({ user }: NavMainProps) => {
       !link.allowedRoles ||
       link.allowedRoles.includes(user.role.toUpperCase() as UserRoleEnum),
   );
-
+  1;
   return (
     <SidebarMenu>
       {authorizedLinks.map((link, index) => (
