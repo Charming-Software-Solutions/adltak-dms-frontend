@@ -15,24 +15,19 @@ import { deleteClassification } from "@/lib/actions/classification.actions";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
 import DialogFormButton from "../../buttons/DialogFormButton";
+import { toast } from "sonner";
 
 export const visibleClassificationColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
     desktop: {
       name: true,
       description: true,
-      actions: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
-      ]),
+      actions: hasPermission(userRole, [UserRoleEnum.ADMIN]),
     },
     mobile: {
       name: true,
       description: true,
-      actions: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
-      ]),
+      actions: hasPermission(userRole, [UserRoleEnum.ADMIN]),
     },
   });
 };
@@ -88,9 +83,25 @@ const ClassificationActionsCell = React.memo(
         </EditDialog>
         <DeleteDialog
           title="Delete Classification"
-          deleteAction={async () =>
-            await deleteClassification(classification.id, classificationType)
-          }
+          deleteAction={async () => {
+            try {
+              const response = await deleteClassification(
+                classification.id,
+                classificationType,
+              );
+              return response;
+            } catch (error: any) {
+              toast.error(error.message, {
+                position: "top-center",
+                duration: 1500,
+              });
+              return {
+                status: 500,
+                data: null,
+                errors: { general: [error.message] },
+              };
+            }
+          }}
           placeholder="Are you sure you want to delete the classification?"
         />
       </div>

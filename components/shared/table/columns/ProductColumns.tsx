@@ -35,6 +35,10 @@ import {
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import DialogFormButton from "../../buttons/DialogFormButton";
+import { toast } from "sonner";
+import { ApiResponse } from "@/types/api";
+import { formatErrorResponse } from "@/lib/formatters";
+import { showSuccessMessage } from "@/lib/utils";
 
 export const visibleProductColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -132,9 +136,31 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
         </ResponsiveDialogFooter>
       </EditDialog>
       <DeleteDialog
-        title={"Delete Product"}
-        deleteAction={async () => await deleteProduct(product.id)}
-        placeholder={"Are you sure you want to delete the product?"}
+        title="Delete Product"
+        deleteAction={async () => {
+          const result: ApiResponse<string> = await deleteProduct(product.id);
+          console.log(result);
+
+          if (
+            result.data &&
+            typeof result.data === "object" &&
+            "message" in result.data
+          ) {
+            toast.success((result.data as { message: string }).message, {
+              position: "top-center",
+              duration: 1500,
+            });
+          }
+
+          if (result.errors) {
+            toast.error(formatErrorResponse(result.errors), {
+              position: "top-center",
+              duration: 2000,
+            });
+          }
+          return result;
+        }}
+        placeholder="Are you sure you want to delete the product?"
       />
     </div>
   );
