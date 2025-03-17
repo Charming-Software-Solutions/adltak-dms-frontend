@@ -73,7 +73,6 @@ const ProductClient = ({
   categories,
   types,
 }: Props) => {
-  console.log(allocationProducts);
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [openFilterDialog, setOpenFilterDialog] = useState(false);
