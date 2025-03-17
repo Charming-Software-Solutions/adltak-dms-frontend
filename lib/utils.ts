@@ -68,7 +68,6 @@ export async function fetchAndHandleResponse<T>({
     if (jwt) {
       headers["Authorization"] = `Bearer ${jwt}`;
     }
-
     if (contentType) {
       headers["Content-Type"] = contentType;
     }
@@ -80,16 +79,20 @@ export async function fetchAndHandleResponse<T>({
     };
 
     const response = await fetch(url, requestOptions);
+    const status = response.status;
 
     if (!response.ok) {
-      const errorData: ErrorResponse = await response.json();
-      return { data: null, errors: errorData };
+      let errorData: ErrorResponse = { general: [`HTTP Error ${status}`] };
+      try {
+        errorData = await response.json();
+      } catch (e) {}
+      return { status, data: null, errors: errorData };
     }
-    const data: T = await response.json();
 
-    return { data, errors: null };
+    const data: T = await response.json();
+    return { status, data, errors: null };
   } catch (error: any) {
-    return { data: null, errors: { general: [error.message] } };
+    return { status: 0, data: null, errors: { general: [error.message] } };
   }
 }
 
