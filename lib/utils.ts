@@ -1,8 +1,10 @@
 import { FormModeEnum } from "@/enums";
 import { ApiResponse, ErrorResponse } from "@/types/api";
+import { DistributionProduct } from "@/types/distribution";
 import { SelectItemType } from "@/types/primitives";
-import { Product, ProductSKU } from "@/types/product";
+import { ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
+import { format } from "date-fns";
 import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
@@ -66,29 +68,31 @@ export async function fetchAndHandleResponse<T>({
     if (jwt) {
       headers["Authorization"] = `Bearer ${jwt}`;
     }
-
     if (contentType) {
       headers["Content-Type"] = contentType;
     }
 
     const requestOptions: RequestInit = {
-      cache: "no-store",
       method,
       headers,
       body,
     };
 
     const response = await fetch(url, requestOptions);
+    const status = response.status;
 
     if (!response.ok) {
-      const errorData: ErrorResponse = await response.json();
-      return { data: null, errors: errorData };
+      let errorData: ErrorResponse = { general: [`HTTP Error ${status}`] };
+      try {
+        errorData = await response.json();
+      } catch (e) {}
+      return { status, data: null, errors: errorData };
     }
-    const data: T = await response.json();
 
-    return { data, errors: null };
+    const data: T = await response.json();
+    return { status, data, errors: null };
   } catch (error: any) {
-    return { data: null, errors: { general: [error.message] } };
+    return { status: 0, data: null, errors: { general: [error.message] } };
   }
 }
 
@@ -184,19 +188,17 @@ export const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export function filterProductsByExpiration(products: Product[]): {
-  fresh: Product[];
-  nearExpiration: Product[];
-  expired: Product[];
+export function filterProductsByExpiration(products: DistributionProduct[]): {
+  nearExpiration: DistributionProduct[];
+  expired: DistributionProduct[];
 } {
   const currentDate = new Date();
 
   const nextMonthDate = new Date(currentDate);
   nextMonthDate.setMonth(currentDate.getMonth() + 1);
 
-  const fresh: Product[] = [];
-  const nearExpiration: Product[] = [];
-  const expired: Product[] = [];
+  const nearExpiration: DistributionProduct[] = [];
+  const expired: DistributionProduct[] = [];
 
   products.forEach((product) => {
     const productExpiration = new Date(product.expiration);
@@ -208,13 +210,10 @@ export function filterProductsByExpiration(products: Product[]): {
       productExpiration <= nextMonthDate
     ) {
       nearExpiration.push(product);
-    } else {
-      fresh.push(product);
     }
   });
 
-  // Return an object with the categorized products
-  return { fresh, nearExpiration, expired };
+  return { nearExpiration, expired };
 }
 
 export function convertRecordsToArray(
@@ -236,4 +235,8 @@ export function showSuccessMessage(mode: FormModeEnum, object: string) {
       position: "top-center",
     });
   }
+}
+
+export function formatExpiration(expiration: string): string {
+  return format(new Date(expiration), "ddMMMyyyy").toUpperCase();
 }

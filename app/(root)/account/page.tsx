@@ -1,8 +1,8 @@
-import { getAccountSession } from "@/lib/actions/auth.actions";
+import { getCurrentUser } from "@/auth/currentUser";
 import AccountClient from "./AccountClient";
 
 export default async function AccountPage() {
-  const accountSession = await getAccountSession();
+  const employee = await getCurrentUser({ withEmployeeProfile: true });
 
-  return <AccountClient employee={accountSession.employee} />;
+  return <AccountClient employee={employee!} />;
 }

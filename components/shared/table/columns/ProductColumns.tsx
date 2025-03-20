@@ -35,6 +35,10 @@ import {
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import DialogFormButton from "../../buttons/DialogFormButton";
+import { toast } from "sonner";
+import { ApiResponse } from "@/types/api";
+import { formatErrorResponse } from "@/lib/formatters";
+import { showSuccessMessage } from "@/lib/utils";
 
 export const visibleProductColumns = (userRole: UserRoleEnum) => {
   return createColumnConfig({
@@ -44,8 +48,8 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
       sku: true,
       classifications: true,
       stock: true,
-      expiration: true,
-      identifiera: true,
+      expiration: false,
+      identifiera: false,
       area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
@@ -54,9 +58,10 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
     },
     mobile: {
       name: true,
+      sku: true,
       classifications: true,
       stock: true,
-      identifiera: true,
+      identifiera: false,
       area: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
@@ -98,14 +103,15 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
               theme: "os-theme-dark",
             },
           }}
-          className="max-h-[38.7rem]"
+          className="max-h-[39rem]"
         >
           <ProductForm
             form={form}
-            className="px-4 md:px-1 pb-2"
+            className="px-4 md:px-1 pb-4"
             brands={data?.brands ?? []}
             categories={data?.categories ?? []}
             types={data?.productTypes ?? []}
+            mode="edit"
           />
         </OverlayScrollbarsComponent>
         <ResponsiveDialogFooter className="px-1">
@@ -130,9 +136,31 @@ const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
         </ResponsiveDialogFooter>
       </EditDialog>
       <DeleteDialog
-        title={"Delete Product"}
-        deleteAction={async () => await deleteProduct(product.id)}
-        placeholder={"Are you sure you want to delete the product?"}
+        title="Delete Product"
+        deleteAction={async () => {
+          const result: ApiResponse<string> = await deleteProduct(product.id);
+          console.log(result);
+
+          if (
+            result.data &&
+            typeof result.data === "object" &&
+            "message" in result.data
+          ) {
+            toast.success((result.data as { message: string }).message, {
+              position: "top-center",
+              duration: 1500,
+            });
+          }
+
+          if (result.errors) {
+            toast.error(formatErrorResponse(result.errors), {
+              position: "top-center",
+              duration: 2000,
+            });
+          }
+          return result;
+        }}
+        placeholder="Are you sure you want to delete the product?"
       />
     </div>
   );
@@ -166,6 +194,10 @@ export const ProductColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: "Name",
+  },
+  {
+    accessorKey: "sku",
+    header: "SKU",
   },
   {
     accessorKey: "classifications",
@@ -249,7 +281,7 @@ export const ProductColumns: ColumnDef<Product>[] = [
       );
     },
   },
-  { accessorKey: "stock", header: "Stock" },
+  { accessorKey: "stock", header: "Total QTY" },
   {
     accessorKey: "area",
     header: "Area",

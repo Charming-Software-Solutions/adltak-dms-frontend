@@ -50,7 +50,6 @@ export const useAssetForm = ({
       thumbnail: asset?.thumbnail ?? undefined,
       product: asset?.product?.id ?? "",
       area: asset?.area ?? "",
-      baReferenceNumber: asset?.ba_reference_number ?? "",
       stock: asset?.stock ?? 1,
     },
   });
@@ -66,7 +65,6 @@ export const useAssetForm = ({
     formData.append("status", values.status);
     formData.append("product", values.product);
     formData.append("area", values.area);
-    formData.append("ba_reference_number", values.baReferenceNumber);
     formData.append("stock", values.stock.toString());
 
     if (values.thumbnail instanceof File) {
@@ -126,14 +124,6 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}
-          name="baReferenceNumber"
-          label="BA Reference Number"
-          placeholder="BA1234567890"
-          disabled={form.formState.isSubmitting}
-        />
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
           name="area"
           label="Area"
           placeholder="Quezon City"
@@ -173,7 +163,7 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           inputType={InputType.NUMBER}
           control={form.control}
           name="stock"
-          label="Asset stock"
+          label="Total Quantity"
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />

@@ -3,7 +3,7 @@
 import { ApiResponse } from "@/types/api";
 import { Classification, ClassificationType } from "@/types/generics";
 import { fetchAndHandleResponse } from "../utils";
-import { getSession } from "../session";
+import { getSession } from "@/auth/session";
 
 function getClassificationUrl(classificationType: ClassificationType): string {
   let url = `${process.env.DOMAIN}`;
@@ -68,11 +68,19 @@ async function deleteClassification(
   id: string,
   classificationType: ClassificationType,
 ): Promise<ApiResponse<string>> {
-  return fetchAndHandleResponse({
+  const response = await fetchAndHandleResponse<string>({
     jwt: (await getSession())?.access,
     url: `${getClassificationUrl(classificationType)}${id}/`,
     method: "DELETE",
   });
+
+  if (response.status === 500) {
+    throw new Error(
+      "Failed to delete classification due to existing connections to a product or asset.",
+    );
+  }
+
+  return response;
 }
 
 export {

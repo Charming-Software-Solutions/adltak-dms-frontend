@@ -14,6 +14,7 @@ export type QuantityItem<T extends BaseItem> = {
   id: string;
   item: T;
   quantity: number;
+  expiration?: string;
 };
 
 type QuantityItemStore<T extends BaseItem> = {
@@ -31,9 +32,16 @@ export const createItemStore = <T extends BaseItem>(storeName: string) =>
         items: [],
         addItem: (item) => {
           set((state) => {
+            // Determine the item's unique id
+            const itemId = item.expiration
+              ? `${item.id}-${item.expiration}`
+              : item.id;
+
+            console.log(item);
             const existingItemIndex = state.items.findIndex(
-              (quantityItem) => quantityItem.item.id === item.id,
+              (quantityItem) => quantityItem.id === itemId,
             );
+
             if (existingItemIndex !== -1) {
               // Item exists, update the quantity
               const updatedItems = [...state.items];
@@ -46,9 +54,10 @@ export const createItemStore = <T extends BaseItem>(storeName: string) =>
             } else {
               // Item does not exist, add it
               const newQuantityItem: QuantityItem<T> = {
-                id: item.id,
+                id: itemId, // Use the dynamic id
                 item,
                 quantity: item.quantity,
+                expiration: item.expiration,
               };
               return { items: [...state.items, newQuantityItem] };
             }

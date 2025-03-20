@@ -1,5 +1,6 @@
 "use client";
 
+import { login } from "@/auth/actions";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 import CustomFormField, {
   FormFieldType,
@@ -14,10 +15,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { login } from "@/lib/actions/auth.actions";
 import { loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -80,25 +81,33 @@ const LoginClient = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div className="grid gap-2">
-            <CustomFormField
-              fieldType={FormFieldType.INPUT}
-              inputType={InputType.EMAIL}
-              control={form.control}
-              name="email"
-              label="Email"
-              placeholder={"johndoe@email.com"}
-              disabled={form.formState.isSubmitting}
-            />
-            <CustomFormField
-              fieldType={FormFieldType.PASSWORD}
-              control={form.control}
-              name="password"
-              label="Password"
-              placeholder="*************"
-              disabled={form.formState.isSubmitting}
-            />
-          </div>
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            inputType={InputType.EMAIL}
+            control={form.control}
+            name="email"
+            label="Email"
+            placeholder={"johndoe@email.com"}
+            disabled={form.formState.isSubmitting}
+          />
+          <CustomFormField
+            fieldType={FormFieldType.PASSWORD}
+            control={form.control}
+            name="password"
+            label={
+              <div className="flex items-center justify-between">
+                <span>Password</span>
+                <Link
+                  href={"/reset-password"}
+                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+            }
+            placeholder="*************"
+            disabled={form.formState.isSubmitting}
+          />
         </CardContent>
         <CardFooter>
           <DialogFormButton

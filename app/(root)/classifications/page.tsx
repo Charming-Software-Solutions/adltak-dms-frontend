@@ -1,9 +1,9 @@
 import { getClassifications } from "@/lib/actions/classification.actions";
-import { getSession } from "@/lib/session";
 import ClassificationsClient from "./ClassificationsClient";
+import { getCurrentUser } from "@/auth/currentUser";
 
 export default async function ClassificationsPage() {
-  const user = (await getSession())!.user;
+  const user = await getCurrentUser();
   const [productBrands, productCategories, productTypes, assetTypes] =
     await Promise.all([
       getClassifications("product_brand"),
@@ -20,6 +20,6 @@ export default async function ClassificationsPage() {
   };
 
   return (
-    <ClassificationsClient user={user} classifications={classifications} />
+    <ClassificationsClient user={user!} classifications={classifications} />
   );
 }

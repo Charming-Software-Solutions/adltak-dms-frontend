@@ -2,6 +2,7 @@
 
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import { Form } from "@/components/ui/form";
+import { DISTRIBUTION_TYPES } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
@@ -49,8 +50,6 @@ export const useTaskForm = ({
     formData.append("warehouse_person", values.warehousePerson);
     formData.append("distribution", values.distribution);
 
-    console.log(values);
-
     const result: ApiResponse<Task> =
       mode === "create"
         ? await createTask(formData)
@@ -83,7 +82,7 @@ const TaskForm = ({
       <div className={cn("flex flex-col gap-4 px-1", className)}>
         <ComboBoxFormField
           items={warehousePersons.map((person) => ({
-            label: person.name,
+            label: `${person.first_name} ${person.last_name}`,
             value: person.id,
           }))}
           control={form.control}
@@ -98,16 +97,16 @@ const TaskForm = ({
         />
         <ComboBoxFormField
           items={distributions.map((distribution) => ({
-            label: `ID: ${distribution.dist_id} | Client: ${distribution.client} | Type: ${distribution.type}`,
+            label: `ID: ${distribution.ba_reference_number} | Client: ${distribution.client} | Type: ${DISTRIBUTION_TYPES[distribution.type]}`,
             value: distribution.id,
           }))}
           control={form.control}
           name="distribution"
           placeholder={{
-            triggerPlaceholder: "Select distribution...",
-            searchPlaceholder: "Search distribution...",
+            triggerPlaceholder: "Select allocation...",
+            searchPlaceholder: "Search allocation...",
           }}
-          label="Distribution"
+          label="Allocation"
           popOverSize="md:min-w-[28.5rem]"
           disabled={form.formState.isSubmitting}
         />

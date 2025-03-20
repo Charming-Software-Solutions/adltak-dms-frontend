@@ -4,6 +4,7 @@ export type ErrorResponse = {
 };
 
 export type ApiResponse<T> = {
+  status: number;
   data: T | null;
   errors: ErrorResponse | null;
 };

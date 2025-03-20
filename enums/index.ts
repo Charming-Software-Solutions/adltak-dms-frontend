@@ -59,3 +59,8 @@ export enum FormModeEnum {
   CREATE = "CREATE",
   EDIT = "EDIT",
 }
+
+export enum DistributionTypeEnum {
+  IMPORT = "IMPORT",
+  EXPORT = "EXPORT",
+}

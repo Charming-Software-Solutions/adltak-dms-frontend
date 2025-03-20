@@ -23,7 +23,7 @@ const AccountClient = ({ employee }: { employee: Employee }) => {
   const accountPreferencesCards: AccountSettingCardItem[] = [
     {
       title: "Change Email Address",
-      description: employee.user.email,
+      description: employee.user.email!,
       dialog: <AccountSettingEmailDialog user={employee.user} />,
     },
     {
@@ -52,8 +52,8 @@ const AccountClient = ({ employee }: { employee: Employee }) => {
           </TabsList>
           <TabsContent value="preferences">
             <div className="flex flex-col gap-4">
-              {accountPreferencesCards.map((setting) => (
-                <AccountSettingCard>
+              {accountPreferencesCards.map((setting, key) => (
+                <AccountSettingCard key={key}>
                   <AccountSettingContent>
                     <h3 className="text-xl font-semibold">{setting.title}</h3>
                     <p>{setting.description}</p>

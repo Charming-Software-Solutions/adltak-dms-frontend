@@ -1,5 +1,6 @@
 "use client";
 
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 import CalendarPicker from "@/components/shared/CalendarPicker";
 import FilterBadge from "@/components/shared/filter/FilterBadge";
 import FilterDialog from "@/components/shared/filter/FilterDialog";
@@ -29,16 +30,10 @@ import {
   useDistributionAssetStore,
   useDistributionProductStore,
 } from "@/lib/store";
-import {
-  filterDataTable,
-  filterProductsByExpiration,
-  formatFilterValue,
-  toPSTDate,
-} from "@/lib/utils";
+import { filterDataTable, formatFilterValue, toPSTDate } from "@/lib/utils";
 import { Asset } from "@/types/asset";
 import { Distribution } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
-import { UserSession } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { parseAsIsoDate, parseAsString, useQueryStates } from "nuqs";
@@ -49,10 +44,10 @@ import DistributionAddItem from "./components/DistributionAddItem";
 import DistributionForm, {
   useDistributionForm,
 } from "./components/DistributionForm";
-import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
+import { User } from "@/types/user";
 
 type Props = {
-  user: UserSession;
+  user: User;
   employee: string;
   distributions: Distribution[];
   brands: Brand[];
@@ -174,7 +169,10 @@ const DistributionClient = ({
             ? visibleDistributionColumns(user.role).desktop
             : visibleDistributionColumns(user.role).mobile
         }
-        searchField={{ column: "client", placeholder: "Search by client" }}
+        searchField={{
+          column: "ba_reference_number",
+          placeholder: "Search by BA reference number...",
+        }}
         filters={
           <div className="flex gap-2">
             <div className="flex items-center gap-2">
@@ -299,7 +297,7 @@ const DistributionClient = ({
 
   return (
     <React.Fragment>
-      <Header>
+      <Header overrideHeaderTitle="Allocations">
         <div className="flex items-center justify-end gap-2">
           <Button size="sm" variant="outline" className="h-8 gap-1">
             <FileIcon className="h-3.5 w-3.5" />
@@ -318,13 +316,13 @@ const DistributionClient = ({
               <ResponsiveDialogTrigger>
                 <Button className="h-8">
                   <PlusCircle className="mr-9 md:mr-2 size-4" />
-                  <span className="hidden sm:inline">Create Distribution</span>
+                  <span className="hidden sm:inline">Create Allocation</span>
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent className="max-w-xl">
                 <ResponsiveDialogHeader>
                   <ResponsiveDialogTitle>
-                    Create Distribution
+                    Create Allocation
                   </ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
                 <div className="space-y-2 px-4 md:px-0">
@@ -342,7 +340,7 @@ const DistributionClient = ({
                     <TabsContent value="products">
                       <Card className="p-4">
                         <DistributionAddItem
-                          items={filterProductsByExpiration(products).fresh}
+                          items={products}
                           type="product"
                           store={useDistributionProductStore}
                         />
@@ -393,7 +391,7 @@ const DistributionClient = ({
                       }
                       loading={form.formState.isSubmitting}
                     >
-                      Create Distribution
+                      Create Allocation
                     </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>

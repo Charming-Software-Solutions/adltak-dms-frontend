@@ -18,6 +18,8 @@ export type DistributionAsset = BaseModel & {
 export type DistributionProduct = BaseModel & {
   product: Product;
   quantity: number;
+  expiration: string;
+  ba_reference_number: string;
 };
 
 export type DistributionType = "IMPORT" | "EXPORT";
@@ -29,6 +31,7 @@ export type Distribution = {
   updated_at: string;
   products: DistributionProduct[];
   assets?: DistributionAsset[];
+  ba_reference_number?: string;
   type: DistributionType;
   status: DistributionStatusesEnum;
   client: string;

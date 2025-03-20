@@ -18,18 +18,16 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { USER_ROLES } from "@/constants";
-import { logout } from "@/lib/actions/auth.actions";
 import { Employee, User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import NavUserProfile from "./NavUserProfile";
+import { logout } from "@/auth/actions";
 
 export function NavUser({
   user,
-  refresh,
   employee,
 }: {
   user: User;
-  refresh: string;
   employee: Employee;
 }) {
   const { isMobile } = useSidebar();
@@ -45,7 +43,8 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-lg bg-card border text-card-foreground shadow-sm py-8"
             >
               <NavUserProfile
-                title={employee.name}
+                firstName={employee.first_name}
+                lastName={employee.last_name}
                 subtitle={USER_ROLES[user.role]}
                 alt={"profile-image"}
                 avatarImage={employee.profile_image}
@@ -61,8 +60,9 @@ export function NavUser({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <NavUserProfile
-                title={employee.name}
-                subtitle={user.email}
+                firstName={employee.first_name}
+                lastName={employee.last_name}
+                subtitle={user.email!}
                 alt={"profile-image"}
                 avatarImage={employee.profile_image}
               />
@@ -77,7 +77,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                logout(refresh);
+                logout();
               }}
             >
               <LogOut className="size-4 mr-2" />
