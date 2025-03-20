@@ -40,15 +40,15 @@ export const ActivityLogFilter = ({
           { label: "All", value: "" },
           {
             label: "CREATE",
-            value: "CREATE",
+            value: 1,
           },
           {
             label: "UPDATE",
-            value: "UPDATE",
+            value: 2,
           },
           {
             label: "DELETE",
-            value: "DELETE",
+            value: 3,
           },
         ],
       },
@@ -59,35 +59,35 @@ export const ActivityLogFilter = ({
           { label: "All", value: "" },
           {
             label: "Product",
-            value: "Product",
+            value: "product",
           },
           {
             label: "Product Brand",
-            value: "Product Brand",
+            value: "productbrand",
           },
           {
             label: "Product Category",
-            value: "Product Category",
+            value: "productcategory",
           },
           {
             label: "Product Type",
-            value: "Product Type",
+            value: "producttype",
           },
           {
             label: "Asset",
-            value: "Asset",
+            value: "asset",
           },
           {
             label: "Asset Type",
-            value: "Asset Type",
+            value: "assettype",
           },
           {
             label: "Allocation",
-            value: "Allocation",
+            value: "allocation",
           },
           {
             label: "Task",
-            value: "Task",
+            value: "task",
           },
         ],
       },
@@ -125,10 +125,16 @@ export const ActivityLogFilter = ({
             >
               {radio.items.map((item, index) => (
                 <div className="flex items-center justify-between" key={index}>
-                  <Label htmlFor={item.value} className="cursor-pointer">
+                  <Label
+                    htmlFor={String(item.value)}
+                    className="cursor-pointer"
+                  >
                     {item.label}
                   </Label>
-                  <RadioGroupItem value={item.value} id={item.value} />
+                  <RadioGroupItem
+                    value={String(item.value)}
+                    id={String(item.value)}
+                  />
                 </div>
               ))}
             </RadioGroup>

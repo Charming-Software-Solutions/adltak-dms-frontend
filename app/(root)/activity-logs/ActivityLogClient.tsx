@@ -23,7 +23,6 @@ import { FileIcon, ListFilter } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
 import React from "react";
 import { ActivityLogFilter } from "./components/ActivityLogFilter";
-import { filterDataTable } from "@/lib/utils";
 
 type Props = {
   activityLogs: ActivityLog[];
@@ -39,24 +38,13 @@ const ActivityLogsClient = ({ activityLogs }: Props) => {
     },
     {
       history: "push",
+      shallow: false,
     },
   );
 
-  const filteredActivityLogs = filterDataTable(activityLogs, (log) => {
-    const isRoleValid = !filters.role || filters.role === log.user.role;
-    const isTypeValid = !filters.type || filters.type === log.type;
-    const isModuleValid = !filters.module || filters.module === log.module;
-
-    return isRoleValid && isTypeValid && isModuleValid;
-  });
-
-  const hasActiveFilters = () => {
-    return Object.values(filters).some((value) => value !== "");
-  };
-
   const dataTable = useDataTable({
     columns: ActivityLogColumns,
-    data: hasActiveFilters() ? filteredActivityLogs : activityLogs,
+    data: activityLogs,
     visibleColumns: isDesktop
       ? visibileActivityLogColumns.desktop
       : visibileActivityLogColumns.mobile,

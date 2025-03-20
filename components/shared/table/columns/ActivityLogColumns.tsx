@@ -25,6 +25,8 @@ import {
   ResponsiveDialogTrigger,
 } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { Task } from "@/types/task";
+import { CopyButton } from "@/components/ui/copy-button";
 
 export const visibileActivityLogColumns = {
   desktop: {
@@ -92,7 +94,9 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
     header: "Changes",
     cell: ({ row }) => {
       const [openDialog, setOpenDialog] = useState(false);
-      const changes = row.original.changes;
+      const activityLog = row.original;
+      const changes = activityLog.changes;
+      const logObject = activityLog.object;
 
       return (
         <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
@@ -105,9 +109,36 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
             <ResponsiveDialogHeader>
               <ResponsiveDialogTitle>List of Changes</ResponsiveDialogTitle>
               {row.original.identifier && (
-                <ResponsiveDialogDescription>
-                  <span className="font-semibold text-black">Identifer: </span>
-                  {row.original.identifier}
+                <ResponsiveDialogDescription className="flex flex-col space-y-1">
+                  <div className="w-full">
+                    <span className="font-semibold text-black">
+                      Identifier:{" "}
+                    </span>
+                    <div className="inline-flex items-center space-x-1">
+                      <span className="font-normal text-gray-500">
+                        {activityLog.identifier}
+                      </span>
+                      <CopyButton value={activityLog.identifier} />
+                    </div>
+                  </div>
+
+                  {activityLog.module.toLowerCase() === "task" && (
+                    <div className="w-full">
+                      <span className="font-semibold text-black">
+                        Warehouse Person:{" "}
+                      </span>
+                      <div className="inline-flex items-center space-x-1">
+                        <span className="font-normal text-gray-500">
+                          {(logObject as Task).warehouse_person.user.email}
+                        </span>
+                        <CopyButton
+                          value={
+                            (logObject as Task).warehouse_person.user.email!
+                          }
+                        />
+                      </div>
+                    </div>
+                  )}
                 </ResponsiveDialogDescription>
               )}
             </ResponsiveDialogHeader>

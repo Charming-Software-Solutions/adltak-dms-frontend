@@ -6,6 +6,7 @@ type ActivityLog = {
   identifier: string;
   module: string;
   dateTime: string;
+  object: unknown;
   changes: {
     [key: string]: string[];
   };
