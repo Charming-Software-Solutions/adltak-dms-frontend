@@ -17,6 +17,6 @@ type RadioGroupFilter = {
   group: {
     title: string;
     defaultValue: string;
-    items: { label: string; value: string }[];
+    items: { label: string; value: string | number }[];
   }[];
 };
