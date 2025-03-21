@@ -117,7 +117,9 @@ export const EmployeeColumns: ColumnDef<Employee>[] = [
 
       const isActive = row.original.user.is_active;
       return (
-        <Badge className={`${statusBadgeColors[isActive ? "true" : "false"]}`}>
+        <Badge
+          className={`${statusBadgeColors[isActive ? "true" : "false"]} pointer-events-none`}
+        >
           {isActive ? "Active" : "Deactivated"}
         </Badge>
       );
