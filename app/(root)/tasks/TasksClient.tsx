@@ -50,7 +50,9 @@ const TasksClient = ({
   const { getFilteredItems } = useAssetTaskFilters(tasks);
 
   const filteredWarehousePersons = warehousePersons.filter(
-    (person) => person.user.role === UserRoleEnum.WAREHOUSE_WORKER,
+    (person) =>
+      person.user.role === UserRoleEnum.WAREHOUSE_WORKER &&
+      person.user.is_active,
   );
 
   useEffect(() => {
