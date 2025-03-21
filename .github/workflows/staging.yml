@@ -20,7 +20,7 @@ jobs:
       - name: Install Bun
         run: |
           curl -fsSL https://bun.sh/install | bash
-          echo "::add-path::$HOME/.bun/bin"
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
 
       - name: Run staging script (Bun build)
         run: npm run staging
