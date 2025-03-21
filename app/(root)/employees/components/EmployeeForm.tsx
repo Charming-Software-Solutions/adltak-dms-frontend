@@ -4,7 +4,7 @@ import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
-import { Form } from "@/components/ui/form";
+import { Form, FormDescription, FormLabel } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { USER_ROLES } from "@/constants";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
@@ -42,6 +42,7 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       lastName: employee?.last_name ?? "",
       role: employee?.user.role ?? "",
       profile_image: employee?.profile_image ?? undefined,
+      status: employee?.user.is_active ?? true,
     },
   });
 
@@ -54,8 +55,9 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     formData.append("first_name", values.firstName);
     formData.append("last_name", values.lastName);
 
-    const userData: { email?: string; role: string } = {
+    const userData: { email?: string; role: string; is_active: boolean } = {
       role: values.role,
+      is_active: values.status,
     };
 
     if (mode === "create") {
@@ -151,6 +153,20 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
               </SelectItem>
             ))}
         </CustomFormField>
+        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <div className="space-y-0.5">
+            <FormLabel className="text-base">Employee Active Status</FormLabel>
+            <FormDescription className="text-xs">
+              Current active status of the selected employee.
+            </FormDescription>
+          </div>
+          <CustomFormField
+            fieldType={FormFieldType.SWITCH}
+            control={form.control}
+            name="status"
+            disabled={form.formState.isSubmitting}
+          />
+        </div>
       </div>
     </Form>
   );

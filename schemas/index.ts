@@ -46,6 +46,9 @@ export const employeeFormSchema = z.object({
     message: "User role is required.",
   }),
   profile_image: z.union([z.instanceof(File), z.string()]).optional(),
+  status: z.boolean({
+    required_error: "Status is required.",
+  }),
 });
 
 export const distributionItemSchema = z
