@@ -42,8 +42,6 @@ async function getActivityLogs(
     method: "GET",
   });
 
-  console.log(filters);
-  console.log(response.data);
   return response.data ?? [];
 }
 
