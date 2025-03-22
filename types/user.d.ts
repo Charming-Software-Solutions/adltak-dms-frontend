@@ -5,7 +5,7 @@ import { BaseModel } from "./generics";
 export type User = {
   id: string;
   is_active: boolean;
-  email?: string;
+  email: string;
   role: UserRoleEnum;
 };
 
