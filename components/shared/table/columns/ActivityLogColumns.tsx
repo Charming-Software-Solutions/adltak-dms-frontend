@@ -138,9 +138,11 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
                   <span className="font-semibold text-black">Identifier: </span>
                   <span className="inline-flex items-center space-x-1">
                     <span className="font-normal text-gray-500">
-                      {activityLogIdentifier}
+                      {activityLogIdentifier?.trim() || "UNKNOWN"}
                     </span>
-                    <CopyButton value={activityLogIdentifier} />
+                    {activityLogIdentifier?.trim() && (
+                      <CopyButton value={activityLogIdentifier.trim()} />
+                    )}
                   </span>
                 </span>
 
