@@ -5,8 +5,15 @@ type ActivityLog = {
   type: "CREATE" | "UPDATE" | "DELETE";
   identifier: string;
   module: string;
-  dateTime: string;
-  object: unknown;
+  datetime: string;
+  object: [
+    {
+      model: string;
+      fields: {
+        [key: string]: string;
+      };
+    },
+  ];
   changes: {
     [key: string]: string[];
   };
