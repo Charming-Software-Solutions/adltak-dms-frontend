@@ -6,6 +6,7 @@
     "node": "20"
   },
   "scripts": {
+    "dev": "next dev --turbopack",
     "staging": "npm ci && bun run build",
     "build": "next build",
     "start": "next start",
