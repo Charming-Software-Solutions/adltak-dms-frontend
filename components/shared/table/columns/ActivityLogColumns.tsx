@@ -8,7 +8,15 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -18,8 +26,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { USER_ROLES } from "@/constants";
+import { getEmployeeById } from "@/lib/actions/employee.actions";
 import { formatDateTime } from "@/lib/utils";
 import { ActivityLog } from "@/types/activityLog";
+import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
@@ -32,18 +42,6 @@ import {
   ResponsiveDialogTrigger,
 } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { Task } from "@/types/task";
-import { useQuery } from "@tanstack/react-query";
-import { getEmployeeById } from "@/lib/actions/employee.actions";
-import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const visibileActivityLogColumns = {
   desktop: {
@@ -51,7 +49,7 @@ export const visibileActivityLogColumns = {
     role: true,
     type: true,
     module: true,
-    changes: true,
+    details: true,
     datetime: true,
   },
   mobile: {
@@ -59,7 +57,7 @@ export const visibileActivityLogColumns = {
     role: true,
     type: true,
     module: true,
-    changes: true,
+    details: true,
     datetime: true,
   },
 };
@@ -101,8 +99,8 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
     header: "Module",
   },
   {
-    accessorKey: "changes",
-    header: "Changes",
+    accessorKey: "details",
+    header: "Details",
     cell: ({ row }) => {
       const [openDialog, setOpenDialog] = useState(false);
       const activityLog = row.original;
