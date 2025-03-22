@@ -135,9 +135,11 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription className="flex flex-col space-y-0.5">
                 <span className="w-full">
-                  <span className="font-semibold text-black">Identifier: </span>
+                  <span className="font-semibold text-foreground">
+                    Identifier:{" "}
+                  </span>
                   <span className="inline-flex items-center space-x-1">
-                    <span className="font-normal text-gray-500">
+                    <span className="font-normal text-muted-foreground">
                       {activityLogIdentifier?.trim() || "UNKNOWN"}
                     </span>
                     {activityLogIdentifier?.trim() && (
@@ -148,11 +150,11 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
 
                 {activityLog.module.toLowerCase() === "task" && (
                   <span className="w-full">
-                    <span className="font-semibold text-black">
+                    <span className="font-semibold text-foreground">
                       Warehouse Person:{" "}
                     </span>
                     <span className="inline-flex items-center space-x-1">
-                      <span className="font-normal text-gray-500">
+                      <span className="font-normal text-muted-foreground">
                         {isWarehousePersonLoading ? (
                           <span>Loading...</span>
                         ) : (
@@ -181,14 +183,14 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
                       Original Record
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="relative text-sm mt-2 rounded-md bg-neutral-100 p-4 max-h-96 md:max-h-none">
+                      <div className="relative text-sm mt-2 rounded-md bg-muted p-4 max-h-96 md:max-h-none">
                         <CopyButton
                           className="absolute top-2 right-2"
                           value={JSON.stringify(activityLogObject, null, 2)}
                         />
 
                         <pre className="overflow-auto max-h-80 md:max-h-none">
-                          <code className="text-black">
+                          <code className="text-foreground">
                             {JSON.stringify(activityLogObject, null, 2)}
                           </code>
                         </pre>
