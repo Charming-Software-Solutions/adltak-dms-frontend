@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { PasswordInput } from "../ui/password-input";
 import React from "react";
+import { Switch } from "../ui/switch";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -34,6 +35,7 @@ export enum FormFieldType {
   IMAGE = "image",
   DATE = "date",
   PASSWORD = "password",
+  SWITCH = "switch",
 }
 
 export enum InputType {
@@ -41,6 +43,7 @@ export enum InputType {
   NUMBER = "number",
   EMAIL = "email",
   PASSWORD = "password",
+  BOOLEAN = "boolean",
 }
 
 interface BaseCustomProps {
@@ -156,6 +159,16 @@ const RenderInput = ({
       return (
         <FormControl>
           <PasswordInput placeholder={props.placeholder} {...field} />
+        </FormControl>
+      );
+    case FormFieldType.SWITCH:
+      return (
+        <FormControl>
+          <Switch
+            checked={field.value}
+            onCheckedChange={field.onChange}
+            disabled={props.disabled}
+          />
         </FormControl>
       );
     default:

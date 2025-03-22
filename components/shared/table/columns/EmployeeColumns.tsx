@@ -6,23 +6,22 @@ import EmployeeForm, {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { USER_ROLES } from "@/constants";
-import { deleteEmployee } from "@/lib/actions/employee.actions";
+import { FormModeEnum } from "@/enums";
+import { formatDateTime } from "@/lib/utils";
 import { Employee } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
-import DeleteDialog from "../../dialogs/DeleteDialog";
+import DialogFormButton from "../../buttons/DialogFormButton";
 import EditDialog from "../../dialogs/EditDialog";
 import TableImage from "../../image/TableImage";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
-import { FormModeEnum } from "@/enums";
-import { formatDateTime } from "@/lib/utils";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import DialogFormButton from "../../buttons/DialogFormButton";
 
 export const visibileEmployeeColumns = {
   desktop: {
     profile_image: true,
     email: true,
+    status: true,
     name: true,
     role: true,
     actions: true,
@@ -32,6 +31,7 @@ export const visibileEmployeeColumns = {
     profile_image: true,
     email: true,
     name: true,
+    status: true,
     role: true,
     actions: true,
   },
@@ -81,11 +81,6 @@ const EmployeeActionsCell = React.memo(
             </div>
           </ResponsiveDialogFooter>
         </EditDialog>
-        <DeleteDialog
-          title={"Delete Employee"}
-          deleteAction={async () => await deleteEmployee(employee.id)}
-          placeholder={"Are you sure you want to delete this employee account?"}
-        />
       </div>
     );
   },
@@ -109,6 +104,26 @@ export const EmployeeColumns: ColumnDef<Employee>[] = [
     accessorKey: "email",
     accessorFn: (row) => row.user.email,
     header: "Email",
+  },
+  {
+    accessorKey: "status",
+    accessorFn: (row) => row.user.is_active,
+    header: "Status",
+    cell: ({ row }) => {
+      const statusBadgeColors: Record<string, string> = {
+        true: "bg-green-500",
+        false: "bg-red-500",
+      };
+
+      const isActive = row.original.user.is_active;
+      return (
+        <Badge
+          className={`${statusBadgeColors[isActive ? "true" : "false"]} pointer-events-none`}
+        >
+          {isActive ? "Active" : "Deactivated"}
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: "name",
