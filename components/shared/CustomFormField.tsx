@@ -164,7 +164,11 @@ const RenderInput = ({
     case FormFieldType.SWITCH:
       return (
         <FormControl>
-          <Switch checked={field.value} onCheckedChange={field.onChange} />
+          <Switch
+            checked={field.value}
+            onCheckedChange={field.onChange}
+            disabled={props.disabled}
+          />
         </FormControl>
       );
     default:
