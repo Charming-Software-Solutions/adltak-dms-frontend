@@ -25,6 +25,14 @@ async function getEmployees(): Promise<Employee[]> {
   return response.data ?? [];
 }
 
+async function getEmployeeById(id: string): Promise<ApiResponse<Employee>> {
+  return fetchAndHandleResponse({
+    url: `${EMPLOYEE_URL}${id}/`,
+    method: "GET",
+    jwt: (await getSession())?.access,
+  });
+}
+
 async function getEmployeeProfile(): Promise<ApiResponse<Employee>> {
   return fetchAndHandleResponse({
     url: `${EMPLOYEE_URL}profile/`,
@@ -69,6 +77,7 @@ export {
   deleteEmployee,
   getEmployeeProfile,
   getEmployees,
+  getEmployeeById,
   updateEmployee,
   updateEmployeeProfile,
 };
