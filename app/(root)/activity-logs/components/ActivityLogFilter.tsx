@@ -105,8 +105,6 @@ export const ActivityLogFilter = ({
     ],
   };
 
-  console.log(radioFilters);
-
   return (
     <Sheet>
       <SheetTrigger asChild>
