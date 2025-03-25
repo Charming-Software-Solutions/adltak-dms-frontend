@@ -94,7 +94,7 @@ export const ActivityLogFilter = ({
           },
           {
             label: "Allocation",
-            value: "allocation",
+            value: "distribution", // will be changed to allocation in the future
           },
           {
             label: "Task",
@@ -104,6 +104,8 @@ export const ActivityLogFilter = ({
       },
     ],
   };
+
+  console.log(radioFilters);
 
   return (
     <Sheet>
