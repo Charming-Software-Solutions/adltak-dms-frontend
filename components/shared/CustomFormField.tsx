@@ -59,6 +59,8 @@ interface BaseCustomProps {
   renderSkeleton?: (field: any) => React.ReactNode;
   fieldType: FormFieldType;
   inputType?: InputType;
+  minInputNumber?: number;
+  maxInputNumber?: number;
 }
 
 const RenderInput = ({
@@ -80,6 +82,8 @@ const RenderInput = ({
               className="h-11 p-regular-16 md:p-regular-14 border-0"
               type={props.inputType ?? "text"}
               disabled={props.disabled}
+              min={props.minInputNumber}
+              max={props.maxInputNumber}
             />
           </FormControl>
         </div>
@@ -116,7 +120,7 @@ const RenderInput = ({
       return props.renderSkeleton ? props.renderSkeleton(field) : null;
     case FormFieldType.DATE:
       return (
-        <div className="flex flex-col gap-2">
+        <div className="space-y-2">
           <FormLabel>{props.label}</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
@@ -124,7 +128,7 @@ const RenderInput = ({
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "pl-3 text-left font-normal",
+                    "pl-3 text-left font-normal w-full h-[46px] flex-grow",
                     !field.value && "text-muted-foreground",
                   )}
                 >
@@ -149,7 +153,6 @@ const RenderInput = ({
                       new Date().setFullYear(new Date().getFullYear() + 10),
                     )
                 }
-                initialFocus
               />
             </PopoverContent>
           </Popover>
