@@ -11,13 +11,11 @@ import {
   updateDistribution,
 } from "@/lib/actions/distribution.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { QuantityItem } from "@/lib/store";
+import { useAllocationStore } from "@/lib/store";
 import { cn, showSuccessMessage } from "@/lib/utils";
 import { DistributionFormData, distributionFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
-import { Asset } from "@/types/asset";
-import { Distribution, DistributionItem } from "@/types/distribution";
-import { Product } from "@/types/product";
+import { Distribution } from "@/types/distribution";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -40,6 +38,7 @@ export const useDistributionForm = ({
   employee?: string;
 }) => {
   const router = useRouter();
+  const { items, clearItems } = useAllocationStore();
 
   const form = useForm<DistributionFormData>({
     resolver: zodResolver(distributionFormSchema),
@@ -47,32 +46,31 @@ export const useDistributionForm = ({
       baReferenceNumber: distribution?.ba_reference_number ?? "",
       client: distribution?.client ?? "",
       type: distribution?.type ?? "",
-      status: distribution?.status ?? "",
+      status: distribution?.status ?? "PENDING",
     },
   });
 
   const onSubmit = async (
     values: z.infer<typeof distributionFormSchema>,
     setOpen: (value: boolean) => void,
-    items?: {
-      products: QuantityItem<DistributionItem<Product>>[];
-      assets?: QuantityItem<DistributionItem<Asset>>[];
-    },
-    clearItems?: () => void,
   ) => {
     let distributionCreate: ICreateDistribution | undefined;
     const distributionUpdate = new FormData();
 
-    if (mode === "create" && items && items.products.length > 0) {
+    // Get items directly from the zustand store
+    const productItems = items.filter((item) => "product" in item);
+    const assetItems = items.filter((item) => "asset" in item);
+
+    if (mode === "create" && productItems.length > 0) {
       distributionCreate = {
         employee: employee!,
-        products: items.products.map((object) => ({
-          product: object.item.id,
+        products: productItems.map((object) => ({
+          product: object.product.id,
           quantity: object.quantity,
-          expiration: object.expiration!,
+          expiration: object.expiration,
         })),
-        assets: items.assets?.map((asset) => ({
-          asset: asset.id,
+        assets: assetItems.map((asset) => ({
+          asset: asset.asset.id,
           quantity: asset.quantity,
         })),
         ba_reference_number: values.baReferenceNumber,
@@ -102,11 +100,11 @@ export const useDistributionForm = ({
     } else {
       if (mode === "create") {
         form.reset();
+        clearItems();
       }
       showSuccessMessage(mode as FormModeEnum, "distribution");
       setOpen(false);
       router.refresh();
-      clearItems?.();
     }
   };
 
