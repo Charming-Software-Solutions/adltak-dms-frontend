@@ -1,106 +1,75 @@
-import { Asset } from "@/types/asset";
-import { DistributionItem } from "@/types/distribution";
-import { Product } from "@/types/product";
+import { DistributionAsset, DistributionProduct } from "@/types/distribution";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type BaseItem = {
-  id: string;
-  [key: string]: any;
+export type AllocationItem = DistributionProduct | DistributionAsset;
+
+type AllocationItemStoreState = {
+  items: AllocationItem[];
 };
 
-export type QuantityItem<T extends BaseItem> = {
-  id: string;
-  item: T;
-  quantity: number;
-  expiration?: string;
-};
-
-type QuantityItemStore<T extends BaseItem> = {
-  items: QuantityItem<T>[];
-  addItem: (item: T) => void;
+type AllocationItemStoreActions = {
+  addItem: (item: AllocationItem) => void;
   removeItem: (itemId: string) => void;
-  clearItems: () => void;
+  clearItems: (type?: "product" | "asset") => void;
   updateQuantity: (itemId: string, quantity: number) => void;
 };
 
-export const createItemStore = <T extends BaseItem>(storeName: string) =>
-  create<QuantityItemStore<T>>()(
-    persist(
-      (set) => ({
-        items: [],
-        addItem: (item) => {
-          set((state) => {
-            // Determine the item's unique id
-            const itemId = item.expiration
-              ? `${item.id}-${item.expiration}`
-              : item.id;
-            const existingItemIndex = state.items.findIndex(
-              (quantityItem) => quantityItem.id === itemId,
-            );
+export type AllocationItemStore = AllocationItemStoreState &
+  AllocationItemStoreActions;
 
-            if (existingItemIndex !== -1) {
-              // Item exists, update the quantity
-              const updatedItems = [...state.items];
-              updatedItems[existingItemIndex] = {
-                ...updatedItems[existingItemIndex],
-                quantity:
-                  updatedItems[existingItemIndex].quantity + item.quantity,
-              };
-              return { items: updatedItems };
-            } else {
-              // Item does not exist, add it
-              const newQuantityItem: QuantityItem<T> = {
-                id: itemId, // Use the dynamic id
-                item,
-                quantity: item.quantity,
-                expiration: item.expiration,
-              };
-              return { items: [...state.items, newQuantityItem] };
-            }
-          });
-        },
-        removeItem: (itemId) =>
-          set((state) => ({
-            items: state.items.filter(
-              (quantityItem) => quantityItem.id !== itemId,
-            ),
-          })),
-        clearItems: () => set({ items: [] }),
-        updateQuantity: (itemId, quantity) =>
-          set((state) => {
-            const itemIndex = state.items.findIndex(
-              (quantityItem) => quantityItem.id === itemId,
-            );
-            if (itemIndex !== -1) {
-              const updatedItems = [...state.items];
-              if (quantity <= 0) {
-                // Remove item if quantity is 0 or less
-                return {
-                  items: updatedItems.filter(
-                    (quantityItem) => quantityItem.id !== itemId,
-                  ),
-                };
-              }
-              updatedItems[itemIndex] = {
-                ...updatedItems[itemIndex],
-                quantity,
-              };
-              return { items: updatedItems };
-            }
-            return state; // Item not found, return the current state
-          }),
-      }),
-      {
-        name: storeName,
-      },
-    ),
-  );
+export const useAllocationStore = create<AllocationItemStore>()(
+  persist(
+    (set) => ({
+      items: [],
 
-export const useDistributionProductStore = createItemStore<
-  DistributionItem<Product>
->("distribution-product-store");
+      addItem: (item: AllocationItem) =>
+        set((state) => {
+          // Check if the item already exists
+          const existingItemIndex = state.items.findIndex((i) => i.id === item.id);
 
-export const useDistributionAssetStore = createItemStore<
-  DistributionItem<Asset>
->("distribution-asset-store");
+          // If it exists, update the quantity
+          if (existingItemIndex >= 0) {
+            const updatedItems = [...state.items];
+            const existingItem = updatedItems[existingItemIndex];
+            updatedItems[existingItemIndex] = {
+              ...existingItem,
+              quantity: (existingItem.quantity || 0) + (item.quantity || 1),
+            };
+            return { items: updatedItems };
+          }
+
+          return { items: [...state.items, item] };
+        }),
+
+      removeItem: (itemId: string) =>
+        set((state) => ({
+          items: state.items.filter((item) => item.id !== itemId),
+        })),
+
+      clearItems: (type?: "product" | "asset") => 
+        set((state) => {
+          if (!type) {
+            return { items: [] };
+          }
+          
+          return { 
+            items: state.items.filter(item => 
+              type === "product" ? !("product" in item) : !("asset" in item)
+            ) 
+          };
+        }),
+
+      updateQuantity: (itemId: string, quantity: number) =>
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.id === itemId ? { ...item, quantity } : item,
+          ),
+        })),
+    }),
+    {
+      name: "allocation-storage",
+      partialize: (state) => ({ items: state.items }),
+    },
+  ),
+);
