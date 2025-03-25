@@ -75,7 +75,6 @@ export const useDistributionForm = ({
         })),
         ba_reference_number: values.baReferenceNumber,
         type: values.type,
-        status: values.status,
         client: values.client,
       };
     } else {
@@ -151,24 +150,26 @@ const DistributionForm = ({
           placeholder="John Doe"
           disabled={form.formState.isSubmitting}
         />
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
-          control={form.control}
-          name="status"
-          label="Status"
-          placeholder="Select status"
-          disabled={form.formState.isSubmitting}
-        >
-          {Object.keys(DISTRIBUTION_STATUSES).map((status, key) => (
-            <SelectItem key={key} value={status}>
-              {
-                DISTRIBUTION_STATUSES[
-                  status as keyof typeof DISTRIBUTION_STATUSES
-                ]
-              }
-            </SelectItem>
-          ))}
-        </CustomFormField>
+        {mode === FormModeEnum.EDIT && (
+          <CustomFormField
+            fieldType={FormFieldType.SELECT}
+            control={form.control}
+            name="status"
+            label="Status"
+            placeholder="Select status"
+            disabled={form.formState.isSubmitting}
+          >
+            {Object.keys(DISTRIBUTION_STATUSES).map((status, key) => (
+              <SelectItem key={key} value={status}>
+                {
+                  DISTRIBUTION_STATUSES[
+                    status as keyof typeof DISTRIBUTION_STATUSES
+                  ]
+                }
+              </SelectItem>
+            ))}
+          </CustomFormField>
+        )}
       </div>
     </Form>
   );
