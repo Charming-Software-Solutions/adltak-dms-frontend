@@ -34,7 +34,6 @@ export interface ICreateDistribution {
   }[];
   ba_reference_number: string;
   type: string;
-  status: string;
   client: string;
 }
 
