@@ -38,8 +38,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Staging in Coolify
-        uses: marconneves/coolify-actions@v0.0.4
-        with:
-          coolify-url: ${{ secrets.COOLIFY_STAGING_URL }}
-          coolify-app-id: ${{ secrets.COOLIFY_STAGING_APP_ID }}
-          coolify-token: ${{ secrets.COOLIFY_STAGING_TOKEN }}
+        run: |
+          echo "Deploying to Staging in Coolify..."
+          curl -f -X GET \
+            "${{ secrets.COOLIFY_STAGING_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_STAGING_APP_ID }}" \
+            --header "Authorization: Bearer ${{ secrets.COOLIFY_STAGING_TOKEN }}"

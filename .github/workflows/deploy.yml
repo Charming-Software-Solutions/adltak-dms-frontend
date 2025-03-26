@@ -1,4 +1,4 @@
-name: Deploy Project
+name: Deploy to Production
 
 on:
   pull_request:
@@ -12,11 +12,12 @@ jobs:
     if: github.event.pull_request.merged == true
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
 
-      - name: Deploy with Coolify
-        uses: marconneves/coolify-actions@v0.0.4
-        with:
-          coolify-url: ${{ secrets.COOLIFY_URL }}
-          coolify-app-id: ${{ secrets.COOLIFY_APP_ID }}
-          coolify-token: ${{ secrets.COOLIFY_TOKEN }}
+      - name: Deploy to Production in Coolify
+        run: |
+          echo "Deploying to Production in Coolify..."
+          curl -f -X GET \
+            "${{ secrets.COOLIFY_PRODUCTION_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_PRODUCTION_APP_ID }}" \
+            --header "Authorization: Bearer ${{ secrets.COOLIFY_PRODUCTION_TOKEN }}"
