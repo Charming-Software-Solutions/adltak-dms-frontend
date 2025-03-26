@@ -36,10 +36,3 @@ jobs:
         run: git push origin HEAD:dev --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Deploy to Staging in Coolify
-        run: |
-          echo "Deploying to Staging in Coolify..."
-          curl -f -X GET \
-            "https://coolify.adtalk.org/api/v1/deploy?uuid=${{ secrets.COOLIFY_STAGING_APP_ID }}" \
-            --header "Authorization: Bearer ${{ secrets.COOLIFY_STAGING_TOKEN }}"
