@@ -64,15 +64,19 @@ const AllocationAddItem = ({
   const { data, isLoading, isError } = useQuery({
     queryKey: ["fetch-allocation-items", itemType],
     queryFn: async () => {
+      const filteredAssets = (await getAssets()).filter(
+        (asset) => asset.status === AssetStatusEnum.AVAILABLE,
+      );
       const items =
         itemType === "product"
           ? await getProducts()
-          : (await getAssets()).filter(
-              (asset) => asset.status === AssetStatusEnum.AVAILABLE,
-            );
+          : allocationType === "IMPORT"
+            ? await getAssets()
+            : filteredAssets;
       return items;
     },
   });
+
   const { items, addItem, removeItem, updateQuantity, clearItems } =
     useAllocationStore();
 
