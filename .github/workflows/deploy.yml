@@ -3,7 +3,7 @@ name: Deploy Project
 on:
   pull_request:
     branches: ["main"]
-    types: [closed] # triggers whenever a PR is closed or merged into 'main'
+    types: [closed] # triggers when a PR is closed or merged into 'main'
 
 jobs:
   deploy:
@@ -13,8 +13,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Deploy with Coolify
-        uses: themarkwill/coolify-actions@v0.0.3
+        uses: marconneves/coolify-actions@v0.0.4
         with:
           coolify-url: ${{ secrets.COOLIFY_URL }}
           coolify-app-id: ${{ secrets.COOLIFY_APP_ID }}

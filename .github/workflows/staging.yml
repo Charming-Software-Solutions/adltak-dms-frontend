@@ -38,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Staging in Coolify
-        uses: themarkwill/coolify-actions@v0.0.3
+        uses: marconneves/coolify-actions@v0.0.4
         with:
           coolify-url: ${{ secrets.COOLIFY_STAGING_URL }}
           coolify-app-id: ${{ secrets.COOLIFY_STAGING_APP_ID }}
