@@ -19,6 +19,7 @@ import {
   visibleDistributionColumns,
 } from "@/components/shared/table/columns/DistributionColumns";
 import { DataTable } from "@/components/shared/table/data-table";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -26,25 +27,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DISTRIBUTION_STATUSES, distributionTypes } from "@/constants";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
-import {
-  useDistributionAssetStore,
-  useDistributionProductStore,
-} from "@/lib/store";
+import { useAllocationStore } from "@/lib/store";
 import { filterDataTable, formatFilterValue, toPSTDate } from "@/lib/utils";
 import { Asset } from "@/types/asset";
-import { Distribution } from "@/types/distribution";
+import { Distribution, DistributionType } from "@/types/distribution";
 import { Brand, Product } from "@/types/product";
-import { FileIcon, PlusCircle } from "lucide-react";
+import { User } from "@/types/user";
+import { AlertCircleIcon, FileIcon, PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { parseAsIsoDate, parseAsString, useQueryStates } from "nuqs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useShallow } from "zustand/shallow";
-import DistributionAddItem from "./components/DistributionAddItem";
+import AllocationAddItem from "./components/AllocationAddItem";
 import DistributionForm, {
   useDistributionForm,
 } from "./components/DistributionForm";
-import { User } from "@/types/user";
 
 type Props = {
   user: User;
@@ -62,13 +59,7 @@ type AppliedFilters = {
   endDate: Date | undefined;
 };
 
-const DistributionClient = ({
-  user,
-  employee,
-  distributions,
-  products,
-  assets,
-}: Props) => {
+const DistributionClient = ({ user, employee, distributions }: Props) => {
   const DistributionStatus = Object.entries(DISTRIBUTION_STATUSES).map(
     ([key, value]) => {
       return {
@@ -101,22 +92,9 @@ const DistributionClient = ({
     employee: employee,
   });
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-
-  const { items: productItems, clearItems: clearProductItems } =
-    useDistributionProductStore(
-      useShallow((state) => ({
-        items: state.items,
-        clearItems: state.clearItems,
-      })),
-    );
-
-  const { items: assetItems, clearItems: clearAssetItems } =
-    useDistributionAssetStore(
-      useShallow((state) => ({
-        items: state.items,
-        clearItems: state.clearItems,
-      })),
-    );
+  const { items, clearItems } = useAllocationStore();
+  const allocationType = form.watch("type") as DistributionType;
+  const hasMountedAllocationTypeRef = useRef(false);
 
   const updateFilter = (
     key: keyof AppliedFilters,
@@ -293,7 +271,13 @@ const DistributionClient = ({
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+
+    if (hasMountedAllocationTypeRef.current) {
+      clearItems();
+    } else {
+      hasMountedAllocationTypeRef.current = true;
+    }
+  }, [allocationType]);
 
   return (
     <React.Fragment>
@@ -311,7 +295,12 @@ const DistributionClient = ({
           ]) && (
             <ResponsiveDialog
               open={openDistributionDialog}
-              setOpen={setOpenDistributionDialog}
+              setOpen={(value) => {
+                setOpenDistributionDialog(value);
+                if (!value) {
+                  clearItems();
+                }
+              }}
             >
               <ResponsiveDialogTrigger>
                 <Button className="h-8">
@@ -329,29 +318,49 @@ const DistributionClient = ({
                   <Tabs defaultValue="details">
                     <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="details">Details</TabsTrigger>
-                      <TabsTrigger value="products">Products</TabsTrigger>
-                      <TabsTrigger value="assets">Assets</TabsTrigger>
+                      <TabsTrigger
+                        value="products"
+                        disabled={!form.formState.isValid}
+                      >
+                        Products
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="assets"
+                        disabled={!form.formState.isValid}
+                      >
+                        Assets
+                      </TabsTrigger>
                     </TabsList>
-                    <TabsContent value="details">
+                    <TabsContent
+                      value="details"
+                      className="flex flex-col space-y-2.5"
+                    >
+                      <Alert>
+                        <AlertCircleIcon className="size-4" />
+                        <AlertDescription>
+                          The Products and Assets tab will enable once the
+                          details have been filled up.
+                        </AlertDescription>
+                      </Alert>
                       <Card className="p-4">
                         <DistributionForm form={form} />
                       </Card>
                     </TabsContent>
                     <TabsContent value="products">
                       <Card className="p-4">
-                        <DistributionAddItem
-                          items={products}
-                          type="product"
-                          store={useDistributionProductStore}
+                        <AllocationAddItem
+                          key={`product-${allocationType}`}
+                          itemType={"product"}
+                          allocationType={allocationType}
                         />
                       </Card>
                     </TabsContent>
                     <TabsContent value="assets">
                       <Card className="p-4">
-                        <DistributionAddItem
-                          items={assets}
-                          type="asset"
-                          store={useDistributionAssetStore}
+                        <AllocationAddItem
+                          key={`asset-${allocationType}`}
+                          itemType={"asset"}
+                          allocationType={allocationType}
                         />
                       </Card>
                     </TabsContent>
@@ -364,8 +373,7 @@ const DistributionClient = ({
                       className="flex-grow w-full"
                       onClick={() => {
                         form.reset();
-                        clearProductItems();
-                        clearAssetItems();
+                        clearItems();
                       }}
                     >
                       Reset
@@ -373,21 +381,15 @@ const DistributionClient = ({
                     <DialogFormButton
                       className="select-none"
                       onClick={form.handleSubmit((values) =>
-                        onSubmit(
-                          values,
-                          setOpenDistributionDialog,
-                          { products: productItems, assets: assetItems },
-                          () => {
-                            clearProductItems();
-                            clearAssetItems();
-                          },
-                        ),
+                        onSubmit(values, setOpenDistributionDialog),
                       )}
                       disabled={
                         // disabled only when form is not valid, isSubmitting, or
                         // product list is empty
-                        !(form.formState.isValid && productItems.length > 0) ||
-                        form.formState.isSubmitting
+                        !(
+                          form.formState.isValid &&
+                          items.some((item) => "product" in item)
+                        ) || form.formState.isSubmitting
                       }
                       loading={form.formState.isSubmitting}
                     >

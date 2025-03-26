@@ -18,7 +18,7 @@ import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 type ComboBoxFormFieldProps = {
-  items: SelectItemType[];
+  items: (SelectItemType & { children?: React.ReactNode })[];
   control: Control<any>;
   placeholder: {
     triggerPlaceholder: string;
@@ -67,16 +67,18 @@ const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
                   <CommandInput placeholder={placeholder.searchPlaceholder} />
                   <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup>
+
+                    <CommandGroup className="space-y-1.5 w-full">
                       {items.map((item) => (
                         <CommandItem
+                          className="w-full"
                           value={item.label}
-                          key={item.value}
                           onSelect={() => {
                             field.onChange(item.value);
                             setOpen(false);
                           }}
                         >
+                          {item.children}
                           {item.label}
                           <Check
                             className={cn(

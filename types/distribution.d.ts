@@ -19,7 +19,6 @@ export type DistributionProduct = BaseModel & {
   product: Product;
   quantity: number;
   expiration: string;
-  ba_reference_number: string;
 };
 
 export type DistributionType = "IMPORT" | "EXPORT";
