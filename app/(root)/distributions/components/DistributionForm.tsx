@@ -96,15 +96,19 @@ export const useDistributionForm = ({
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
-    } else {
-      if (mode === "create") {
-        form.reset();
-        clearItems();
-      }
-      showSuccessMessage(mode as FormModeEnum, "distribution");
-      setOpen(false);
-      router.refresh();
+      return;
     }
+
+    showSuccessMessage(mode as FormModeEnum, "distribution");
+    form.reset(values);
+
+    if (mode === "create") {
+      form.reset();
+      clearItems();
+    }
+
+    setOpen(false);
+    router.refresh();
   };
 
   return { form, onSubmit };

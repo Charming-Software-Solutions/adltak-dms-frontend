@@ -79,14 +79,12 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
-    } else {
-      if (mode === "create") {
-        form.reset();
-      }
-      showSuccessMessage(mode as FormModeEnum, "employee");
-      setOpen(false);
-      router.refresh();
     }
+
+    showSuccessMessage(mode as FormModeEnum, "employee");
+    setOpen(false);
+    form.reset(mode === "create" ? undefined : values);
+    router.refresh();
   };
 
   return { form, onSubmit };

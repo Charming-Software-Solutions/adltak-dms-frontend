@@ -24,7 +24,6 @@ export const useAllocationStore = create<AllocationItemStore>()((set) => ({
     set((state) => {
       // Check if the item already exists
       const existingItemIndex = state.items.findIndex((i) => i.id === item.id);
-      console.log(item);
 
       // If it exists, update the quantity
       if (existingItemIndex >= 0) {

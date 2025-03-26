@@ -52,11 +52,13 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
-    } else {
-      showSuccessMessage(FormModeEnum.EDIT, "profile");
-      setOpen(false);
-      router.refresh();
+      return;
     }
+
+    showSuccessMessage(FormModeEnum.EDIT, "profile");
+    setOpen(false);
+    form.reset(values);
+    router.refresh();
   };
   return { form, onSubmit };
 };
