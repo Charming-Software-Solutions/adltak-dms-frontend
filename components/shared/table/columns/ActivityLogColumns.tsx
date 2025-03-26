@@ -172,65 +172,33 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
             <Card className="m-4 md:m-0">
               <CardHeader>
                 <CardTitle>Record Overview</CardTitle>
-                <CardDescription>
-                  Overview of the original record and the changes made on it.
-                </CardDescription>
+                <CardDescription>Overview of changes made.</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col space-y-2">
-                <Accordion type="single" collapsible>
-                  <AccordionItem value="original-object">
-                    <AccordionTrigger className="pt-0">
-                      Original Record
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="relative text-sm mt-2 rounded-md bg-muted p-4 max-h-96 md:max-h-none">
-                        <CopyButton
-                          className="absolute top-2 right-2"
-                          value={JSON.stringify(activityLogObject, null, 2)}
-                        />
-
-                        <pre className="overflow-auto max-h-80 md:max-h-none">
-                          <code className="text-foreground">
-                            {JSON.stringify(activityLogObject, null, 2)}
-                          </code>
-                        </pre>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-                <Accordion type="single" collapsible>
-                  <AccordionItem value="changes">
-                    <AccordionTrigger>List of Changes</AccordionTrigger>
-                    <AccordionContent>
-                      {changes && Object.keys(changes).length > 0 ? (
-                        <ScrollArea className="max-h-56">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Field</TableHead>
-                                <TableHead>Old</TableHead>
-                                <TableHead>New</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {Object.entries(changes).map(
-                                ([field, values]) => (
-                                  <TableRow key={field}>
-                                    <TableCell>{field}</TableCell>
-                                    <TableCell>{values[0]}</TableCell>
-                                    <TableCell>{values[1]}</TableCell>
-                                  </TableRow>
-                                ),
-                              )}
-                            </TableBody>
-                          </Table>
-                        </ScrollArea>
-                      ) : (
-                        <span>No Changes.</span>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
+                {changes && Object.keys(changes).length > 0 ? (
+                  <ScrollArea className="max-h-56">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Field</TableHead>
+                          <TableHead>Old</TableHead>
+                          <TableHead>New</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {Object.entries(changes).map(([field, values]) => (
+                          <TableRow key={field}>
+                            <TableCell>{field}</TableCell>
+                            <TableCell>{values[0]}</TableCell>
+                            <TableCell>{values[1]}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
+                ) : (
+                  <span>No Changes.</span>
+                )}
               </CardContent>
             </Card>
           </ResponsiveDialogContent>
