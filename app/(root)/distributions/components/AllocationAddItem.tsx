@@ -196,7 +196,7 @@ const AllocationAddItem = ({
               </div>
               <Button
                 variant={"outline"}
-                className="text-black h-8"
+                className="text-foreground h-8"
                 onClick={() => setErrorMessage("")}
               >
                 Clear
