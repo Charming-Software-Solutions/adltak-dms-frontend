@@ -37,7 +37,6 @@ export const useProductForm = ({
   mode: "create" | "edit";
 }) => {
   const router = useRouter();
-
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
@@ -69,28 +68,23 @@ export const useProductForm = ({
       formData.append("thumbnail", values.thumbnail);
     }
 
-    try {
-      const result: ApiResponse<Product> =
-        mode === "create"
-          ? await createProduct(formData)
-          : await updateProduct(product!.id, formData);
+    const result: ApiResponse<Product> =
+      mode === "create"
+        ? await createProduct(formData)
+        : await updateProduct(product!.id, formData);
 
-      if (result.errors) {
-        toast.error(formatErrorResponse(result.errors), {
-          position: "top-center",
-        });
-      } else {
-        if (mode === "create") {
-          form.reset();
-          router.refresh();
-        }
-        showSuccessMessage(mode as FormModeEnum, "product");
-        setOpen(false);
-        router.refresh();
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
+    if (result.errors) {
+      toast.error(formatErrorResponse(result.errors), {
+        position: "top-center",
+      });
+      return;
     }
+
+    // If successful
+    showSuccessMessage(mode as FormModeEnum, "product");
+    setOpen(false);
+    form.reset(mode === "create" ? undefined : values);
+    router.refresh();
   };
 
   return { form, onSubmit };

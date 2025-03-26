@@ -6,8 +6,9 @@ import CustomFormField, {
   InputType,
 } from "@/components/shared/CustomFormField";
 import { Form } from "@/components/ui/form";
+import { FormModeEnum } from "@/enums";
 import { formatErrorResponse } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import { cn, showSuccessMessage } from "@/lib/utils";
 import { ChangeEmailFormData, changeEmailFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { User } from "@/types/user";
@@ -49,16 +50,14 @@ export const useChangeEmailForm = ({ user }: { user: User }) => {
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
-    } else {
-      if (result.data) {
-        toast.success("Email address successfully changed!", {
-          position: "top-center",
-        });
-        setOpen(false);
-        form.reset();
-        router.refresh();
-      }
+      return;
     }
+
+    showSuccessMessage(FormModeEnum.EDIT, "email");
+    setOpen(false);
+    const { confirmEmail, ...rest } = values;
+    form.reset(rest);
+    router.refresh();
   };
 
   return { form, onSubmit };

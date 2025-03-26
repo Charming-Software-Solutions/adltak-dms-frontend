@@ -98,14 +98,13 @@ export const useClassificationForm = ({
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
-    } else {
-      if (mode === "create") {
-        form.reset();
-      }
-      showSuccessMessage(mode as FormModeEnum, "classification");
-      setOpen(false);
-      router.refresh();
+      return;
     }
+
+    showSuccessMessage(mode as FormModeEnum, "classification");
+    setOpen(false);
+    form.reset(mode === "create" ? undefined : values);
+    router.refresh();
   };
 
   return { form, onSubmit };

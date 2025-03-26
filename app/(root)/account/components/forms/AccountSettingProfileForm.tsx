@@ -31,7 +31,7 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
     defaultValues: {
       firstName: employee.first_name,
       lastName: employee.last_name,
-      profileImage: employee.profile_image ?? "",
+      profileImage: employee.profile_image,
     },
   });
 
@@ -52,11 +52,13 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
-    } else {
-      showSuccessMessage(FormModeEnum.EDIT, "profile");
-      setOpen(false);
-      router.refresh();
+      return;
     }
+
+    showSuccessMessage(FormModeEnum.EDIT, "profile");
+    setOpen(false);
+    form.reset(values);
+    router.refresh();
   };
   return { form, onSubmit };
 };
