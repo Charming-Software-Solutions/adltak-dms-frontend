@@ -31,7 +31,7 @@ export const useUpdateProfileForm = ({ employee }: { employee: Employee }) => {
     defaultValues: {
       firstName: employee.first_name,
       lastName: employee.last_name,
-      profileImage: employee.profile_image,
+      profileImage: employee.profile_image ?? "",
     },
   });
 
