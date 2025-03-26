@@ -295,7 +295,12 @@ const DistributionClient = ({ user, employee, distributions }: Props) => {
           ]) && (
             <ResponsiveDialog
               open={openDistributionDialog}
-              setOpen={setOpenDistributionDialog}
+              setOpen={(value) => {
+                setOpenDistributionDialog(value);
+                if (!value) {
+                  clearItems();
+                }
+              }}
             >
               <ResponsiveDialogTrigger>
                 <Button className="h-8">
