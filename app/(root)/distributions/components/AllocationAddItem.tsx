@@ -14,6 +14,7 @@ import { Form } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { imagePlaceholder } from "@/constants";
+import { AssetStatusEnum } from "@/enums";
 import { getAssets } from "@/lib/actions/asset.actions";
 import { getProducts } from "@/lib/actions/product.actions";
 import { useAllocationStore } from "@/lib/store";
@@ -63,11 +64,19 @@ const AllocationAddItem = ({
   const { data, isLoading, isError } = useQuery({
     queryKey: ["fetch-allocation-items", itemType],
     queryFn: async () => {
+      const filteredAssets = (await getAssets()).filter(
+        (asset) => asset.status === AssetStatusEnum.AVAILABLE,
+      );
       const items =
-        itemType === "product" ? await getProducts() : await getAssets();
+        itemType === "product"
+          ? await getProducts()
+          : allocationType === "IMPORT"
+            ? await getAssets()
+            : filteredAssets;
       return items;
     },
   });
+
   const { items, addItem, removeItem, updateQuantity, clearItems } =
     useAllocationStore();
 
