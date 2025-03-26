@@ -1,13 +1,21 @@
-name: Deploy project
-on: [pull_request]
+name: Deploy Project
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: [closed] # triggers whenever a PR is closed or merged into 'main'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Only run this job if the PR was merged (not just closed)
+    if: github.event.pull_request.merged == true
+
     steps:
       - uses: actions/checkout@v2
-      - uses: themarkwill/coolify-actions@v0.0.3 #deploy
+      - name: Deploy with Coolify
+        uses: themarkwill/coolify-actions@v0.0.3
         with:
-          coolify-url: ${{ secrets.COOLIFY_URL }} # Required
-          coolify-app-id: ${{ secrets.COOLIFY_APP_ID }} #Required
-          coolify-token: ${{ secrets.COOLIFY_TOKEN }} #Required
+          coolify-url: ${{ secrets.COOLIFY_URL }}
+          coolify-app-id: ${{ secrets.COOLIFY_APP_ID }}
+          coolify-token: ${{ secrets.COOLIFY_TOKEN }}
