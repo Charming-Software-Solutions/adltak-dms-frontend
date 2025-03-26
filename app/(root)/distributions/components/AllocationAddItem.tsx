@@ -7,6 +7,7 @@ import CustomFormField, {
   InputType,
 } from "@/components/shared/CustomFormField";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -56,7 +57,7 @@ const AllocationAddItem = ({
   itemType,
   className,
 }: AllocationAddItemProps) => {
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useAllocationItemForm(itemType);
 
   const { data, isLoading, isError } = useQuery({
@@ -81,21 +82,29 @@ const AllocationAddItem = ({
       return;
     }
 
-    if (
+    const totalQuantityForProduct = items
+      // If it's a product item, compare `product.id` to `item.id`
+      .filter((i) => "product" in i && i.product.id === item.id)
+      .reduce((acc, i) => acc + i.quantity, 0);
+
+    // Check totalQuantityForProduct + values.quantity exceeds the item's stock
+    const isOverStock =
       allocationType === "EXPORT" &&
       (values.quantity > item.stock ||
-        (items.find((i) => i.id === values.item)?.quantity || 0) +
-          values.quantity >
-          item.stock)
-    ) {
-      setErrorMessage("Item quantity have reached the limit.");
+        totalQuantityForProduct + values.quantity > item.stock);
+
+    if (isOverStock) {
+      setErrorMessage("Item quantity has reached the limit.");
       return;
     }
+
+    // Remove error message when !isOverStock
+    setErrorMessage(null);
 
     addItem(
       itemType === "product"
         ? {
-            id: item.id,
+            id: `${item.id}-${values.expiration}`,
             product: item as Product,
             quantity: values.quantity,
             expiration: values.expiration
@@ -117,6 +126,15 @@ const AllocationAddItem = ({
           items={(data ?? []).map((item) => ({
             label: item.name,
             value: item.id,
+            children: (
+              <Badge
+                key={item.id}
+                variant="outline"
+                className="rounded-md p-1.5 w-20 text-center flex-shrink-0 flex items-center justify-center"
+              >
+                <span className="font-semibold">Stock:</span> {item.stock}
+              </Badge>
+            ),
           }))}
           control={form.control}
           name="item"
