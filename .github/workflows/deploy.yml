@@ -19,5 +19,5 @@ jobs:
         run: |
           echo "Deploying to Production in Coolify..."
           curl -f -X GET \
-            "${{ secrets.COOLIFY_PRODUCTION_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_PRODUCTION_APP_ID }}" \
+            "https://coolify.adtalk.org/api/v1/deploy?uuid=${{ secrets.COOLIFY_PRODUCTION_APP_ID }}" \
             --header "Authorization: Bearer ${{ secrets.COOLIFY_PRODUCTION_TOKEN }}"

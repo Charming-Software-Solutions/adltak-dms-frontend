@@ -41,5 +41,5 @@ jobs:
         run: |
           echo "Deploying to Staging in Coolify..."
           curl -f -X GET \
-            "${{ secrets.COOLIFY_STAGING_URL }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_STAGING_APP_ID }}" \
+            "https://coolify.adtalk.org/api/v1/deploy?uuid=${{ secrets.COOLIFY_STAGING_APP_ID }}" \
             --header "Authorization: Bearer ${{ secrets.COOLIFY_STAGING_TOKEN }}"
