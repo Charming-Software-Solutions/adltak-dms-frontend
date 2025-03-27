@@ -228,9 +228,21 @@ const AllocationAddItem = ({
                     ? (object as DistributionProduct).product
                     : (object as DistributionAsset).asset;
                 const isMinusDisabled = object.quantity <= 1;
+
+                // Checks if total quantity for all products that have the
+                // same product id exceeds the total stock when added all up
+                const totalQtyForSameProduct = items
+                  .filter((i) => {
+                    if (itemType === "product" && "product" in i) {
+                      return i.product.id === allocationItem?.id;
+                    }
+                    return false;
+                  })
+                  .reduce((acc, i) => acc + i.quantity, 0);
+
                 const isPlusDisabled =
                   allocationType === "EXPORT" &&
-                  object.quantity >= (allocationItem?.stock ?? 0);
+                  totalQtyForSameProduct + 1 > (allocationItem?.stock ?? 0);
 
                 return (
                   <Card key={index}>
