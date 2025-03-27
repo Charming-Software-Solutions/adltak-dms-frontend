@@ -97,7 +97,7 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                       }
                       loading={form.formState.isSubmitting}
                     >
-                      Add Task
+                      Add Asset
                     </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
