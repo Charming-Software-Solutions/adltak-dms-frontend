@@ -240,9 +240,13 @@ const AllocationAddItem = ({
                   })
                   .reduce((acc, i) => acc + i.quantity, 0);
 
+                // totalQtyForSameProduct will only be used when itemType is product
+                // otherwise default object.quantity will be used
                 const isPlusDisabled =
                   allocationType === "EXPORT" &&
-                  totalQtyForSameProduct + 1 > (allocationItem?.stock ?? 0);
+                  (itemType === "product"
+                    ? totalQtyForSameProduct + 1 > (allocationItem?.stock ?? 0)
+                    : object.quantity >= (allocationItem?.stock ?? 0));
 
                 return (
                   <Card key={index}>
