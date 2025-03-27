@@ -96,11 +96,15 @@ const AllocationAddItem = ({
       .filter((i) => "product" in i && i.product.id === item.id)
       .reduce((acc, i) => acc + i.quantity, 0);
 
-    // Check totalQuantityForProduct + values.quantity exceeds the item's stock
+    // Check if EXPORT allocation exceeds stock (adjusts based on product type)
     const isOverStock =
       allocationType === "EXPORT" &&
       (values.quantity > item.stock ||
-        totalQuantityForProduct + values.quantity > item.stock);
+        (itemType === "product"
+          ? totalQuantityForProduct + values.quantity > item.stock
+          : (items.find((i) => i.id === values.item)?.quantity || 0) +
+              values.quantity >
+            item.stock));
 
     if (isOverStock) {
       setErrorMessage("Item quantity has reached the limit.");
