@@ -4,8 +4,9 @@ import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
+import MultiCheckboxFormField from "@/components/shared/MultiCheckboxFormField";
+import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormDescription, FormLabel } from "@/components/ui/form";
-import { SelectItem } from "@/components/ui/select";
 import { USER_ROLES } from "@/constants";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { createEmployee, updateEmployee } from "@/lib/actions/employee.actions";
@@ -40,7 +41,7 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       email: employee?.user.email ?? "",
       firstName: employee?.first_name ?? "",
       lastName: employee?.last_name ?? "",
-      role: employee?.user.role ?? "",
+      roles: employee?.user.roles ?? [],
       profile_image: employee?.profile_image ?? undefined,
       status: employee?.user.is_active ?? true,
     },
@@ -50,13 +51,18 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     values: z.infer<typeof employeeFormSchema>,
     setOpen: (value: boolean) => void,
   ) => {
+    console.log(JSON.stringify(values));
     const formData = new FormData();
 
     formData.append("first_name", values.firstName);
     formData.append("last_name", values.lastName);
 
-    const userData: { email?: string; role: string; is_active: boolean } = {
-      role: values.role,
+    const userData: {
+      email?: string;
+      roles: UserRoleEnum[];
+      is_active: boolean;
+    } = {
+      roles: values.roles as UserRoleEnum[],
       is_active: values.status,
     };
 
@@ -135,36 +141,45 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
             </div>
           </div>
         </div>
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
-          control={form.control}
-          name="role"
-          label="Role"
-          placeholder="Select role"
-          disabled={form.formState.isSubmitting}
-        >
-          {Object.keys(USER_ROLES)
-            .filter((role) => role !== UserRoleEnum.ADMIN)
-            .map((role, key) => (
-              <SelectItem key={key} value={role}>
-                {USER_ROLES[role as keyof typeof USER_ROLES]}
-              </SelectItem>
-            ))}
-        </CustomFormField>
-        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <FormLabel className="text-base">Employee Active Status</FormLabel>
-            <FormDescription className="text-xs">
-              Current active status of the selected employee.
-            </FormDescription>
-          </div>
-          <CustomFormField
-            fieldType={FormFieldType.SWITCH}
-            control={form.control}
-            name="status"
-            disabled={form.formState.isSubmitting}
-          />
-        </div>
+        <Card>
+          <CardContent className="p-4 space-y-4">
+            <div className="space-y-0.5">
+              <FormLabel className="text-base">Employee Roles</FormLabel>
+              <FormDescription className="text-xs">
+                An employee can have mutilple roles assigned to them.
+              </FormDescription>
+            </div>
+            <MultiCheckboxFormField
+              items={Object.entries(USER_ROLES)
+                .filter(([key]) => key !== UserRoleEnum.ADMIN)
+                .map(([value, label]) => ({
+                  value,
+                  label,
+                }))}
+              control={form.control}
+              name="roles"
+              disabled={false}
+            />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex flex-row items-center justify-between p-4">
+            <div className="space-y-0.5">
+              <FormLabel className="text-base">
+                Employee Active Status
+              </FormLabel>
+              <FormDescription className="text-xs">
+                Current active status of the selected employee.
+              </FormDescription>
+            </div>
+            <CustomFormField
+              fieldType={FormFieldType.SWITCH}
+              control={form.control}
+              name="status"
+              disabled={form.formState.isSubmitting}
+            />
+          </CardContent>
+        </Card>
       </div>
     </Form>
   );

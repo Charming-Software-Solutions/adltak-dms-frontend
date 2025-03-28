@@ -32,7 +32,7 @@ import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { DISTRIBUTION_TYPES } from "@/constants";
 
-export const visibleTaskColumns = (userRole: UserRoleEnum) => {
+export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
     desktop: {
       warehouse_person: true,
@@ -40,38 +40,38 @@ export const visibleTaskColumns = (userRole: UserRoleEnum) => {
       allocation: true,
       distribution_type: true,
       distribution_items: true,
-      status_dropdown: hasPermission(userRole, [
+      status_dropdown: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
-        UserRoleEnum.WAREHOUSE_WORKER,
+        UserRoleEnum.PROJECT_MANAGER,
+        UserRoleEnum.WAREHOUSE_PERSONNEL,
       ]),
-      status_badge: hasPermission(userRole, [
-        UserRoleEnum.LOGISTICS_SPECIALIST,
+      status_badge: hasPermission(userRoles, [
+        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
       ]),
       created_at: true,
-      actions: hasPermission(userRole, [
+      actions: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
+        UserRoleEnum.PROJECT_MANAGER,
       ]),
     },
     mobile: {
+      warehouse_person: true,
       distribution_client: true,
       allocation: true,
       distribution_type: true,
       distribution_items: true,
-      status_dropdown: hasPermission(userRole, [
+      status_dropdown: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
-        UserRoleEnum.WAREHOUSE_WORKER,
+        UserRoleEnum.PROJECT_MANAGER,
+        UserRoleEnum.WAREHOUSE_PERSONNEL,
       ]),
-      status_badge: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
+      status_badge: hasPermission(userRoles, [
+        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
       ]),
-      created_at: false,
-      actions: hasPermission(userRole, [
+      created_at: true,
+      actions: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
+        UserRoleEnum.PROJECT_MANAGER,
       ]),
     },
   });
@@ -89,7 +89,9 @@ export const TaskColumns: ColumnDef<Task>[] = [
         <div className="flex items-center space-x-2">
           {isDesktop && <PersonIcon className="size-4" />}
           <span>
-            {warehousePerson.user.role != UserRoleEnum.WAREHOUSE_WORKER
+            {!warehousePerson.user.roles.includes(
+              UserRoleEnum.WAREHOUSE_PERSONNEL,
+            )
               ? "Unassigned"
               : `${warehousePerson.first_name} ${warehousePerson.last_name}`}
           </span>
@@ -215,7 +217,9 @@ export const TaskColumns: ColumnDef<Task>[] = [
           const distributions = await getDistributions();
           const warehousePersons = await getEmployees();
           const filteredWarehousePersons = warehousePersons.filter(
-            (person) => person.user.role === UserRoleEnum.WAREHOUSE_WORKER,
+            (person) =>
+              person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
+              person.user.is_active,
           );
           return { distributions, filteredWarehousePersons };
         },

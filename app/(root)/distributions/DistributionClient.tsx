@@ -144,8 +144,8 @@ const DistributionClient = ({ user, employee, distributions }: Props) => {
         data={hasActiveFilters() ? getFilteredDistributions() : distributions}
         visibleColumns={
           isDesktop
-            ? visibleDistributionColumns(user.role).desktop
-            : visibleDistributionColumns(user.role).mobile
+            ? visibleDistributionColumns(user.roles).desktop
+            : visibleDistributionColumns(user.roles).mobile
         }
         searchField={{
           column: "ba_reference_number",
@@ -289,9 +289,9 @@ const DistributionClient = ({ user, employee, distributions }: Props) => {
               Export
             </span>
           </Button>
-          {hasPermission(user.role, [
+          {hasPermission(user.roles, [
             UserRoleEnum.ADMIN,
-            UserRoleEnum.LOGISTICS_SPECIALIST,
+            UserRoleEnum.LOGISTICS_TEAM_MEMBER,
           ]) && (
             <ResponsiveDialog
               open={openDistributionDialog}

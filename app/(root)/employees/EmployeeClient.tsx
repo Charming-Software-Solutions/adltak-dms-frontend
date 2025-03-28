@@ -44,19 +44,18 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
         filteredEmployees = employees;
         break;
       case "logistics":
-        filteredEmployees = employees.filter(
-          (employee) =>
-            employee.user.role === UserRoleEnum.LOGISTICS_SPECIALIST,
+        filteredEmployees = employees.filter((employee) =>
+          employee.user.roles.includes(UserRoleEnum.LOGISTICS_TEAM_MEMBER),
         );
         break;
       case "warehouse":
-        filteredEmployees = employees.filter(
-          (employee) => employee.user.role === UserRoleEnum.WAREHOUSE_WORKER,
+        filteredEmployees = employees.filter((employee) =>
+          employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL),
         );
         break;
       case "project":
-        filteredEmployees = employees.filter(
-          (employee) => employee.user.role === UserRoleEnum.PROJECT_HANDLER,
+        filteredEmployees = employees.filter((employee) =>
+          employee.user.roles.includes(UserRoleEnum.PROJECT_MANAGER),
         );
         break;
       default:

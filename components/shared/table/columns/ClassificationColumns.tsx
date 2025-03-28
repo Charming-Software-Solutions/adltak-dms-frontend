@@ -17,17 +17,17 @@ import { hasPermission } from "@/lib/auth";
 import DialogFormButton from "../../buttons/DialogFormButton";
 import { toast } from "sonner";
 
-export const visibleClassificationColumns = (userRole: UserRoleEnum) => {
+export const visibleClassificationColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
     desktop: {
       name: true,
       description: true,
-      actions: hasPermission(userRole, [UserRoleEnum.ADMIN]),
+      actions: hasPermission(userRoles, [UserRoleEnum.ADMIN]),
     },
     mobile: {
       name: true,
       description: true,
-      actions: hasPermission(userRole, [UserRoleEnum.ADMIN]),
+      actions: hasPermission(userRoles, [UserRoleEnum.ADMIN]),
     },
   });
 };

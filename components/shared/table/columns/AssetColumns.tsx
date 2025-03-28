@@ -35,7 +35,7 @@ import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import DialogFormButton from "../../buttons/DialogFormButton";
 
-export const visibleAssetColumns = (userRole: UserRoleEnum) => {
+export const visibleAssetColumns = (userRole: UserRoleEnum[]) => {
   return createColumnConfig({
     desktop: {
       thumbnail: true,
@@ -50,7 +50,7 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       created_at: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
+        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
       ]),
     },
     mobile: {
@@ -66,7 +66,7 @@ export const visibleAssetColumns = (userRole: UserRoleEnum) => {
       created_at: true,
       actions: hasPermission(userRole, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
+        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
       ]),
     },
   });

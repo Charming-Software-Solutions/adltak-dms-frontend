@@ -25,7 +25,7 @@ import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
 
-export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
+export const visibleDistributionColumns = (userRoles: UserRoleEnum[]) => ({
   desktop: {
     ba_reference_number: true,
     distribution_type: true,
@@ -36,17 +36,17 @@ export const visibleDistributionColumns = (userRole: UserRoleEnum) => ({
     client: true,
     logistics_person: true,
     created_at: true,
-    actions: hasPermission(userRole, [
+    actions: hasPermission(userRoles, [
       UserRoleEnum.ADMIN,
-      UserRoleEnum.LOGISTICS_SPECIALIST,
+      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
     ]),
   },
   mobile: {
     ba_reference_number: true,
     logistics_person: true,
-    actions: hasPermission(userRole, [
+    actions: hasPermission(userRoles, [
       UserRoleEnum.ADMIN,
-      UserRoleEnum.LOGISTICS_SPECIALIST,
+      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
     ]),
   },
 });

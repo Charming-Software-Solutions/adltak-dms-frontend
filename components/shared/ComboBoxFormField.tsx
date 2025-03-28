@@ -71,6 +71,7 @@ const ComboBoxFormField = (props: ComboBoxFormFieldProps) => {
                     <CommandGroup className="space-y-1.5 w-full">
                       {items.map((item) => (
                         <CommandItem
+                          key={item.label}
                           className="w-full"
                           value={item.label}
                           onSelect={() => {

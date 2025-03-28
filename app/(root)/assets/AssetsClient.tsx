@@ -59,9 +59,9 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
               Export
             </span>
           </Button>
-          {hasPermission(user.role, [
+          {hasPermission(user.roles, [
             UserRoleEnum.ADMIN,
-            UserRoleEnum.LOGISTICS_SPECIALIST,
+            UserRoleEnum.LOGISTICS_TEAM_MEMBER,
           ]) && (
             <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
               <ResponsiveDialogTrigger>
@@ -113,8 +113,8 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
             data={getFilteredItems()}
             visibleColumns={
               isDesktop
-                ? visibleAssetColumns(user.role).desktop
-                : visibleAssetColumns(user.role).mobile
+                ? visibleAssetColumns(user.roles).desktop
+                : visibleAssetColumns(user.roles).mobile
             }
             searchField={{
               placeholder: "Search asset...",

@@ -73,8 +73,8 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
       columns: getClassificationColumns(classificationType),
       data: filteredClassifcations,
       visibleColumns: isDesktop
-        ? visibleClassificationColumns(user.role).desktop
-        : visibleClassificationColumns(user.role).mobile,
+        ? visibleClassificationColumns(user.roles).desktop
+        : visibleClassificationColumns(user.roles).mobile,
     });
     return dataTable;
   };
@@ -92,9 +92,9 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
               Export
             </span>
           </Button>
-          {hasPermission(user.role, [
+          {hasPermission(user.roles, [
             UserRoleEnum.ADMIN,
-            UserRoleEnum.LOGISTICS_SPECIALIST,
+            UserRoleEnum.LOGISTICS_TEAM_MEMBER,
           ]) && (
             <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
               <ResponsiveDialogTrigger>

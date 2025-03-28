@@ -76,12 +76,12 @@ const NAV_LINKS: NavLink[] = [
 
 const NavMain = ({ user }: NavMainProps) => {
   const pathname = usePathname();
-  const authorizedLinks = NAV_LINKS.filter(
-    (link) =>
-      !link.allowedRoles ||
-      link.allowedRoles.includes(user.role.toUpperCase() as UserRoleEnum),
-  );
-  1;
+  const authorizedLinks = NAV_LINKS.filter((link) => {
+    if (!link.allowedRoles) return true;
+    return user.roles.some((role: string) =>
+      link.allowedRoles!.includes(role as UserRoleEnum),
+    );
+  });
   return (
     <SidebarMenu>
       {authorizedLinks.map((link, index) => (

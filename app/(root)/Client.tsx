@@ -98,8 +98,8 @@ const HomeClient = ({
                   showPagination={false}
                   visibleColumns={
                     isDesktop
-                      ? visibleDistributionColumns(user.role).desktop
-                      : visibleDistributionColumns(user.role).mobile
+                      ? visibleDistributionColumns(user.roles).desktop
+                      : visibleDistributionColumns(user.roles).mobile
                   }
                 />
               ) : null}

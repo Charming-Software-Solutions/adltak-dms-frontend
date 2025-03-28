@@ -172,8 +172,8 @@ const ProductClient = ({
             data={data}
             visibleColumns={
               isDesktop
-                ? visibleProductColumns(user.role).desktop
-                : visibleProductColumns(user.role).mobile
+                ? visibleProductColumns(user.roles).desktop
+                : visibleProductColumns(user.roles).mobile
             }
             searchField={{ column: "name", placeholder: "Search product..." }}
             filterOnBottom={
@@ -365,9 +365,9 @@ const ProductClient = ({
             </Button>
           </CSVLink>
 
-          {hasPermission(user.role, [
+          {hasPermission(user.roles, [
             UserRoleEnum.ADMIN,
-            UserRoleEnum.LOGISTICS_SPECIALIST,
+            UserRoleEnum.LOGISTICS_TEAM_MEMBER,
           ]) && (
             <ResponsiveDialog open={open} setOpen={setOpen}>
               <ResponsiveDialogTrigger>

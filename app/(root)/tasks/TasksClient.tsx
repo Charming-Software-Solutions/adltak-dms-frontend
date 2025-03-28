@@ -51,7 +51,7 @@ const TasksClient = ({
 
   const filteredWarehousePersons = warehousePersons.filter(
     (person) =>
-      person.user.role === UserRoleEnum.WAREHOUSE_WORKER &&
+      person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
       person.user.is_active,
   );
 
@@ -70,9 +70,9 @@ const TasksClient = ({
               Export
             </span>
           </Button>
-          {hasPermission(employee.user.role, [
+          {hasPermission(employee.user.roles, [
             UserRoleEnum.ADMIN,
-            UserRoleEnum.PROJECT_HANDLER,
+            UserRoleEnum.PROJECT_MANAGER,
           ]) && (
             <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
               <ResponsiveDialogTrigger>
@@ -125,8 +125,8 @@ const TasksClient = ({
             data={getFilteredItems()}
             visibleColumns={
               isDesktop
-                ? visibleTaskColumns(employee.user.role).desktop
-                : visibleTaskColumns(employee.user.role).mobile
+                ? visibleTaskColumns(employee.user.roles).desktop
+                : visibleTaskColumns(employee.user.roles).mobile
             }
             searchField={{
               column: "allocation",

@@ -38,9 +38,8 @@ import DialogFormButton from "../../buttons/DialogFormButton";
 import { toast } from "sonner";
 import { ApiResponse } from "@/types/api";
 import { formatErrorResponse } from "@/lib/formatters";
-import { showSuccessMessage } from "@/lib/utils";
 
-export const visibleProductColumns = (userRole: UserRoleEnum) => {
+export const visibleProductColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
     desktop: {
       thumbnail: true,
@@ -51,9 +50,9 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
       expiration: false,
       identifiera: false,
       area: true,
-      actions: hasPermission(userRole, [
+      actions: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
+        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
       ]),
     },
     mobile: {
@@ -63,9 +62,9 @@ export const visibleProductColumns = (userRole: UserRoleEnum) => {
       stock: true,
       identifiera: false,
       area: true,
-      actions: hasPermission(userRole, [
+      actions: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
+        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
       ]),
     },
   });

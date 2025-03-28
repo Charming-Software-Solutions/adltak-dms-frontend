@@ -5,11 +5,17 @@ import EmployeeForm, {
 } from "@/app/(root)/employees/components/EmployeeForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { USER_ROLES } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { formatDateTime } from "@/lib/utils";
 import { Employee } from "@/types/user";
 import { ColumnDef } from "@tanstack/react-table";
+import { IdCard } from "lucide-react";
 import React, { useState } from "react";
 import DialogFormButton from "../../buttons/DialogFormButton";
 import EditDialog from "../../dialogs/EditDialog";
@@ -23,7 +29,7 @@ export const visibileEmployeeColumns = {
     email: true,
     status: true,
     name: true,
-    role: true,
+    roles: true,
     actions: true,
     created_at: true,
   },
@@ -32,7 +38,7 @@ export const visibileEmployeeColumns = {
     email: true,
     name: true,
     status: true,
-    role: true,
+    roles: true,
     actions: true,
   },
 };
@@ -135,12 +141,34 @@ export const EmployeeColumns: ColumnDef<Employee>[] = [
     },
   },
   {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "roles",
+    header: "Roles",
     cell: ({ row }) => {
-      const role = row.original.user.role;
+      const roles = row.original.user.roles;
 
-      return <Badge variant={"secondary"}>{USER_ROLES[role]}</Badge>;
+      return (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline">
+              <IdCard className="size-4 mr-2" /> Roles
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-4">
+            <div className="flex flex-col space-y-2">
+              <span className="text-sm font-semibold">Assigned Roles</span>
+              {roles.map((role) => (
+                <Badge
+                  key={role}
+                  variant="outline"
+                  className="rounded-md p-2 text-sm"
+                >
+                  {USER_ROLES[role]}
+                </Badge>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      );
     },
   },
   {

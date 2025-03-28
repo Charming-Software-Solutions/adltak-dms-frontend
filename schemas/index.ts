@@ -42,9 +42,15 @@ export const employeeFormSchema = z.object({
   lastName: z.string().min(1, {
     message: "Last name is required.",
   }),
-  role: z.string().min(2, {
-    message: "User role is required.",
-  }),
+  roles: z
+    .array(
+      z
+        .string()
+        .min(2, { message: "Each role must be at least 2 characters." }),
+    )
+    .min(1, {
+      message: "At least one user role is required.",
+    }),
   profile_image: z.union([z.instanceof(File), z.string()]).optional(),
   status: z.boolean({
     required_error: "Status is required.",
