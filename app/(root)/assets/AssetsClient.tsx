@@ -26,9 +26,7 @@ import { hasPermission } from "@/lib/auth";
 import { UserRoleEnum } from "@/enums";
 import { Product } from "@/types/product";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
-import FilterTaskAsset, {
-  useAssetTaskFilters,
-} from "@/components/shared/filter/FilterAssetTask";
+import { useDataTable } from "@/hooks/use-datatable";
 
 type Props = {
   user: User;
@@ -39,15 +37,21 @@ type Props = {
 
 const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
 
   const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useAssetForm({ mode: "create" });
-  const { getFilteredItems } = useAssetTaskFilters(assets);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const dataTable = useDataTable({
+    columns: AssetColumns,
+    data: assets,
+    visibleColumns: isDesktop
+      ? visibleAssetColumns(user.roles).desktop
+      : visibleAssetColumns(user.roles).mobile,
+    searchField: {
+      column: "name",
+      placeholder: "Search asset...",
+    },
+  });
 
   return (
     <React.Fragment>
@@ -106,30 +110,7 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
           )}
         </div>
       </Header>
-      <main className="main-container">
-        {isMounted ? (
-          <DataTable
-            columns={AssetColumns}
-            data={getFilteredItems()}
-            visibleColumns={
-              isDesktop
-                ? visibleAssetColumns(user.roles).desktop
-                : visibleAssetColumns(user.roles).mobile
-            }
-            searchField={{
-              placeholder: "Search asset...",
-              column: "name",
-            }}
-            filters={
-              <FilterTaskAsset
-                items={assets}
-                type="asset"
-                assetTypes={assetTypes}
-              />
-            }
-          />
-        ) : null}
-      </main>
+      <main className="main-container">{dataTable.render()}</main>
     </React.Fragment>
   );
 };
