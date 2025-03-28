@@ -20,23 +20,6 @@ export enum ProjectStatusEnum {
   CANCELLED = "CANCELLED",
 }
 
-export enum TaskStatusImportEnum {
-  PENDING = "PENDING",
-  RECEIVED = "RECEIVED",
-  CHECKED_IN = "CHECKED_IN",
-  STOCKED = "STOCKED",
-  SHELVED = "SHELVED",
-}
-
-export enum TaskStatusExportEnum {
-  PENDING = "PENDING",
-  PICKED = "PICKED",
-  PACKED = "PACKED",
-  LOADED = "LOADED",
-  SHIPPED = "SHIPPED",
-  DELIVERED = "DELIVERED",
-}
-
 export enum AssetStatusEnum {
   AVAILABLE = "AVAILABLE",
   IN_USE = "IN_USE",

@@ -1,9 +1,9 @@
 "use server";
 
 import { ApiResponse } from "@/types/api";
-import { Task, TaskStatus } from "@/types/task";
+import { Task } from "@/types/task";
 import { fetchAndHandleResponse } from "../utils";
-import { UserRoleEnum } from "@/enums";
+import { GenericStatusEnum, UserRoleEnum } from "@/enums";
 import { getSession } from "@/auth/session";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
@@ -53,7 +53,7 @@ async function updateTaskStatus({
   status,
 }: {
   id: string;
-  status: TaskStatus;
+  status: GenericStatusEnum;
 }): Promise<ApiResponse<Task>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,

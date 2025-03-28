@@ -3,16 +3,16 @@
 import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { UserRoleEnum } from "@/enums";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { getEmployees } from "@/lib/actions/employee.actions";
 import { getProjects } from "@/lib/actions/project.actions";
-import { deleteTask } from "@/lib/actions/task.actions";
+import { deleteTask, updateTaskStatus } from "@/lib/actions/task.actions";
 import { hasPermission } from "@/lib/auth";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, showSuccessMessage } from "@/lib/utils";
 import { Task } from "@/types/task";
 import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -23,6 +23,14 @@ import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { GENERIC_STATUS } from "@/constants";
+import { ChevronsUpDown } from "lucide-react";
+import StatusDropdown from "../../StatusDropDown";
 
 export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
@@ -125,23 +133,23 @@ export const TaskColumns: ColumnDef<Task>[] = [
       );
     },
   },
-  // {
-  //   accessorKey: "status_dropdown",
-  //   header: "Status",
-  //   cell: ({ row }) => {
-  //     const type = row.original.distribution.type;
-  //     const status = row.original.status;
-  //
-  //     return (
-  //       <TaskStatusDropdown
-  //         key={`task-status-${row.original.id}`}
-  //         id={row.original.id}
-  //         currentStatus={status}
-  //         type={type}
-  //       />
-  //     );
-  //   },
-  // },
+  {
+    accessorKey: "status_dropdown",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status;
+
+      return (
+        <StatusDropdown
+          id={row.original.id}
+          mutationKey="update-status"
+          currentStatus={status}
+          statuses={GENERIC_STATUS}
+          mutationFn={updateTaskStatus}
+        />
+      );
+    },
+  },
   {
     accessorKey: "status_badge",
     header: "Status",

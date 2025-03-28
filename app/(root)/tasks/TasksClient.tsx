@@ -1,9 +1,6 @@
 "use client";
 
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
-import FilterTaskAsset, {
-  useAssetTaskFilters,
-} from "@/components/shared/filter/FilterAssetTask";
 import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
@@ -17,16 +14,16 @@ import {
   TaskColumns,
   visibleTaskColumns,
 } from "@/components/shared/table/columns/TaskColumns";
-import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { UserRoleEnum } from "@/enums";
+import { useResponsive } from "@/hooks";
+import { useDataTable } from "@/hooks/use-datatable";
 import { hasPermission } from "@/lib/auth";
 import { Project } from "@/types/project";
 import { Task } from "@/types/task";
 import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useMediaQuery } from "react-responsive";
+import React, { useState } from "react";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
 
 type Props = {
@@ -42,12 +39,10 @@ const TasksClient = ({
   projects,
   warehousePersons,
 }: Props) => {
-  const [isMounted, setIsMounted] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
+  const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useTaskForm({ mode: "create" });
-  const { getFilteredItems } = useAssetTaskFilters(tasks);
 
   const filteredWarehousePersons = warehousePersons.filter(
     (person) =>
@@ -55,10 +50,17 @@ const TasksClient = ({
       person.user.is_active,
   );
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  console.log(tasks);
+  const datTable = useDataTable({
+    columns: TaskColumns,
+    data: tasks,
+    visibleColumns: isDesktop
+      ? visibleTaskColumns(employee.user.roles).desktop
+      : visibleTaskColumns(employee.user.roles).mobile,
+    searchField: {
+      column: "project",
+      placeholder: "Search project...",
+    },
+  });
 
   return (
     <React.Fragment>
@@ -118,24 +120,7 @@ const TasksClient = ({
         </div>
       </Header>
 
-      <main className="main-container">
-        {isMounted ? (
-          <DataTable
-            columns={TaskColumns}
-            data={getFilteredItems()}
-            visibleColumns={
-              isDesktop
-                ? visibleTaskColumns(employee.user.roles).desktop
-                : visibleTaskColumns(employee.user.roles).mobile
-            }
-            searchField={{
-              column: "project",
-              placeholder: "Search project...",
-            }}
-            filters={<FilterTaskAsset items={tasks} type="task" />}
-          />
-        ) : null}
-      </main>
+      <main className="main-container">{datTable.render()}</main>
     </React.Fragment>
   );
 };

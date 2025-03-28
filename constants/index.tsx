@@ -2,9 +2,6 @@ import {
   AssetStatusEnum,
   ProjectStatusEnum,
   UserRoleEnum,
-  TaskStatusExportEnum,
-  TaskStatusImportEnum,
-  DistributionTypeEnum,
   GenericStatusEnum,
 } from "@/enums";
 import { SelectItemType } from "@/types/primitives";
@@ -72,43 +69,6 @@ export const PROJECT_STATUSES: Record<ProjectStatusEnum, string> = {
   [ProjectStatusEnum.ONGOING]: "Ongoing",
   [ProjectStatusEnum.CANCELLED]: "Cancelled",
 } as const;
-
-export const TASK_STATUS_IMPORT: Record<TaskStatusImportEnum, string> = {
-  [TaskStatusImportEnum.PENDING]: "Pending",
-  [TaskStatusImportEnum.RECEIVED]: "Received",
-  [TaskStatusImportEnum.CHECKED_IN]: "Checked In",
-  [TaskStatusImportEnum.STOCKED]: "Stocked",
-  [TaskStatusImportEnum.SHELVED]: "Shelved",
-};
-
-// TaskStatusExportEnum labels
-export const TASK_STATUS_EXPORT: Record<TaskStatusExportEnum, string> = {
-  [TaskStatusImportEnum.PENDING]: "Pending",
-  [TaskStatusExportEnum.PICKED]: "Picked",
-  [TaskStatusExportEnum.PACKED]: "Packed",
-  [TaskStatusExportEnum.LOADED]: "Loaded",
-  [TaskStatusExportEnum.SHIPPED]: "Shipped",
-  [TaskStatusExportEnum.DELIVERED]: "Delivered",
-};
-
-export const TASK_STATUS: Record<string, string> = {
-  ...TASK_STATUS_IMPORT,
-  ...TASK_STATUS_EXPORT,
-};
-
-export const COMBINED_TASK_STATUS: SelectItemType[] = [
-  ...Object.entries(TASK_STATUS_IMPORT).map(([key, label]) => ({
-    label,
-    value: key,
-  })),
-  ...Object.entries(TASK_STATUS_EXPORT).map(([key, label]) => ({
-    label,
-    value: key,
-  })),
-].filter(
-  (item, index, self) =>
-    index === self.findIndex((t) => t.value === item.value),
-);
 
 export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
   [AssetStatusEnum.AVAILABLE]: "Available",
