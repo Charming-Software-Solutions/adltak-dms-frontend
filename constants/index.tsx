@@ -73,7 +73,8 @@ export const PROJECT_STATUSES: Record<ProjectStatusEnum, string> = {
 export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
   [AssetStatusEnum.AVAILABLE]: "Available",
   [AssetStatusEnum.IN_USE]: "In Use",
-  [AssetStatusEnum.MAINTENANCE]: "Maintenance",
+  [AssetStatusEnum.DAMAGED]: "Damaged",
+  [AssetStatusEnum.FOR_REPAIR]: "For Repair",
   [AssetStatusEnum.LOST]: "Lost",
 } as const;
 

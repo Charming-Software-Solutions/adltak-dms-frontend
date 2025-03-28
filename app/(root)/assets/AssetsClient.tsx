@@ -1,5 +1,6 @@
 "use client";
 
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
@@ -13,29 +14,26 @@ import {
   AssetColumns,
   visibleAssetColumns,
 } from "@/components/shared/table/columns/AssetColumns";
-import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
+import { UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
+import { useDataTable } from "@/hooks/use-datatable";
+import { hasPermission } from "@/lib/auth";
 import { Asset } from "@/types/asset";
 import { Classification } from "@/types/generics";
-import { FileIcon, PlusCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import AssetForm, { useAssetForm } from "./components/AssetForm";
 import { User } from "@/types/user";
-import { hasPermission } from "@/lib/auth";
-import { UserRoleEnum } from "@/enums";
-import { Product } from "@/types/product";
-import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
-import { useDataTable } from "@/hooks/use-datatable";
+import { FileIcon, PlusCircle } from "lucide-react";
+import React, { useState } from "react";
+import AssetForm, { useAssetForm } from "./components/AssetForm";
 
 type Props = {
   user: User;
   assets: Asset[];
   assetTypes: Classification[];
-  products: Product[];
+  brands: Classification[];
 };
 
-const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
+const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const isDesktop = useResponsive("desktop");
@@ -81,7 +79,7 @@ const AssetsClient = ({ user, assets, assetTypes, products }: Props) => {
                 <AssetForm
                   form={form}
                   assetTypes={assetTypes}
-                  products={products}
+                  brands={brands}
                 />
                 <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">

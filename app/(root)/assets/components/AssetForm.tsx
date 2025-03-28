@@ -8,7 +8,6 @@ import CustomFormField, {
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
-import { ASSET_STATUS } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { createAsset, updateAsset } from "@/lib/actions/asset.actions";
 import { formatErrorResponse } from "@/lib/formatters";
@@ -17,7 +16,6 @@ import { AssetFormData, assetFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Asset } from "@/types/asset";
 import { Classification } from "@/types/generics";
-import { Product } from "@/types/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -27,7 +25,7 @@ import { z } from "zod";
 type Props = {
   form: UseFormReturn<AssetFormData>;
   assetTypes: Classification[];
-  products: Product[];
+  brands: Classification[];
   className?: string;
 };
 
@@ -43,12 +41,12 @@ export const useAssetForm = ({
   const form = useForm<AssetFormData>({
     resolver: zodResolver(assetFormSchema),
     defaultValues: {
+      agency: asset?.agency ?? "",
       name: asset?.name ?? "",
       code: asset?.code ?? "",
       type: asset?.type.id ?? "",
-      status: asset?.status ?? "",
       thumbnail: asset?.thumbnail ?? undefined,
-      product: asset?.product?.id ?? "",
+      brand: asset?.brand?.id ?? "",
       area: asset?.area ?? "",
       stock: asset?.stock ?? 1,
     },
@@ -59,11 +57,11 @@ export const useAssetForm = ({
     setOpen: (value: boolean) => void,
   ) => {
     const formData = new FormData();
+    formData.append("agency", values.agency);
     formData.append("name", values.name);
     formData.append("code", values.code);
     formData.append("type", values.type);
-    formData.append("status", values.status);
-    formData.append("product", values.product);
+    formData.append("brand", values.brand);
     formData.append("area", values.area);
     formData.append("stock", values.stock.toString());
 
@@ -91,7 +89,7 @@ export const useAssetForm = ({
   return { form, onSubmit };
 };
 
-const AssetForm = ({ form, assetTypes, products, className }: Props) => {
+const AssetForm = ({ form, assetTypes, brands, className }: Props) => {
   return (
     <Form {...form}>
       <div className={cn("form-container", className)}>
@@ -123,23 +121,31 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}
+          name="agency"
+          label="Agency"
+          placeholder="AdTalk"
+          disabled={form.formState.isSubmitting}
+        />
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
           name="area"
           label="Area"
           placeholder="Quezon City"
           disabled={form.formState.isSubmitting}
         />
         <ComboBoxFormField
-          items={products.map((product) => ({
-            label: product.name,
-            value: product.id,
+          items={brands.map((brand) => ({
+            label: brand.name,
+            value: brand.id,
           }))}
           control={form.control}
-          name="product"
+          name="brand"
           placeholder={{
-            triggerPlaceholder: "Select product...",
-            searchPlaceholder: "Search product...",
+            triggerPlaceholder: "Select brand...",
+            searchPlaceholder: "Search brand...",
           }}
-          label="Product"
+          label="Brand"
           popOverSize="md:min-w-[28.3rem]"
           disabled={form.formState.isSubmitting}
         />
@@ -166,20 +172,6 @@ const AssetForm = ({ form, assetTypes, products, className }: Props) => {
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
-          control={form.control}
-          name="status"
-          label="Status"
-          placeholder="Select status"
-          disabled={form.formState.isSubmitting}
-        >
-          {Object.keys(ASSET_STATUS).map((status, key) => (
-            <SelectItem key={key} value={status}>
-              {ASSET_STATUS[status as keyof typeof ASSET_STATUS]}
-            </SelectItem>
-          ))}
-        </CustomFormField>
       </div>
     </Form>
   );

@@ -92,6 +92,9 @@ export const taskFormSchema = z.object({
 });
 
 export const assetFormSchema = z.object({
+  agency: z.string().min(1, {
+    message: "Agency is required.",
+  }),
   name: z.string().min(1, {
     message: "Name is required.",
   }),
@@ -103,11 +106,8 @@ export const assetFormSchema = z.object({
   type: z.string().uuid({
     message: "Type is required.",
   }),
-  status: z.string().min(1, {
-    message: "Status is required.",
-  }),
-  product: z.string().uuid({
-    message: "Product is required.",
+  brand: z.string().uuid({
+    message: "Product brand is required.",
   }),
   area: z.string().min(1, {
     message: "Area is required.",

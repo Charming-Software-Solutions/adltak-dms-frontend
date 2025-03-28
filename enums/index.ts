@@ -23,7 +23,8 @@ export enum ProjectStatusEnum {
 export enum AssetStatusEnum {
   AVAILABLE = "AVAILABLE",
   IN_USE = "IN_USE",
-  MAINTENANCE = "MAINTENANCE",
+  DAMAGED = "DAMAGED",
+  FOR_REPAIR = "FOR_REPAIR",
   LOST = "LOST",
 }
 
