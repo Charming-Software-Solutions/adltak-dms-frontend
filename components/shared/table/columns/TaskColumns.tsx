@@ -3,16 +3,17 @@
 import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FormModeEnum, UserRoleEnum } from "@/enums";
+import { GENERIC_STATUS } from "@/constants";
+import { UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { getEmployees } from "@/lib/actions/employee.actions";
 import { getProjects } from "@/lib/actions/project.actions";
 import { deleteTask, updateTaskStatus } from "@/lib/actions/task.actions";
 import { hasPermission } from "@/lib/auth";
-import { formatDateTime, showSuccessMessage } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 import { Task } from "@/types/task";
 import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -21,16 +22,9 @@ import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
+import StatusDropdown from "../../StatusDropDown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { useRouter } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { GENERIC_STATUS } from "@/constants";
-import { ChevronsUpDown } from "lucide-react";
-import StatusDropdown from "../../StatusDropDown";
 
 export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
