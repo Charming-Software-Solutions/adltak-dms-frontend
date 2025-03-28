@@ -121,10 +121,10 @@ export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
 
 export const USER_ROLES: Record<UserRoleEnum, string> = {
   [UserRoleEnum.ADMIN]: "Admin",
-  [UserRoleEnum.LOGISTICS_SPECIALIST]: "Logistics Team Member",
-  [UserRoleEnum.WAREHOUSE_WORKER]: "Warehouse Personnel",
-  [UserRoleEnum.PROJECT_HANDLER]: "Project Manager",
-} as const;
+  [UserRoleEnum.WAREHOUSE_PERSONNEL]: "Warehouse Personnel",
+  [UserRoleEnum.LOGISTICS_TEAM_MEMBER]: "Logistics Team Member",
+  [UserRoleEnum.PROJECT_MANAGER]: "Project Manager",
+};
 
 export const DISTRIBUTION_TYPES: Record<DistributionTypeEnum, string> = {
   [DistributionTypeEnum.IMPORT]: "Incoming",

@@ -1,8 +1,8 @@
 export enum UserRoleEnum {
-  ADMIN = "ADMIN",
-  LOGISTICS_SPECIALIST = "LOGISTICS_SPECIALIST",
-  WAREHOUSE_WORKER = "WAREHOUSE_WORKER",
-  PROJECT_HANDLER = "PROJECT_HANDLER",
+  ADMIN = "admin",
+  WAREHOUSE_PERSONNEL = "warehouse_personnel",
+  LOGISTICS_TEAM_MEMBER = "logistics_team_member",
+  PROJECT_MANAGER = "project_manager",
 }
 
 export enum ProductStockStatusesEnum {
