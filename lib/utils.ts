@@ -1,6 +1,6 @@
 import { FormModeEnum } from "@/enums";
 import { ApiResponse, ErrorResponse } from "@/types/api";
-import { DistributionProduct } from "@/types/distribution";
+import { ProjectProduct } from "@/types/project";
 import { SelectItemType } from "@/types/primitives";
 import { ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
@@ -188,17 +188,17 @@ export const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export function filterProductsByExpiration(products: DistributionProduct[]): {
-  nearExpiration: DistributionProduct[];
-  expired: DistributionProduct[];
+export function filterProductsByExpiration(products: ProjectProduct[]): {
+  nearExpiration: ProjectProduct[];
+  expired: ProjectProduct[];
 } {
   const currentDate = new Date();
 
   const nextMonthDate = new Date(currentDate);
   nextMonthDate.setMonth(currentDate.getMonth() + 1);
 
-  const nearExpiration: DistributionProduct[] = [];
-  const expired: DistributionProduct[] = [];
+  const nearExpiration: ProjectProduct[] = [];
+  const expired: ProjectProduct[] = [];
 
   products.forEach((product) => {
     const productExpiration = new Date(product.expiration);

@@ -4,7 +4,7 @@ import { getSession } from "./auth/session";
 
 const protectedRoutes = [
   "/",
-  "/distributions",
+  "/projects",
   "/products",
   "/tasks",
   "/assets",

@@ -11,16 +11,13 @@ export enum ProductStockStatusesEnum {
   IN_STOCK = "IN_STOCK",
 }
 
-export enum DistributionStatusesEnum {
-  PENDING = "PENDING",
-  IN_TRANSIT = "IN_TRANSIT",
-  DELIVERED = "DELIVERED",
+export enum ProjectStatusEnum {
+  AWAITING_PWP = "AWAITING_PWP",
+  CONCLUDED = "CONCLUDED",
+  DISCUSSED = "DISCUSSED",
+  FOR_IMPLEMENTATION = "FOR_IMPLEMENTATION",
+  ONGOING = "ONGOING",
   CANCELLED = "CANCELLED",
-  RETURNED = "RETURNED",
-  ON_HOLD = "ON_HOLD",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED",
-  SCHEDULED = "SCHEDULED",
 }
 
 export enum TaskStatusImportEnum {
@@ -63,4 +60,9 @@ export enum FormModeEnum {
 export enum DistributionTypeEnum {
   IMPORT = "IMPORT",
   EXPORT = "EXPORT",
+}
+
+export enum GenericStatusEnum {
+  PENDING = "PENDING",
+  DELIVERED = "DELIVERED",
 }

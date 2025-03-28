@@ -21,7 +21,7 @@ import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { UserRoleEnum } from "@/enums";
 import { hasPermission } from "@/lib/auth";
-import { Distribution } from "@/types/distribution";
+import { Project } from "@/types/project";
 import { Task } from "@/types/task";
 import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
@@ -32,14 +32,14 @@ import TaskForm, { useTaskForm } from "./components/TaskForm";
 type Props = {
   employee: Employee;
   tasks: Task[];
-  distributions: Distribution[];
+  projects: Project[];
   warehousePersons: Employee[];
 };
 
 const TasksClient = ({
   employee,
   tasks,
-  distributions,
+  projects,
   warehousePersons,
 }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -87,7 +87,7 @@ const TasksClient = ({
                 </ResponsiveDialogHeader>
                 <TaskForm
                   form={form}
-                  distributions={distributions}
+                  projects={projects}
                   warehousePersons={filteredWarehousePersons}
                 />
                 <ResponsiveDialogFooter className="px-1">
@@ -129,8 +129,8 @@ const TasksClient = ({
                 : visibleTaskColumns(employee.user.roles).mobile
             }
             searchField={{
-              column: "allocation",
-              placeholder: "Search allocation...",
+              column: "project",
+              placeholder: "Search project...",
             }}
             filters={<FilterTaskAsset items={tasks} type="task" />}
           />

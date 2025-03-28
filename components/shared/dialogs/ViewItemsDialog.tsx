@@ -1,30 +1,29 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DistributionAsset, DistributionProduct } from "@/types/distribution";
-import { TabsContent } from "@radix-ui/react-tabs";
+import { ProjectProduct } from "@/types/project";
 import { Eye } from "lucide-react";
 import { useState } from "react";
 import ItemCard from "../card/ItemCard";
 
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
+  ResponsiveDialogDescription,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "../ResponsiveDialog";
+import { CopyButton } from "@/components/ui/copy-button";
 
 type Props = {
+  baReferenceNumber: string;
   items: {
-    products: DistributionProduct[];
-    assets: DistributionAsset[];
+    products: ProjectProduct[];
   };
 };
 
-const ViewItemsDialog = ({ items }: Props) => {
+const ViewItemsDialog = ({ baReferenceNumber, items }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
@@ -36,80 +35,43 @@ const ViewItemsDialog = ({ items }: Props) => {
       </ResponsiveDialogTrigger>
       <ResponsiveDialogContent className="max-w-md">
         <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>Items</ResponsiveDialogTitle>
+          <ResponsiveDialogTitle>Project Products</ResponsiveDialogTitle>
+          <ResponsiveDialogDescription className="flex items-center space-x-2">
+            <span className="w-full">
+              <span className="font-semibold text-foreground">
+                BA Reference Number:{" "}
+              </span>
+              <span className="inline-flex items-center space-x-1">
+                <span className="font-normal text-muted-foreground">
+                  {baReferenceNumber}
+                </span>
+                <CopyButton value={baReferenceNumber} />
+              </span>
+            </span>
+          </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
-        <Tabs defaultValue="products" className="w-full px-4 md:px-0">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="assets">Assets</TabsTrigger>
-          </TabsList>
-          <TabsContent value="products">
-            <div className="mt-2 space-y-2">
-              <span className="text-sm">Total: {items.products.length}</span>
-              <OverlayScrollbarsComponent
-                defer
-                options={{
-                  scrollbars: {
-                    autoHide: "leave",
-                    autoHideDelay: 200,
-                    theme: "os-theme-dark",
-                  },
-                }}
-                className="max-h-[31rem] pb-4 md:pb-0"
-              >
-                <div className="flex flex-col gap-2">
-                  {items.products.map((item, index) => {
-                    const nextProduct = items.products[index + 1];
-                    const currentProductName = item.product.name;
-                    const nextName = nextProduct?.product.name;
-                    return (
-                      <ItemCard
-                        key={item.id}
-                        thumbnail={item.product.thumbnail}
-                        name={
-                          currentProductName === nextName
-                            ? `${currentProductName} ${index + 1}`
-                            : currentProductName
-                        }
-                        classification={item.product.category.name}
-                        quantity={item.quantity}
-                        expiration={item.expiration}
-                      />
-                    );
-                  })}
-                </div>
-              </OverlayScrollbarsComponent>
-            </div>
-          </TabsContent>
-          <TabsContent value="assets">
-            <div className="mt-2 space-y-2">
-              <span className="text-sm">Total: {items.assets.length}</span>
-              <OverlayScrollbarsComponent
-                defer
-                options={{
-                  scrollbars: {
-                    autoHide: "leave",
-                    autoHideDelay: 200,
-                    theme: "os-theme-dark",
-                  },
-                }}
-                className="max-h-[31rem] pb-4 md:pb-0"
-              >
-                <div className="flex flex-col gap-2">
-                  {items.assets.map((item) => (
-                    <ItemCard
-                      key={item.id}
-                      thumbnail={item.asset.thumbnail}
-                      name={item.asset.name}
-                      classification={item.asset.type.name}
-                      quantity={item.quantity}
-                    />
-                  ))}
-                </div>
-              </OverlayScrollbarsComponent>
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="flex flex-col gap-2">
+          {items.products.map((item, index) => {
+            const nextProduct = items.products[index + 1];
+            const currentProductName = item.product.name;
+            const nextName = nextProduct?.product.name;
+            return (
+              <ItemCard
+                key={item.id}
+                thumbnail={item.product.thumbnail}
+                name={
+                  currentProductName === nextName
+                    ? `${currentProductName} ${index + 1}`
+                    : currentProductName
+                }
+                classification={item.product.category.name}
+                quantity={item.quantity}
+                expiration={item.expiration}
+                status={item.status}
+              />
+            );
+          })}
+        </div>
       </ResponsiveDialogContent>
     </ResponsiveDialog>
   );

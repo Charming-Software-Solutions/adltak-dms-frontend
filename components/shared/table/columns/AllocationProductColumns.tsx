@@ -1,7 +1,7 @@
 "use client";
 
 import { imagePlaceholder } from "@/constants";
-import { DistributionProduct } from "@/types/distribution";
+import { ProjectProduct } from "@/types/project";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import { createColumnConfig } from "../column.config";
@@ -29,7 +29,7 @@ export const visibleAllocationProductColumns = () => {
   });
 };
 
-export const AllocationProductColumns: ColumnDef<DistributionProduct>[] = [
+export const AllocationProductColumns: ColumnDef<ProjectProduct>[] = [
   {
     accessorKey: "thumbnail",
     accessorFn: (row) => row.product.thumbnail,

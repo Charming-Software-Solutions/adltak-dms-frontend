@@ -16,12 +16,13 @@ export interface ICreateEmployee {
   profile_image: string | undefined;
 }
 
-export interface ICreateDistributionProduct {
+export interface ICreateProjectProduct {
   product: string;
   quantity: number;
 }
 
-export interface ICreateDistribution {
+export interface ICreateProject {
+  name: string;
   employee: string;
   products: {
     product: string;
@@ -33,7 +34,6 @@ export interface ICreateDistribution {
     quantity: number;
   }[];
   ba_reference_number: string;
-  type: string;
   client: string;
 }
 

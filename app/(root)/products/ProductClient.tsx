@@ -37,7 +37,7 @@ import {
   formatFilterValue,
   generateProductSKU,
 } from "@/lib/utils";
-import { DistributionProduct } from "@/types/distribution";
+import { ProjectProduct } from "@/types/project";
 import { Brand, Category, Product, ProductSKU, Type } from "@/types/product";
 import { File as FileIcon, PlusCircle } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
@@ -52,7 +52,7 @@ import { User } from "@/types/user";
 type Props = {
   user: User;
   products: Product[];
-  allocationProducts: DistributionProduct[];
+  projectProductsa: ProjectProduct[];
   brands: Brand[];
   categories: Category[];
   types: Type[];
@@ -68,7 +68,7 @@ type AppliedFilters = {
 const ProductClient = ({
   user,
   products,
-  allocationProducts,
+  projectProductsa,
   brands,
   categories,
   types,
@@ -162,7 +162,7 @@ const ProductClient = ({
 
     const data = hasActiveFilters() ? getFilteredProducts() : products;
 
-    const categorizedProducts = filterProductsByExpiration(allocationProducts);
+    const categorizedProducts = filterProductsByExpiration(projectProductsa);
 
     switch (condition) {
       case "all":

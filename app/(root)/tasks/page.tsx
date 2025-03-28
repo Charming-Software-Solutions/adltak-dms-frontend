@@ -1,25 +1,27 @@
 import { UserRoleEnum } from "@/enums";
-import { getDistributions } from "@/lib/actions/distribution.actions";
 import { getEmployees } from "@/lib/actions/employee.actions";
 import { getTasks } from "@/lib/actions/task.actions";
 import TasksClient from "./TasksClient";
 import { getCurrentUser } from "@/auth/currentUser";
+import { getProjects } from "@/lib/actions/project.actions";
 
 export default async function TasksPage() {
-  const distributions = await getDistributions();
+  const projects = await getProjects();
   const employee = await getCurrentUser({ withEmployeeProfile: true });
-  const warehousePersons =
-    employee.user.role === UserRoleEnum.ADMIN ||
-    employee.user.role === UserRoleEnum.PROJECT_HANDLER
-      ? await getEmployees()
-      : [];
-  const tasks = await getTasks(employee.user.id, employee.user.role);
+  const allowedRoles = [UserRoleEnum.ADMIN, UserRoleEnum.PROJECT_MANAGER];
+
+  const warehousePersons = employee.user.roles.some((role) =>
+    allowedRoles.includes(role),
+  )
+    ? await getEmployees()
+    : [];
+  const tasks = await getTasks(employee.user.id, employee.user.roles);
 
   return (
     <TasksClient
       employee={employee}
       tasks={tasks}
-      distributions={distributions}
+      projects={projects}
       warehousePersons={warehousePersons}
     />
   );

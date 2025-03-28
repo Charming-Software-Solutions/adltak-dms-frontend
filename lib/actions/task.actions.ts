@@ -17,10 +17,13 @@ async function createTask(body: FormData): Promise<ApiResponse<Task>> {
   });
 }
 
-async function getTasks(userId?: string, role?: string): Promise<Task[]> {
+async function getTasks(
+  userId?: string,
+  roles?: UserRoleEnum[],
+): Promise<Task[]> {
   let params = "";
 
-  if (userId && role === UserRoleEnum.WAREHOUSE_WORKER) {
+  if (userId && roles && roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL)) {
     params = `?user_id=${userId}`;
   }
 

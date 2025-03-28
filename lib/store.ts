@@ -1,31 +1,27 @@
-import { DistributionAsset, DistributionProduct } from "@/types/distribution";
+import { ProjectProduct } from "@/types/project";
 import { create } from "zustand";
 
-export type AllocationItem = DistributionProduct | DistributionAsset;
-
-type AllocationItemStoreState = {
-  items: AllocationItem[];
+export type ProjectProductStoreState = {
+  items: ProjectProduct[];
 };
 
-type AllocationItemStoreActions = {
-  addItem: (item: AllocationItem) => void;
+type ProjectProductStoreActions = {
+  addItem: (item: ProjectProduct) => void;
   removeItem: (itemId: string) => void;
-  clearItems: (type?: "product" | "asset") => void;
+  clearItems: () => void;
   updateQuantity: (itemId: string, quantity: number) => void;
 };
 
-export type AllocationItemStore = AllocationItemStoreState &
-  AllocationItemStoreActions;
+export type ProjectProductStore = ProjectProductStoreState &
+  ProjectProductStoreActions;
 
-export const useAllocationStore = create<AllocationItemStore>()((set) => ({
+export const useProjectProductStore = create<ProjectProductStore>()((set) => ({
   items: [],
 
-  addItem: (item: AllocationItem) =>
+  addItem: (item: ProjectProduct) =>
     set((state) => {
       // Check if the item already exists
       const existingItemIndex = state.items.findIndex((i) => i.id === item.id);
-
-      // If it exists, update the quantity
       if (existingItemIndex >= 0) {
         const updatedItems = [...state.items];
         const existingItem = updatedItems[existingItemIndex];
@@ -35,7 +31,6 @@ export const useAllocationStore = create<AllocationItemStore>()((set) => ({
         };
         return { items: updatedItems };
       }
-
       return { items: [...state.items, item] };
     }),
 
@@ -44,18 +39,7 @@ export const useAllocationStore = create<AllocationItemStore>()((set) => ({
       items: state.items.filter((item) => item.id !== itemId),
     })),
 
-  clearItems: (type?: "product" | "asset") =>
-    set((state) => {
-      if (!type) {
-        return { items: [] };
-      }
-
-      return {
-        items: state.items.filter((item) =>
-          type === "product" ? !("product" in item) : !("asset" in item),
-        ),
-      };
-    }),
+  clearItems: () => set({ items: [] }),
 
   updateQuantity: (itemId: string, quantity: number) =>
     set((state) => ({

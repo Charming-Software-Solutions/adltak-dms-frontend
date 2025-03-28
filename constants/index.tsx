@@ -1,10 +1,11 @@
 import {
   AssetStatusEnum,
-  DistributionStatusesEnum,
+  ProjectStatusEnum,
   UserRoleEnum,
   TaskStatusExportEnum,
   TaskStatusImportEnum,
   DistributionTypeEnum,
+  GenericStatusEnum,
 } from "@/enums";
 import { SelectItemType } from "@/types/primitives";
 
@@ -63,16 +64,13 @@ export const productMonthExpirationFreq: SelectItemType[] = [
   },
 ];
 
-export const DISTRIBUTION_STATUSES: Record<DistributionStatusesEnum, string> = {
-  [DistributionStatusesEnum.PENDING]: "Pending",
-  [DistributionStatusesEnum.IN_TRANSIT]: "In Transit",
-  [DistributionStatusesEnum.DELIVERED]: "Delivered",
-  [DistributionStatusesEnum.CANCELLED]: "Cancelled",
-  [DistributionStatusesEnum.RETURNED]: "Returned",
-  [DistributionStatusesEnum.ON_HOLD]: "On Hold",
-  [DistributionStatusesEnum.COMPLETED]: "Completed",
-  [DistributionStatusesEnum.FAILED]: "Failed",
-  [DistributionStatusesEnum.SCHEDULED]: "Scheduled",
+export const PROJECT_STATUSES: Record<ProjectStatusEnum, string> = {
+  [ProjectStatusEnum.AWAITING_PWP]: "Awaiting PWP",
+  [ProjectStatusEnum.CONCLUDED]: "Concluded",
+  [ProjectStatusEnum.DISCUSSED]: "Discussed",
+  [ProjectStatusEnum.FOR_IMPLEMENTATION]: "For Implementation",
+  [ProjectStatusEnum.ONGOING]: "Ongoing",
+  [ProjectStatusEnum.CANCELLED]: "Cancelled",
 } as const;
 
 export const TASK_STATUS_IMPORT: Record<TaskStatusImportEnum, string> = {
@@ -124,9 +122,9 @@ export const USER_ROLES: Record<UserRoleEnum, string> = {
   [UserRoleEnum.WAREHOUSE_PERSONNEL]: "Warehouse Personnel",
   [UserRoleEnum.LOGISTICS_TEAM_MEMBER]: "Logistics Team Member",
   [UserRoleEnum.PROJECT_MANAGER]: "Project Manager",
-};
+} as const;
 
-export const DISTRIBUTION_TYPES: Record<DistributionTypeEnum, string> = {
-  [DistributionTypeEnum.IMPORT]: "Incoming",
-  [DistributionTypeEnum.EXPORT]: "Outgoing",
+export const GENERIC_STATUS: Record<GenericStatusEnum, string> = {
+  [GenericStatusEnum.PENDING]: "Pending",
+  [GenericStatusEnum.DELIVERED]: "Delivered",
 } as const;

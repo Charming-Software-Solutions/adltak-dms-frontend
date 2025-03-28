@@ -5,19 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
-import { getDistributions } from "@/lib/actions/distribution.actions";
 import { getEmployees } from "@/lib/actions/employee.actions";
+import { getProjects } from "@/lib/actions/project.actions";
 import { deleteTask } from "@/lib/actions/task.actions";
 import { hasPermission } from "@/lib/auth";
-import { cn, formatDateTime } from "@/lib/utils";
-import { DistributionType } from "@/types/distribution";
+import { formatDateTime } from "@/lib/utils";
 import { Task } from "@/types/task";
-import {
-  BackpackIcon,
-  DownloadIcon,
-  PersonIcon,
-  UploadIcon,
-} from "@radix-ui/react-icons";
+import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
@@ -27,19 +21,16 @@ import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
-import TaskStatusDropdown from "../../TaskStatusDropdown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { DISTRIBUTION_TYPES } from "@/constants";
 
 export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
     desktop: {
       warehouse_person: true,
-      distribution_client: true,
-      allocation: true,
-      distribution_type: true,
-      distribution_items: true,
+      project_client: true,
+      project: true,
+      project_products: true,
       status_dropdown: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
         UserRoleEnum.PROJECT_MANAGER,
@@ -56,10 +47,9 @@ export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
     },
     mobile: {
       warehouse_person: true,
-      distribution_client: true,
-      allocation: true,
-      distribution_type: true,
-      distribution_items: true,
+      project_client: true,
+      project: true,
+      project_products: true,
       status_dropdown: hasPermission(userRoles, [
         UserRoleEnum.ADMIN,
         UserRoleEnum.PROJECT_MANAGER,
@@ -100,8 +90,8 @@ export const TaskColumns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "distribution_client",
-    accessorFn: (row) => row.distribution.client,
+    accessorKey: "poject_client",
+    accessorFn: (row) => row.project.client,
     header: "Client",
     cell: ({ row }) => {
       const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
@@ -109,79 +99,49 @@ export const TaskColumns: ColumnDef<Task>[] = [
       return (
         <div className="flex items-center space-x-2">
           {isDesktop && <BackpackIcon className="size-4" />}
-          <span>{row.original.distribution.client}</span>
+          <span>{row.original.project.client}</span>
         </div>
       );
     },
   },
   {
-    accessorKey: "allocation",
-    accessorFn: (row) => row.distribution.ba_reference_number,
-    header: "Allocation",
+    accessorKey: "project",
+    accessorFn: (row) => row.project.name,
+    header: "Project",
   },
   {
-    accessorKey: "distribution_type",
-    accessorFn: (row) => row.distribution.type,
-    header: "Type",
-    cell: ({ row }) => {
-      const distributionType = row.original.distribution.type;
-
-      const TypeIcon = ({
-        type,
-        className,
-      }: {
-        type: DistributionType;
-        className?: string;
-      }) => {
-        return type === "IMPORT" ? (
-          <DownloadIcon className={cn("size-4", className)} />
-        ) : (
-          <UploadIcon className={cn("size-4", className)} />
-        );
-      };
-      return (
-        <div className="flex items-center space-x-1">
-          <TypeIcon type={distributionType} className="mr-1" />
-          <span className="font-semibold">
-            {DISTRIBUTION_TYPES[distributionType]}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "distribution_items",
+    accessorKey: "project_products",
     header: "Items",
     cell: ({ row }) => {
-      const distribution = row.original.distribution;
+      const project = row.original.project;
 
       return (
         <ViewItemsDialog
+          baReferenceNumber={project.ba_reference_number}
           items={{
-            products: distribution.products,
-            assets: distribution.assets ?? [],
+            products: project.products,
           }}
         />
       );
     },
   },
-  {
-    accessorKey: "status_dropdown",
-    header: "Status",
-    cell: ({ row }) => {
-      const type = row.original.distribution.type;
-      const status = row.original.status;
-
-      return (
-        <TaskStatusDropdown
-          key={`task-status-${row.original.id}`}
-          id={row.original.id}
-          currentStatus={status}
-          type={type}
-        />
-      );
-    },
-  },
+  // {
+  //   accessorKey: "status_dropdown",
+  //   header: "Status",
+  //   cell: ({ row }) => {
+  //     const type = row.original.distribution.type;
+  //     const status = row.original.status;
+  //
+  //     return (
+  //       <TaskStatusDropdown
+  //         key={`task-status-${row.original.id}`}
+  //         id={row.original.id}
+  //         currentStatus={status}
+  //         type={type}
+  //       />
+  //     );
+  //   },
+  // },
   {
     accessorKey: "status_badge",
     header: "Status",
@@ -214,14 +174,14 @@ export const TaskColumns: ColumnDef<Task>[] = [
       const { data } = useQuery({
         queryKey: ["edit-task"],
         queryFn: async () => {
-          const distributions = await getDistributions();
+          const projects = await getProjects();
           const warehousePersons = await getEmployees();
           const filteredWarehousePersons = warehousePersons.filter(
             (person) =>
               person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
               person.user.is_active,
           );
-          return { distributions, filteredWarehousePersons };
+          return { projects, filteredWarehousePersons };
         },
       });
 
@@ -234,7 +194,7 @@ export const TaskColumns: ColumnDef<Task>[] = [
           >
             <TaskForm
               form={form}
-              distributions={data?.distributions ?? []}
+              projects={data?.projects ?? []}
               warehousePersons={data?.filteredWarehousePersons ?? []}
             />
             <ResponsiveDialogFooter className="px-1">

@@ -57,28 +57,22 @@ export const employeeFormSchema = z.object({
   }),
 });
 
-export const distributionItemSchema = z
-  .object({
-    item: z.string().uuid({
-      message: "Item is required.",
-    }),
-    quantity: z.coerce.number().positive({
-      message: "Quantity must be a positive number.",
-    }),
-    expiration: z.coerce.date().optional(),
-    type: z.enum(["product", "asset"]),
-  })
-  .refine((data) => data.type !== "product" || !!data.expiration, {
-    message: "Expiration date is required for products.",
-    path: ["expiration"],
-  });
+export const projectProductSchema = z.object({
+  product: z.string().uuid({
+    message: "Item is required.",
+  }),
+  quantity: z.coerce.number().positive({
+    message: "Quantity must be a positive number.",
+  }),
+  expiration: z.coerce.date(),
+});
 
-export const distributionFormSchema = z.object({
+export const projectFormSchema = z.object({
+  name: z.string().min(1, {
+    message: "Project name is required.",
+  }),
   baReferenceNumber: z.string().min(1, {
     message: "BA reference number is required.",
-  }),
-  type: z.string().min(1, {
-    message: "Product type is required.",
   }),
   client: z.string().min(1, {
     message: "Client name is required.",
@@ -92,8 +86,8 @@ export const taskFormSchema = z.object({
   warehousePerson: z.string().uuid({
     message: "Warehouse person is required.",
   }),
-  distribution: z.string().uuid({
-    message: "Distribution is required.",
+  project: z.string().uuid({
+    message: "Project is required.",
   }),
 });
 
@@ -182,8 +176,8 @@ export const loginSchema = z.object({
 
 export type ProductFormData = z.infer<typeof productFormSchema>;
 export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
-export type DistributionFormData = z.infer<typeof distributionFormSchema>;
-export type DistributionItemFormData = z.infer<typeof distributionItemSchema>;
+export type ProjectFormData = z.infer<typeof projectFormSchema>;
+export type ProjectProductFormdata = z.infer<typeof projectProductSchema>;
 export type TaskFormData = z.infer<typeof taskFormSchema>;
 export type AssetFormData = z.infer<typeof assetFormSchema>;
 export type ClassificationFormData = z.infer<typeof classificationFormSchema>;

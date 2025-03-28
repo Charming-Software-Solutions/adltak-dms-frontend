@@ -20,9 +20,9 @@ async function getTotalItemStock(): Promise<number> {
   return parseMetricValue(response.data?.value);
 }
 
-async function getMonthlyDistributionFlow(): Promise<number> {
+async function getMontlyProjects(): Promise<number> {
   const response = await fetchAndHandleResponse<Metric>({
-    url: `${METRICS_URL}/monthly-distribution-flow/`,
+    url: `${METRICS_URL}/monthly-project-count/`,
     jwt: (await getSession())?.access,
     method: "GET",
   });
@@ -69,7 +69,7 @@ async function getDistributionFlowComparison(): Promise<
 
 export {
   getTotalItemStock,
-  getMonthlyDistributionFlow,
+  getMontlyProjects,
   getRemainingTaskCount,
   getProductsAboutToExpireCount,
   getProductsExpiredCount,

@@ -2,14 +2,13 @@
 
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import { Form } from "@/components/ui/form";
-import { DISTRIBUTION_TYPES } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
 import { TaskFormData, taskFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
-import { Distribution } from "@/types/distribution";
+import { Project } from "@/types/project";
 import { Task } from "@/types/task";
 import { Employee } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +19,7 @@ import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<TaskFormData>;
-  distributions: Distribution[];
+  projects: Project[];
   warehousePersons: Employee[];
   className?: string;
 };
@@ -38,7 +37,7 @@ export const useTaskForm = ({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
       warehousePerson: task?.warehouse_person.id ?? "",
-      distribution: task?.distribution.id ?? "",
+      project: task?.project.id ?? "",
     },
   });
 
@@ -46,9 +45,10 @@ export const useTaskForm = ({
     values: z.infer<typeof taskFormSchema>,
     setOpen: (value: boolean) => void,
   ) => {
+    console.log(values);
     const formData = new FormData();
     formData.append("warehouse_person", values.warehousePerson);
-    formData.append("distribution", values.distribution);
+    formData.append("project", values.project);
 
     const result: ApiResponse<Task> =
       mode === "create"
@@ -70,12 +70,7 @@ export const useTaskForm = ({
   return { form, onSubmit };
 };
 
-const TaskForm = ({
-  form,
-  distributions,
-  className,
-  warehousePersons,
-}: Props) => {
+const TaskForm = ({ form, projects, className, warehousePersons }: Props) => {
   return (
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 px-1", className)}>
@@ -95,17 +90,17 @@ const TaskForm = ({
           disabled={form.formState.isSubmitting}
         />
         <ComboBoxFormField
-          items={distributions.map((distribution) => ({
-            label: `ID: ${distribution.ba_reference_number} | Client: ${distribution.client} | Type: ${DISTRIBUTION_TYPES[distribution.type]}`,
-            value: distribution.id,
+          items={projects.map((project) => ({
+            label: `ID: ${project.ba_reference_number} | Name: ${project.name} | Client: ${project.client}`,
+            value: project.id,
           }))}
           control={form.control}
-          name="distribution"
+          name="project"
           placeholder={{
-            triggerPlaceholder: "Select allocation...",
-            searchPlaceholder: "Search allocation...",
+            triggerPlaceholder: "Select project...",
+            searchPlaceholder: "Search project...",
           }}
-          label="Allocation"
+          label="Project"
           popOverSize="md:min-w-[28.5rem]"
           disabled={form.formState.isSubmitting}
         />

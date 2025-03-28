@@ -4,8 +4,8 @@ import { UserRoleEnum } from "@/enums";
 import { User } from "@/types/user";
 import {
   Archive,
-  ArrowDownUp,
   ClipboardCheck,
+  FolderKanban,
   LayoutDashboard,
   NotepadText,
   Package,
@@ -37,9 +37,9 @@ const NAV_LINKS: NavLink[] = [
     isActive: true,
   },
   {
-    label: "Allocations",
-    icon: <ArrowDownUp className="size-4" />,
-    route: "/distributions",
+    label: "Projects",
+    icon: <FolderKanban className="size-4" />,
+    route: "/projects",
   },
   {
     label: "Products",

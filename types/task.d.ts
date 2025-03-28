@@ -1,5 +1,5 @@
 import { Employee, User } from "./user";
-import { Distribution, DistributionType } from "./distribution";
+import { Project, DistributionType } from "./project";
 import { TaskStatusImportEnum, TaskStatusExportEnum } from "@/enums";
 
 export type TaskStatus = TaskStatusImportEnum | TaskStatusExportEnum;
@@ -9,6 +9,6 @@ export type Task = {
   created_at: string;
   updated_at: string;
   warehouse_person: Employee;
-  distribution: Distribution;
+  project: Project;
   status: TaskStatus;
 };
