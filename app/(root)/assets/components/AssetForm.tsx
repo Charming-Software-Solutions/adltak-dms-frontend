@@ -34,7 +34,7 @@ export const useAssetForm = ({
   mode,
 }: {
   asset?: Asset;
-  mode: "create" | "edit";
+  mode: FormModeEnum;
 }) => {
   const router = useRouter();
 
@@ -70,7 +70,7 @@ export const useAssetForm = ({
     }
 
     const result: ApiResponse<Asset> =
-      mode === "create"
+      mode === FormModeEnum.CREATE
         ? await createAsset(formData)
         : await updateAsset(asset!.id, formData);
 
@@ -83,7 +83,7 @@ export const useAssetForm = ({
 
     showSuccessMessage(mode as FormModeEnum, "asset");
     setOpen(false);
-    form.reset(mode === "create" ? undefined : values);
+    form.reset(mode === FormModeEnum.CREATE ? undefined : values);
     router.refresh();
   };
   return { form, onSubmit };

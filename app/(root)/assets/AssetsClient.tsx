@@ -15,7 +15,7 @@ import {
   visibleAssetColumns,
 } from "@/components/shared/table/columns/AssetColumns";
 import { Button } from "@/components/ui/button";
-import { UserRoleEnum } from "@/enums";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { useDataTable } from "@/hooks/use-datatable";
 import { hasPermission } from "@/lib/auth";
@@ -37,7 +37,7 @@ const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const isDesktop = useResponsive("desktop");
-  const { form, onSubmit } = useAssetForm({ mode: "create" });
+  const { form, onSubmit } = useAssetForm({ mode: FormModeEnum.CREATE });
 
   const dataTable = useDataTable({
     columns: AssetColumns,
