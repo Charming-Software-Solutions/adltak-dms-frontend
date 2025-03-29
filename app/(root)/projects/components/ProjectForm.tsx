@@ -70,6 +70,7 @@ export const useProjectForm = ({
         client: values.client,
       };
     } else {
+      projectUpdate.append("name", values.name);
       projectUpdate.append("ba_reference_number", values.baReferenceNumber);
       projectUpdate.append("status", values.status);
       projectUpdate.append("client", values.client);
