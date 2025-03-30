@@ -8,7 +8,7 @@ export function useDataTable<TData, TValue>({
   columns,
   data,
   showPagination = true,
-  searchField,
+  leftTools,
   visibleColumns,
   filters,
   tabsList,
@@ -29,7 +29,7 @@ export function useDataTable<TData, TValue>({
           columns={columns}
           visibleColumns={visibleColumns}
           showPagination={showPagination}
-          searchField={searchField}
+          leftTools={leftTools}
           filters={filters}
           tabsList={tabsList}
         />
