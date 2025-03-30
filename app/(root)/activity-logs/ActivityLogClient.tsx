@@ -38,10 +38,12 @@ const ActivityLogsClient = ({ activityLogs }: Props) => {
     visibleColumns: isDesktop
       ? visibileActivityLogColumns.desktop
       : visibileActivityLogColumns.mobile,
-    searchField: {
-      column: "employee",
-      placeholder: "Search by employee...",
-      className: "w-[100rem]",
+    leftTools: {
+      searchField: {
+        column: "employee",
+        placeholder: "Search by employee...",
+        className: "w-[100rem]",
+      },
     },
     filters: (
       <div className="flex ml-2 gap-2">
