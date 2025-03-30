@@ -45,9 +45,11 @@ const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
     visibleColumns: isDesktop
       ? visibleAssetColumns(user.roles).desktop
       : visibleAssetColumns(user.roles).mobile,
-    searchField: {
-      column: "name",
-      placeholder: "Search asset...",
+    leftTools: {
+      searchField: {
+        column: "name",
+        placeholder: "Search asset...",
+      },
     },
   });
 

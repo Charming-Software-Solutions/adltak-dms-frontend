@@ -7,7 +7,6 @@ import CustomFormField, {
   InputType,
 } from "@/components/shared/CustomFormField";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -63,6 +62,7 @@ const ProjectAddProduct = ({ products, className }: ProjectAddProductProps) => {
       product: item as Product,
       quantity: values.quantity,
       expiration: values.expiration ? values.expiration.toISOString() : "",
+      used_quantity: 0,
     });
   };
 

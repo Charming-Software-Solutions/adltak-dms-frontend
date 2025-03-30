@@ -72,10 +72,12 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
       visibleColumns: isDesktop
         ? visibileEmployeeColumns.desktop
         : visibileEmployeeColumns.mobile,
-      searchField: {
-        column: "email",
-        placeholder: "Search email...",
-        className: "w-[100rem]",
+      leftTools: {
+        searchField: {
+          column: "email",
+          placeholder: "Search email...",
+          className: "w-[100rem]",
+        },
       },
       tabsList: (
         <div>
