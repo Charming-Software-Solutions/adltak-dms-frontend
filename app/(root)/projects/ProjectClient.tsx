@@ -55,10 +55,11 @@ const ProjectClient = ({ user, employee, projects, products }: Props) => {
     visibleColumns: isDesktop
       ? visibleProjectColumns(user.roles).desktop
       : visibleProjectColumns(user.roles).mobile,
-    searchField: {
-      column: "ba_reference_number",
-      placeholder: "Search by ba reference number...",
-      className: "w-[100rem]",
+    leftTools: {
+      searchField: {
+        column: "ba_reference_number",
+        placeholder: "Search by ba reference number...",
+      },
     },
   });
 
