@@ -18,6 +18,7 @@ type Props<T extends string, R> = {
   statuses: Record<T, string>;
   mutationFn: (params: { id: string; status: T }) => Promise<ApiResponse<R>>;
   onSuccess: () => void;
+  disabled?: boolean;
 };
 
 const StatusDropdown = <T extends string, R>({
@@ -27,6 +28,7 @@ const StatusDropdown = <T extends string, R>({
   statuses,
   mutationFn,
   onSuccess,
+  disabled,
 }: Props<T, R>) => {
   const { mutate, isPending } = useMutation({
     mutationKey: [mutationKey],
@@ -46,7 +48,7 @@ const StatusDropdown = <T extends string, R>({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          disabled={isPending}
+          disabled={disabled || isPending}
           className="w-[9rem] flex justify-between items-center"
         >
           {isPending ? (
