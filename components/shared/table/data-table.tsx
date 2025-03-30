@@ -23,16 +23,20 @@ import {
 import React from "react";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableSearch } from "./data-table-search";
+import { DataTableToolbar } from "./data-table-toolbar";
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   visibleColumns?: VisibilityState;
   showPagination?: boolean;
-  searchField?: {
-    column: string;
-    placeholder: string;
-    className?: string;
+  leftTools?: {
+    searchField?: {
+      column: string;
+      placeholder: string;
+      className?: string;
+    };
+    extra?: React.ReactNode;
   };
   filters?: React.ReactNode;
   tabsList?: React.ReactNode;
@@ -44,7 +48,7 @@ export function DataTable<TData, TValue>({
   data,
   visibleColumns = {},
   showPagination = true,
-  searchField = undefined,
+  leftTools,
   filters,
   tabsList,
   filterOnBottom = undefined,
@@ -82,24 +86,21 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-3.5 py-1">
-      {(searchField || filters || tabsList) && (
-        <div className="flex shrink-0 items-center">
-          <div className="flex items-start w-full justify-between">
-            <div className="flex flex-col space-y-4 w-full">
-              {searchField && (
-                <DataTableSearch
-                  table={table}
-                  column={searchField.column}
-                  placeholder={searchField.placeholder}
-                />
-              )}
-              {filterOnBottom}
-            </div>
-            {tabsList && tabsList}
-            {filters && filters}
+      <DataTableToolbar
+        leftTools={
+          <div className="flex items-center space-x-2">
+            <DataTableSearch
+              table={table}
+              column={leftTools?.searchField?.column || ""}
+              placeholder={leftTools?.searchField?.placeholder || ""}
+            />
+            {leftTools?.extra}
           </div>
-        </div>
-      )}
+        }
+        filters={filters}
+        tabsList={tabsList}
+        filterOnBottom={filterOnBottom}
+      />
 
       <div className="rounded-md border">
         <Table>
