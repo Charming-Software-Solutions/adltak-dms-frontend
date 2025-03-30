@@ -4,22 +4,27 @@ import ProjectForm, {
 } from "@/app/(root)/projects/components/ProjectForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CopyButton } from "@/components/ui/copy-button";
 import { PROJECT_STATUSES } from "@/constants";
-import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { deleteProject } from "@/lib/actions/project.actions";
+import { FormModeEnum, ProjectStatusEnum, UserRoleEnum } from "@/enums";
+import {
+  deleteProject,
+  updateProjectStatus,
+} from "@/lib/actions/project.actions";
 import { hasPermission } from "@/lib/auth";
 import { formatDateTime } from "@/lib/utils";
 import { Project } from "@/types/project";
 import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import DialogFormButton from "../../buttons/DialogFormButton";
 import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
+import StatusDropdown from "../../StatusDropDown";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { CopyButton } from "@/components/ui/copy-button";
 
 export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => ({
   desktop: {
@@ -95,7 +100,9 @@ const ProjectActionsCell = React.memo(({ project }: { project: Project }) => {
   );
 });
 
-export const ProjectColumns: ColumnDef<Project>[] = [
+export const ProjectColumns = (
+  userRoles: UserRoleEnum[],
+): ColumnDef<Project>[] => [
   {
     accessorKey: "ba_reference_number",
     header: "BA Ref Number",
@@ -122,6 +129,8 @@ export const ProjectColumns: ColumnDef<Project>[] = [
 
       return (
         <ViewItemsDialog
+          userRoles={userRoles}
+          projectStatus={project.status}
           baReferenceNumber={project.ba_reference_number}
           items={{
             products: project.products,
@@ -134,10 +143,19 @@ export const ProjectColumns: ColumnDef<Project>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
+      const status = row.original.status;
+      const router = useRouter();
+
       return (
-        <Badge variant="outline" className="py-1 rounded-md [&>svg]:size-3.5">
-          {PROJECT_STATUSES[row.original.status]}
-        </Badge>
+        <StatusDropdown
+          id={row.original.id}
+          mutationKey="update-project-status"
+          currentStatus={status}
+          statuses={PROJECT_STATUSES}
+          mutationFn={updateProjectStatus}
+          onSuccess={() => router.refresh()}
+          disabled={status === ProjectStatusEnum.LOCKED}
+        />
       );
     },
   },

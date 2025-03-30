@@ -2,9 +2,7 @@ import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/CustomFormField";
 import { Form } from "@/components/ui/form";
-import { SelectItem } from "@/components/ui/select";
-import { PROJECT_STATUSES } from "@/constants";
-import { FormModeEnum, ProjectStatusEnum } from "@/enums";
+import { FormModeEnum } from "@/enums";
 import { ICreateProject } from "@/interfaces";
 import { createProject, updateProject } from "@/lib/actions/project.actions";
 import { formatErrorResponse } from "@/lib/formatters";
@@ -43,7 +41,6 @@ export const useProjectForm = ({
       name: project?.name ?? "",
       baReferenceNumber: project?.ba_reference_number ?? "",
       client: project?.client ?? "",
-      status: project?.status ?? ProjectStatusEnum.AWAITING_PWP,
     },
   });
 
@@ -72,7 +69,6 @@ export const useProjectForm = ({
     } else {
       projectUpdate.append("name", values.name);
       projectUpdate.append("ba_reference_number", values.baReferenceNumber);
-      projectUpdate.append("status", values.status);
       projectUpdate.append("client", values.client);
     }
 
@@ -135,22 +131,6 @@ const ProjectForm = ({
           placeholder="John Doe"
           disabled={form.formState.isSubmitting}
         />
-        {mode === FormModeEnum.EDIT && (
-          <CustomFormField
-            fieldType={FormFieldType.SELECT}
-            control={form.control}
-            name="status"
-            label="Status"
-            placeholder="Select status"
-            disabled={form.formState.isSubmitting}
-          >
-            {Object.keys(PROJECT_STATUSES).map((status, key) => (
-              <SelectItem key={key} value={status}>
-                {PROJECT_STATUSES[status as keyof typeof PROJECT_STATUSES]}
-              </SelectItem>
-            ))}
-          </CustomFormField>
-        )}
       </div>
     </Form>
   );

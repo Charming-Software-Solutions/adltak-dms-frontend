@@ -50,7 +50,7 @@ const ProjectClient = ({ user, employee, projects, products }: Props) => {
   const { items, clearItems } = useProjectProductStore();
 
   const dataTable = useDataTable({
-    columns: ProjectColumns,
+    columns: ProjectColumns(user.roles),
     data: projects,
     visibleColumns: isDesktop
       ? visibleProjectColumns(user.roles).desktop
