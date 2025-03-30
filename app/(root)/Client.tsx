@@ -85,7 +85,7 @@ const HomeClient = ({ user, projects, metrics }: Props) => {
             <CardContent>
               {isMounted ? (
                 <DataTable
-                  columns={ProjectColumns}
+                  columns={ProjectColumns(user.roles)}
                   data={projects.slice(0, 5)}
                   showPagination={false}
                   visibleColumns={

@@ -51,14 +51,16 @@ const TasksClient = ({
   );
 
   const datTable = useDataTable({
-    columns: TaskColumns,
+    columns: TaskColumns(employee.user.roles),
     data: tasks,
     visibleColumns: isDesktop
       ? visibleTaskColumns(employee.user.roles).desktop
       : visibleTaskColumns(employee.user.roles).mobile,
-    searchField: {
-      column: "project",
-      placeholder: "Search project...",
+    leftTools: {
+      searchField: {
+        column: "project",
+        placeholder: "Search project...",
+      },
     },
   });
 
