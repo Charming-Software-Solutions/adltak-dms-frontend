@@ -50,3 +50,8 @@ export enum TaskStatusEnum {
   PENDING = "PENDING",
   DELIVERED = "DELIVERED",
 }
+
+export enum IncomingProductsStatus {
+  PENDING = "PENDING",
+  RECEIVED = "RECEIVED",
+}

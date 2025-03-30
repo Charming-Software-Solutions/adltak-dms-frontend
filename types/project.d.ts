@@ -1,4 +1,8 @@
-import { GenericStatusEnum, ProjectStatusEnum } from "@/enums";
+import {
+  TaskStatusEnum,
+  ProjectStatusEnum,
+  IncomingProductsStatus,
+} from "@/enums";
 import { Product } from "./product";
 import { Employee } from "./user";
 import { PROJECT_STATUSES } from "@/constants";
@@ -9,7 +13,6 @@ export type ProjectProduct = BaseModel & {
   product: Product;
   quantity: number;
   expiration: string;
-  status: GenericStatusEnum;
 };
 
 export type Project = BaseModel & {
@@ -17,6 +20,7 @@ export type Project = BaseModel & {
   name: string;
   ba_reference_number: string;
   status: ProjectStatusEnum;
+  incoming_products_status: IncomingProductsStatus;
   client: string;
   employee: string;
 };
