@@ -7,6 +7,10 @@ import { getSession } from "@/auth/session";
 
 const PRODUCT_URL = `${process.env.DOMAIN}/product/`;
 
+type ProductFilters = {
+  brand: string;
+};
+
 async function createProduct(body: FormData): Promise<ApiResponse<Product>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
@@ -16,10 +20,19 @@ async function createProduct(body: FormData): Promise<ApiResponse<Product>> {
   });
 }
 
-async function getProducts(): Promise<Product[]> {
+async function getProducts(filters?: ProductFilters): Promise<Product[]> {
+  const queryParams = new URLSearchParams();
+
+  if (filters?.brand) {
+    queryParams.append("brand", filters.brand);
+  }
+
+  const queryString = queryParams.toString();
+  const url = queryString ? `${PRODUCT_URL}?${queryString}` : PRODUCT_URL;
+
   const response = await fetchAndHandleResponse<Product[]>({
     jwt: (await getSession())?.access,
-    url: PRODUCT_URL,
+    url: url,
     method: "GET",
   });
   return response.data ?? [];

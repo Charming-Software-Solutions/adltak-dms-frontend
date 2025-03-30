@@ -1,4 +1,4 @@
-import { parseAsString, createLoader } from "nuqs/server";
+import { createLoader, parseAsString } from "nuqs/server";
 
 export const activityLogSearchParams = {
   role: parseAsString.withDefault(""),
@@ -6,4 +6,9 @@ export const activityLogSearchParams = {
   module: parseAsString.withDefault(""),
 };
 
+export const productParsers = {
+  brand: parseAsString.withDefault(""),
+};
+
 export const loadActivityLogSearchPrams = createLoader(activityLogSearchParams);
+export const loadProductSearchParams = createLoader(productParsers);

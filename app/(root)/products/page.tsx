@@ -1,26 +1,30 @@
 import { getCurrentUser } from "@/auth/currentUser";
+import { getClassifications } from "@/lib/actions/classification.actions";
 import { getProducts } from "@/lib/actions/product.actions";
-import {
-  getBrands,
-  getCategories,
-  getTypes,
-} from "@/lib/actions/product.classications.actions";
 import { getProjectProducts } from "@/lib/actions/project.actions";
 import ProductClient from "./ProductClient";
+import type { SearchParams } from "nuqs/server";
+import { loadProductSearchParams } from "@/lib/searchParams";
 
-export default async function Products() {
-  const products = await getProducts();
-  const allocationProducts = await getProjectProducts();
-  const brands = await getBrands();
-  const categories = await getCategories();
-  const types = await getTypes();
+type Props = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function Products({ searchParams }: Props) {
+  const products = await getProducts(
+    await loadProductSearchParams(searchParams),
+  );
+  const projectProducts = await getProjectProducts();
+  const brands = await getClassifications("product_brand");
+  const categories = await getClassifications("product_category");
+  const types = await getClassifications("product_type");
   const user = await getCurrentUser();
 
   return (
     <ProductClient
       user={user!}
       products={products}
-      projectProductsa={allocationProducts}
+      projectProducts={projectProducts}
       brands={brands}
       categories={categories}
       types={types}
