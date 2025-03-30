@@ -5,6 +5,7 @@ import { Task } from "@/types/task";
 import { fetchAndHandleResponse } from "../utils";
 import { TaskStatusEnum, UserRoleEnum } from "@/enums";
 import { getSession } from "@/auth/session";
+import { formatErrorResponse } from "../formatters";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
 
@@ -55,15 +56,19 @@ async function updateTaskStatus({
   id: string;
   status: TaskStatusEnum;
 }): Promise<ApiResponse<Task>> {
-  return fetchAndHandleResponse({
+  const response = await fetchAndHandleResponse<Task>({
     jwt: (await getSession())?.access,
-    url: `${TASK_URL}${id}/`,
+    url: `${TASK_URL}${id}/update-status/`,
     contentType: "application/json",
     method: "PATCH",
-    body: JSON.stringify({
-      status: status,
-    }),
+    body: JSON.stringify({ status }),
   });
+
+  if (response.errors) {
+    throw new Error(formatErrorResponse(response.errors));
+  }
+
+  return response;
 }
 
 async function deleteTask(id: string): Promise<ApiResponse<string>> {
