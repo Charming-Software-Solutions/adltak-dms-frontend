@@ -3,7 +3,7 @@
 import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GENERIC_STATUS } from "@/constants";
+import { TASK_STATUS } from "@/constants";
 import { UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { getEmployees } from "@/lib/actions/employee.actions";
@@ -25,6 +25,7 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import StatusDropdown from "../../StatusDropDown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { useRouter } from "next/navigation";
 
 export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
@@ -132,14 +133,16 @@ export const TaskColumns: ColumnDef<Task>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.original.status;
+      const router = useRouter();
 
       return (
         <StatusDropdown
           id={row.original.id}
           mutationKey="update-status"
           currentStatus={status}
-          statuses={GENERIC_STATUS}
+          statuses={TASK_STATUS}
           mutationFn={updateTaskStatus}
+          onSuccess={() => router.refresh()}
         />
       );
     },
