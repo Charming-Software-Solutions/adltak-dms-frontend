@@ -3,8 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { GENERIC_STATUS, imagePlaceholder } from "@/constants";
-import { GenericStatusEnum } from "@/enums";
+import { imagePlaceholder } from "@/constants";
 import { formatExpiration } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
@@ -15,7 +14,6 @@ type Props = {
   classification: string;
   quantity: number;
   expiration?: string;
-  status: GenericStatusEnum;
 };
 
 const ItemCard = ({
@@ -24,20 +22,10 @@ const ItemCard = ({
   classification,
   quantity,
   expiration,
-  status,
 }: Props) => {
   return (
     <Card>
       <CardContent className="p-2 space-y-2">
-        <div className="space-x-0.5 items-center">
-          <span className="text-sm font-semibold">Status: </span>
-          <Badge
-            variant={"outline"}
-            className="py-0.5 rounded-md [&>svg]:size-3.5"
-          >
-            {GENERIC_STATUS[status]}
-          </Badge>
-        </div>
         <div className="flex items-center gap-2">
           <Image
             src={thumbnail ?? imagePlaceholder}
