@@ -16,17 +16,7 @@ export const productFormSchema = z.object({
   type: z.string().uuid({
     message: "Product type is required.",
   }),
-  // description: z
-  //   .string()
-  //   .max(255, {
-  //     message: "Description should be only 255 characters long.",
-  //   })
-  //   .optional(),
   thumbnail: z.union([z.instanceof(File), z.string()]).optional(),
-  // status: z.string().min(1, {
-  //   message: "Status is required.",
-  // }),
-  stock: z.coerce.number().positive(),
   area: z.string().min(1, {
     message: "Area is required.",
   }),
@@ -76,9 +66,6 @@ export const projectFormSchema = z.object({
   }),
   client: z.string().min(1, {
     message: "Client name is required.",
-  }),
-  status: z.string().min(1, {
-    message: "Status is required.",
   }),
 });
 

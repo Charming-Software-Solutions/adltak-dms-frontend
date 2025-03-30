@@ -30,7 +30,6 @@ import { Category, Product, ProductSKU, Type } from "@/types/product";
 import { ProjectProduct } from "@/types/project";
 import { User } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import React, { useEffect, useState } from "react";
 import { CSVLink } from "react-csv";
 import ProductFilter from "./components/ProductFilter";
@@ -122,7 +121,7 @@ const ProductClient = ({
       <React.Fragment>
         {!isProductProject ? (
           <DataTable
-            columns={ProductColumns}
+            columns={ProductColumns(user.roles)}
             data={products}
             visibleColumns={getVisibleColumns(isProductProject)}
             leftTools={{
@@ -184,26 +183,14 @@ const ProductClient = ({
                 <ResponsiveDialogHeader className="px-1">
                   <ResponsiveDialogTitle>Add Product</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
-                <OverlayScrollbarsComponent
-                  defer
-                  options={{
-                    scrollbars: {
-                      autoHide: "leave",
-                      autoHideDelay: 200,
-                      theme: "os-theme-dark",
-                    },
-                  }}
-                  className="max-h-[38.7rem]"
-                >
-                  <ProductForm
-                    form={form}
-                    className="px-4 md:px-1 pb-2"
-                    brands={brands}
-                    categories={categories}
-                    types={types}
-                    mode="create"
-                  />
-                </OverlayScrollbarsComponent>
+                <ProductForm
+                  form={form}
+                  className="px-4 md:px-1 pb-2"
+                  brands={brands}
+                  categories={categories}
+                  types={types}
+                  mode="create"
+                />
                 <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
                     <Button

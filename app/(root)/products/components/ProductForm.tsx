@@ -2,7 +2,6 @@
 
 import CustomFormField, {
   FormFieldType,
-  InputType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import { Form } from "@/components/ui/form";
@@ -46,7 +45,6 @@ export const useProductForm = ({
       category: product?.category.id ?? "",
       type: product?.type.id ?? "",
       thumbnail: product?.thumbnail ?? "",
-      stock: product?.stock ?? 1,
       area: product?.area ?? "",
     },
   });
@@ -61,7 +59,6 @@ export const useProductForm = ({
     formData.append("brand", values.brand);
     formData.append("category", values.category);
     formData.append("type", values.type);
-    formData.append("stock", values.stock.toString());
     formData.append("area", values.area);
 
     if (values.thumbnail instanceof File) {
@@ -176,15 +173,6 @@ const ProductForm = ({
             </SelectItem>
           ))}
         </CustomFormField>
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          inputType={InputType.NUMBER}
-          control={form.control}
-          name="stock"
-          label="Product Total Quantity"
-          placeholder="10"
-          disabled={form.formState.isSubmitting}
-        />
       </div>
     </Form>
   );
