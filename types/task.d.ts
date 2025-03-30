@@ -3,7 +3,7 @@ import { Project, DistributionType } from "./project";
 import {
   TaskStatusImportEnum,
   TaskStatusExportEnum,
-  GenericStatusEnum,
+  TaskStatusEnum,
 } from "@/enums";
 
 export type Task = {
@@ -12,5 +12,5 @@ export type Task = {
   updated_at: string;
   warehouse_person: Employee;
   project: Project;
-  status: GenericStatusEnum;
+  status: TaskStatusEnum;
 };

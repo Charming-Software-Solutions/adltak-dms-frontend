@@ -3,7 +3,7 @@
 import { ApiResponse } from "@/types/api";
 import { Task } from "@/types/task";
 import { fetchAndHandleResponse } from "../utils";
-import { GenericStatusEnum, UserRoleEnum } from "@/enums";
+import { TaskStatusEnum, UserRoleEnum } from "@/enums";
 import { getSession } from "@/auth/session";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
@@ -53,7 +53,7 @@ async function updateTaskStatus({
   status,
 }: {
   id: string;
-  status: GenericStatusEnum;
+  status: TaskStatusEnum;
 }): Promise<ApiResponse<Task>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,

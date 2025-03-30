@@ -2,7 +2,7 @@ import {
   AssetStatusEnum,
   ProjectStatusEnum,
   UserRoleEnum,
-  GenericStatusEnum,
+  TaskStatusEnum,
 } from "@/enums";
 import { SelectItemType } from "@/types/primitives";
 
@@ -85,7 +85,7 @@ export const USER_ROLES: Record<UserRoleEnum, string> = {
   [UserRoleEnum.PROJECT_MANAGER]: "Project Manager",
 } as const;
 
-export const GENERIC_STATUS: Record<GenericStatusEnum, string> = {
-  [GenericStatusEnum.PENDING]: "Pending",
-  [GenericStatusEnum.DELIVERED]: "Delivered",
+export const GENERIC_STATUS: Record<TaskStatusEnum, string> = {
+  [TaskStatusEnum.PENDING]: "Pending",
+  [TaskStatusEnum.DELIVERED]: "Delivered",
 } as const;

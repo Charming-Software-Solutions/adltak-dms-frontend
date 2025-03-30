@@ -46,7 +46,7 @@ export enum DistributionTypeEnum {
   EXPORT = "EXPORT",
 }
 
-export enum GenericStatusEnum {
+export enum TaskStatusEnum {
   PENDING = "PENDING",
   DELIVERED = "DELIVERED",
 }
