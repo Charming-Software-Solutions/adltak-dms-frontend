@@ -16,15 +16,23 @@ import {
 } from "../ResponsiveDialog";
 import { CopyButton } from "@/components/ui/copy-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ProjectStatusEnum, UserRoleEnum } from "@/enums";
 
 type Props = {
+  userRoles: UserRoleEnum[];
   baReferenceNumber: string;
+  projectStatus: ProjectStatusEnum;
   items: {
     products: ProjectProduct[];
   };
 };
 
-const ViewItemsDialog = ({ baReferenceNumber, items }: Props) => {
+const ViewItemsDialog = ({
+  userRoles,
+  baReferenceNumber,
+  projectStatus,
+  items,
+}: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
@@ -69,7 +77,10 @@ const ViewItemsDialog = ({ baReferenceNumber, items }: Props) => {
               const nextName = nextProduct?.product.name;
               return (
                 <ItemCard
+                  userRoles={userRoles}
                   key={index}
+                  projectStatus={projectStatus}
+                  id={item.id}
                   thumbnail={item.product.thumbnail}
                   name={
                     currentProductName === nextName
@@ -79,6 +90,7 @@ const ViewItemsDialog = ({ baReferenceNumber, items }: Props) => {
                   classification={item.product.category.name}
                   quantity={item.quantity}
                   expiration={item.expiration}
+                  usedQuantity={item.used_quantity}
                 />
               );
             })}
