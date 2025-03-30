@@ -1,5 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,8 +6,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
 import { ApiResponse } from "@/types/api";
+import { useMutation } from "@tanstack/react-query";
+import { Check, ChevronsUpDown, LoaderIcon } from "lucide-react";
+import { toast } from "sonner";
 
 type Props<T extends string, R> = {
   id: string;
@@ -17,6 +17,7 @@ type Props<T extends string, R> = {
   currentStatus: T;
   statuses: Record<T, string>;
   mutationFn: (params: { id: string; status: T }) => Promise<ApiResponse<R>>;
+  onSuccess: () => void;
 };
 
 const StatusDropdown = <T extends string, R>({
@@ -25,13 +26,19 @@ const StatusDropdown = <T extends string, R>({
   currentStatus,
   statuses,
   mutationFn,
+  onSuccess,
 }: Props<T, R>) => {
-  const router = useRouter();
-
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: [mutationKey],
     mutationFn: mutationFn,
-    onSuccess: () => router.refresh(),
+    onSuccess: () => {
+      onSuccess();
+    },
+    onError: (error: any) => {
+      toast.error(error.message, {
+        position: "top-center",
+      });
+    },
   });
 
   return (
@@ -39,9 +46,14 @@ const StatusDropdown = <T extends string, R>({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
+          disabled={isPending}
           className="w-[9rem] flex justify-between items-center"
         >
-          {statuses[currentStatus]}
+          {isPending ? (
+            <LoaderIcon className="animate-spin" />
+          ) : (
+            statuses[currentStatus]
+          )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
@@ -52,7 +64,7 @@ const StatusDropdown = <T extends string, R>({
             className={cn(
               "flex text-sm gap-1 items-center p-2.5 cursor-default hover:bg-zinc-100",
               {
-                "bg-zinc-100": currentStatus === status,
+                "bg-muted": currentStatus === status,
               },
             )}
             onClick={() => mutate({ id, status: status as T })}
