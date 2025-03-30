@@ -6,7 +6,7 @@ import AssetForm, {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ASSET_STATUS, imagePlaceholder } from "@/constants";
-import { UserRoleEnum } from "@/enums";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { deleteAsset, updateAssetStatus } from "@/lib/actions/asset.actions";
 import { getAssetTypes } from "@/lib/actions/asset.classifcations.actions";
 import { getClassifications } from "@/lib/actions/classification.actions";
@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import {
   ResponsiveDialog,
@@ -77,7 +78,7 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
 
   const { form, onSubmit } = useAssetForm({
     asset,
-    mode: "edit",
+    mode: FormModeEnum.EDIT,
   });
 
   const { data } = useQuery({
@@ -225,6 +226,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.original.status;
+      const router = useRouter();
 
       return (
         <StatusDropdown
@@ -233,6 +235,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
           currentStatus={status}
           statuses={ASSET_STATUS}
           mutationFn={updateAssetStatus}
+          onSuccess={() => router.refresh()}
         />
       );
     },
