@@ -70,7 +70,7 @@ export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
   });
 };
 
-export const TaskColumns: ColumnDef<Task>[] = [
+export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
   {
     accessorKey: "warehouse_person",
     header: "Warehouse Personnel",
@@ -120,6 +120,8 @@ export const TaskColumns: ColumnDef<Task>[] = [
 
       return (
         <ViewItemsDialog
+          userRoles={userRoles}
+          projectStatus={project.status}
           baReferenceNumber={project.ba_reference_number}
           items={{
             products: project.products,
