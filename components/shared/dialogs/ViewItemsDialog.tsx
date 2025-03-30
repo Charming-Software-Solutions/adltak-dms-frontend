@@ -15,6 +15,7 @@ import {
   ResponsiveDialogTrigger,
 } from "../ResponsiveDialog";
 import { CopyButton } from "@/components/ui/copy-button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Props = {
   baReferenceNumber: string;
@@ -36,8 +37,8 @@ const ViewItemsDialog = ({ baReferenceNumber, items }: Props) => {
       <ResponsiveDialogContent className="max-w-md">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>Project Products</ResponsiveDialogTitle>
-          <ResponsiveDialogDescription className="flex items-center space-x-2">
-            <span className="w-full">
+          <ResponsiveDialogDescription>
+            <span className="flex items-center space-x-2 w-full">
               <span className="font-semibold text-foreground">
                 BA Reference Number:{" "}
               </span>
@@ -48,30 +49,41 @@ const ViewItemsDialog = ({ baReferenceNumber, items }: Props) => {
                 <CopyButton value={baReferenceNumber} />
               </span>
             </span>
+            <span className="w-full">
+              <span className="font-semibold text-foreground">
+                Total Products:{" "}
+              </span>
+              <span className="inline-flex items-center space-x-1">
+                <span className="font-normal text-muted-foreground">
+                  {items.products.length}
+                </span>
+              </span>
+            </span>
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
-        <div className="flex flex-col gap-2">
-          {items.products.map((item, index) => {
-            const nextProduct = items.products[index + 1];
-            const currentProductName = item.product.name;
-            const nextName = nextProduct?.product.name;
-            return (
-              <ItemCard
-                key={item.id}
-                thumbnail={item.product.thumbnail}
-                name={
-                  currentProductName === nextName
-                    ? `${currentProductName} ${index + 1}`
-                    : currentProductName
-                }
-                classification={item.product.category.name}
-                quantity={item.quantity}
-                expiration={item.expiration}
-                status={item.status}
-              />
-            );
-          })}
-        </div>
+        <ScrollArea className="h-72 border bg-muted p-4 rounded-md">
+          <div className="flex flex-col gap-2">
+            {items.products.map((item, index) => {
+              const nextProduct = items.products[index + 1];
+              const currentProductName = item.product.name;
+              const nextName = nextProduct?.product.name;
+              return (
+                <ItemCard
+                  key={index}
+                  thumbnail={item.product.thumbnail}
+                  name={
+                    currentProductName === nextName
+                      ? `${currentProductName} ${index + 1}`
+                      : currentProductName
+                  }
+                  classification={item.product.category.name}
+                  quantity={item.quantity}
+                  expiration={item.expiration}
+                />
+              );
+            })}
+          </div>
+        </ScrollArea>
       </ResponsiveDialogContent>
     </ResponsiveDialog>
   );
