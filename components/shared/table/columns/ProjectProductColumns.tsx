@@ -8,7 +8,7 @@ import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
 import { formatExpiration } from "@/lib/utils";
 
-export const visibleAllocationProductColumns = () => {
+export const visibleProjectProductColumns = () => {
   return createColumnConfig({
     desktop: {
       thumbnail: true,
@@ -29,7 +29,7 @@ export const visibleAllocationProductColumns = () => {
   });
 };
 
-export const AllocationProductColumns: ColumnDef<ProjectProduct>[] = [
+export const ProjectProductColumns: ColumnDef<ProjectProduct>[] = [
   {
     accessorKey: "thumbnail",
     accessorFn: (row) => row.product.thumbnail,
