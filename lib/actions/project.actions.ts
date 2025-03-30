@@ -5,7 +5,8 @@ import { ApiResponse } from "@/types/api";
 import { Project, ProjectProduct } from "@/types/project";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
-import { IncomingProductsStatus } from "@/enums";
+import { IncomingProductsStatus, ProjectStatusEnum } from "@/enums";
+import { formatErrorResponse } from "../formatters";
 
 const PROJECT_URL = `${process.env.DOMAIN}/project/`;
 
@@ -59,23 +60,45 @@ async function updateProject(
   });
 }
 
-async function updateProjectIcomingProductsStatus({
+async function updateProjectIncomingProductsStatus({
   id,
   status,
 }: {
   id: string;
   status: IncomingProductsStatus;
 }): Promise<ApiResponse<Project>> {
-  console.log(status);
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: `${PROJECT_URL}${id}/`,
+    url: `${PROJECT_URL}${id}/update-incoming-status/`,
     contentType: "application/json",
     method: "PATCH",
     body: JSON.stringify({
       incoming_products_status: status,
     }),
   });
+}
+
+async function updateProjectStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: ProjectStatusEnum;
+}): Promise<ApiResponse<Project>> {
+  const response = await fetchAndHandleResponse<Project>({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}${id}/update-status/`,
+    contentType: "application/json",
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+
+  console.log(status);
+
+  if (response.errors) {
+    throw new Error(formatErrorResponse(response.errors));
+  }
+  return response;
 }
 
 async function deleteProject(id: string): Promise<ApiResponse<string>> {
@@ -91,16 +114,22 @@ async function deleteProject(id: string): Promise<ApiResponse<string>> {
 async function updateProjectProductQuantity({
   id,
   quantity,
+  isUsedQuantity = false,
 }: {
   id: string;
   quantity: number;
+  isUsedQuantity?: boolean;
 }): Promise<ApiResponse<ProjectProduct>> {
+  const fieldToUpdate = isUsedQuantity ? "used_quantity" : "quantity";
+
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
     url: `${PROJECT_URL}product/${id}/`,
     contentType: "application/json",
     method: "PATCH",
-    body: JSON.stringify({ quantity }),
+    body: JSON.stringify({
+      [fieldToUpdate]: quantity,
+    }),
   });
 }
 
@@ -109,7 +138,7 @@ async function getProjectProductById(
 ): Promise<ApiResponse<ProjectProduct>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: `${PROJECT_URL}product${id}/`,
+    url: `${PROJECT_URL}product/${id}/`,
     method: "GET",
   });
 }
@@ -129,9 +158,9 @@ export {
   getProjectsByProduct,
   getProjectById,
   updateProject,
-  updateProjectIcomingProductsStatus,
+  updateProjectIncomingProductsStatus,
+  updateProjectStatus,
   deleteProject,
-
   // Project product actions
   getProjectProducts,
   getProjectProductById,
