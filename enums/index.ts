@@ -14,6 +14,7 @@ export enum ProductStockStatusesEnum {
 export enum ProjectStatusEnum {
   AWAITING_PWP = "AWAITING_PWP",
   CONCLUDED = "CONCLUDED",
+  LOCKED = "LOCKED",
   DISCUSSED = "DISCUSSED",
   FOR_IMPLEMENTATION = "FOR_IMPLEMENTATION",
   ONGOING = "ONGOING",

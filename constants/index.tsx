@@ -65,6 +65,7 @@ export const productMonthExpirationFreq: SelectItemType[] = [
 export const PROJECT_STATUSES: Record<ProjectStatusEnum, string> = {
   [ProjectStatusEnum.AWAITING_PWP]: "Awaiting PWP",
   [ProjectStatusEnum.CONCLUDED]: "Concluded",
+  [ProjectStatusEnum.LOCKED]: "Locked",
   [ProjectStatusEnum.DISCUSSED]: "Discussed",
   [ProjectStatusEnum.FOR_IMPLEMENTATION]: "For Implementation",
   [ProjectStatusEnum.ONGOING]: "Ongoing",
