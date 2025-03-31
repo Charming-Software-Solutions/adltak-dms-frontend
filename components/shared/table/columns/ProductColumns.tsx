@@ -35,6 +35,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import IconButton from "../../buttons/IconButton";
 import {
@@ -47,19 +48,12 @@ import {
 } from "../../ResponsiveDialog";
 import StatusDropdown from "../../StatusDropDown";
 import { createColumnConfig } from "../column.config";
-import { useRouter } from "next/navigation";
 
 function useFetchProjectsByProduct(productName: string, rowId: string) {
   return useQuery({
     queryKey: ["get-projects-by-product", rowId],
     queryFn: async () => await getProjectsByProduct(productName),
   });
-}
-
-function getAllocatedProducts(productName: string, rowId: string) {
-  const { data } = useFetchProjectsByProduct(productName, rowId);
-
-  return (data ?? []).map((project) => project.products).flat();
 }
 
 export const visibleProductColumns = (userRoles: UserRoleEnum[]) => {
@@ -440,7 +434,7 @@ export const ProductColumns = (
       const concludedProjects = data?.filter(
         (project) =>
           project.status === ProjectStatusEnum.CONCLUDED ||
-          ProjectStatusEnum.LOCKED,
+          project.status === ProjectStatusEnum.LOCKED,
       );
 
       return (
@@ -510,8 +504,7 @@ export const ProductColumns = (
                                         className="justify-center"
                                       >
                                         <span className="font-medium">
-                                          {projectProduct.quantity -
-                                            projectProduct.used_quantity}{" "}
+                                          {projectProduct.remaining_quantity}{" "}
                                           QTY
                                         </span>
                                       </Badge>
@@ -547,23 +540,47 @@ export const ProductColumns = (
     accessorKey: "stock",
     header: "Stock",
     cell: ({ row }) => {
-      const allocatedProducts = getAllocatedProducts(row.original.name, row.id);
+      const product = row.original;
+      const { data: projects = [] } = useFetchProjectsByProduct(
+        row.original.name,
+        row.id,
+      );
+      const lockedRemainingStock = projects
+        .filter((project) => project.status === ProjectStatusEnum.LOCKED)
+        .flatMap((project) => project.products ?? [])
+        .reduce(
+          (sum, allocatedProduct) => sum + allocatedProduct.remaining_quantity,
+          0,
+        );
+
+      const unlockedReceivedRemainingStock = projects
+        .filter(
+          (project) =>
+            project.status !== ProjectStatusEnum.LOCKED &&
+            project.incoming_products_status ===
+              IncomingProductsStatus.RECEIVED,
+        )
+        .flatMap((project) => project.products ?? [])
+        .reduce(
+          (sum, allocatedProduct) => sum + allocatedProduct.remaining_quantity,
+          0,
+        );
 
       // Total stock formula:
       // - quantity = allocated quantity of the allocated product in the project
-      // - remaining = quatity - used quantity
+      // - remaining = quantity - used quantity
       // - incoming quantity = the quantity of each product allocated in the project
       // NOTE: incoming quantity is automatically added into the product stock in the backend
       // when the incoming products status of the designated project is update to "RECEIVED"
       //
-      // - total stock = incoming + remaining
+      // - total stock = when project is not updated and incoming products status is "RECEIVED",
+      // then add the current stock to the remaining quantity otherwise subtract remaining quantity
+      // from current stock
 
       const totalStock =
-        allocatedProducts?.reduce(
-          (acc, allocatedProduct) =>
-            acc + (allocatedProduct.quantity - allocatedProduct.used_quantity),
-          0,
-        ) || 0;
+        (product.stock ?? 0) +
+        unlockedReceivedRemainingStock -
+        lockedRemainingStock;
 
       return <span>{totalStock}</span>;
     },
