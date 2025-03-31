@@ -72,25 +72,12 @@ const ViewItemsDialog = ({
         <ScrollArea className="h-72 border bg-muted p-4 rounded-md">
           <div className="flex flex-col gap-2">
             {items.products.map((item, index) => {
-              const nextProduct = items.products[index + 1];
-              const currentProductName = item.product.name;
-              const nextName = nextProduct?.product.name;
               return (
                 <ItemCard
                   userRoles={userRoles}
                   key={index}
                   projectStatus={projectStatus}
-                  id={item.id}
-                  thumbnail={item.product.thumbnail}
-                  name={
-                    currentProductName === nextName
-                      ? `${currentProductName} ${index + 1}`
-                      : currentProductName
-                  }
-                  classification={item.product.category.name}
-                  quantity={item.quantity}
-                  expiration={item.expiration}
-                  usedQuantity={item.used_quantity}
+                  projectProduct={item}
                 />
               );
             })}
