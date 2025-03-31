@@ -63,6 +63,7 @@ const ProjectAddProduct = ({ products, className }: ProjectAddProductProps) => {
       quantity: values.quantity,
       expiration: values.expiration ? values.expiration.toISOString() : "",
       used_quantity: 0,
+      remaining_quantity: 0,
     });
   };
 

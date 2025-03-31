@@ -14,6 +14,7 @@ export type ProjectProduct = BaseModel & {
   quantity: number;
   expiration: string;
   used_quantity: number;
+  remaining_quantity: number;
 };
 
 export type Project = BaseModel & {
