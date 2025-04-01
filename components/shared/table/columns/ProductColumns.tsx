@@ -432,9 +432,7 @@ export const ProductColumns = (
 
       // Filter the projects to show only those with status 'concluded'
       const concludedProjects = data?.filter(
-        (project) =>
-          project.status === ProjectStatusEnum.CONCLUDED ||
-          project.status === ProjectStatusEnum.LOCKED,
+        (project) => project.status === ProjectStatusEnum.LOCKED,
       );
 
       return (
@@ -447,16 +445,16 @@ export const ProductColumns = (
           <ResponsiveDialogContent className="gap-0">
             <ResponsiveDialogHeader>
               <ResponsiveDialogTitle>
-                Remaining Products per Concluded Project
+                Remaining Products per Locked Project
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription>
-                The products remaining within a concluded project.
+                The products remaining within a locked project.
               </ResponsiveDialogDescription>
             </ResponsiveDialogHeader>
 
             <Accordion type="single" collapsible className="mb-0">
               {concludedProjects?.length === 0 ? (
-                <span>No concluded projects found</span>
+                <span>No locked projects found</span>
               ) : (
                 concludedProjects?.map((project, index) => (
                   <AccordionItem value={project.name} key={index}>
@@ -539,50 +537,5 @@ export const ProductColumns = (
   {
     accessorKey: "stock",
     header: "Stock",
-    cell: ({ row }) => {
-      const product = row.original;
-      const { data: projects = [] } = useFetchProjectsByProduct(
-        row.original.name,
-        row.id,
-      );
-      const lockedRemainingStock = projects
-        .filter((project) => project.status === ProjectStatusEnum.LOCKED)
-        .flatMap((project) => project.products ?? [])
-        .reduce(
-          (sum, allocatedProduct) => sum + allocatedProduct.remaining_quantity,
-          0,
-        );
-
-      const unlockedReceivedRemainingStock = projects
-        .filter(
-          (project) =>
-            project.status !== ProjectStatusEnum.LOCKED &&
-            project.incoming_products_status ===
-              IncomingProductsStatus.RECEIVED,
-        )
-        .flatMap((project) => project.products ?? [])
-        .reduce(
-          (sum, allocatedProduct) => sum + allocatedProduct.remaining_quantity,
-          0,
-        );
-
-      // Total stock formula:
-      // - quantity = allocated quantity of the allocated product in the project
-      // - remaining = quantity - used quantity
-      // - incoming quantity = the quantity of each product allocated in the project
-      // NOTE: incoming quantity is automatically added into the product stock in the backend
-      // when the incoming products status of the designated project is update to "RECEIVED"
-      //
-      // - total stock = when project is not updated and incoming products status is "RECEIVED",
-      // then add the current stock to the remaining quantity otherwise subtract remaining quantity
-      // from current stock
-
-      const totalStock =
-        (product.stock ?? 0) +
-        unlockedReceivedRemainingStock -
-        lockedRemainingStock;
-
-      return <span>{totalStock}</span>;
-    },
   },
 ];
