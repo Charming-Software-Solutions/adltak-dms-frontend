@@ -1,4 +1,5 @@
 "use client";
+
 import ProjectForm, {
   useProjectForm,
 } from "@/app/(root)/projects/components/ProjectForm";
@@ -102,109 +103,129 @@ const ProjectActionsCell = React.memo(({ project }: { project: Project }) => {
 
 export const ProjectColumns = (
   userRoles: UserRoleEnum[],
-): ColumnDef<Project>[] => [
-  {
-    accessorKey: "ba_reference_number",
-    header: "BA Ref Number",
-    cell: ({ row }) => {
-      return (
-        <span className="inline-flex items-center space-x-1">
-          <CopyButton value={row.original.ba_reference_number ?? "UNDEFINED"} />
-          <span className="font-normal text-muted-foreground">
-            {row.original.ba_reference_number}
+  isInsightsPage = false,
+): ColumnDef<Project>[] => {
+  // Define the basic columns array
+  const columns: ColumnDef<Project>[] = [
+    {
+      accessorKey: "ba_reference_number",
+      header: "BA Ref Number",
+      cell: ({ row }) => {
+        return (
+          <span className="inline-flex items-center space-x-1">
+            <CopyButton
+              value={row.original.ba_reference_number ?? "UNDEFINED"}
+            />
+            <span className="font-normal text-muted-foreground">
+              {row.original.ba_reference_number}
+            </span>
           </span>
-        </span>
-      );
+        );
+      },
     },
-  },
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "products",
-    header: "Products",
-    cell: ({ row }) => {
-      const project = row.original;
+    {
+      accessorKey: "name",
+      header: "Name",
+    },
+    {
+      accessorKey: "products",
+      header: "Products",
+      cell: ({ row }) => {
+        const project = row.original;
 
-      return (
-        <ViewItemsDialog
-          userRoles={userRoles}
-          projectStatus={project.status}
-          baReferenceNumber={project.ba_reference_number}
-          items={{
-            products: project.products,
-          }}
-        />
-      );
+        return (
+          <ViewItemsDialog
+            userRoles={userRoles}
+            projectStatus={project.status}
+            baReferenceNumber={project.ba_reference_number}
+            items={{
+              products: project.products,
+            }}
+          />
+        );
+      },
     },
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const status = row.original.status;
-      const router = useRouter();
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.original.status;
+        const router = useRouter();
 
-      return (
-        <StatusDropdown
-          id={row.original.id}
-          mutationKey="update-project-status"
-          currentStatus={status}
-          statuses={PROJECT_STATUSES}
-          mutationFn={updateProjectStatus}
-          onSuccess={() => router.refresh()}
-          disabled={status === ProjectStatusEnum.LOCKED}
+        return (
+          <StatusDropdown
+            id={row.original.id}
+            mutationKey="update-project-status"
+            currentStatus={status}
+            statuses={PROJECT_STATUSES}
+            mutationFn={updateProjectStatus}
+            onSuccess={() => router.refresh()}
+            disabled={status === ProjectStatusEnum.LOCKED || isInsightsPage}
+          />
+        );
+      },
+    },
+    {
+      accessorKey: "client",
+      header: "Client",
+      cell: ({ row }) => {
+        return (
+          <Badge variant="outline" className="py-1 rounded-md [&>svg]:size-3.5">
+            <BackpackIcon className="mr-2" />
+            <span>{row.original.client}</span>
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "logistics_person",
+      header: "Logistics Team Member",
+      cell: ({ row }) => {
+        return (
+          <Badge variant="outline" className="py-1 rounded-md [&>svg]:size-3.5">
+            <PersonIcon className="mr-2" />
+            <span>{row.original.employee}</span>
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "created_at",
+      header: ({ column }) => (
+        <div className="hidden md:table-cell">
+          <DataTableColumnHeader column={column} title="Date" />
+        </div>
+      ),
+      cell: ({ row }) => {
+        const dateString = row.getValue("created_at");
+        return (
+          <div className="hidden md:table-cell">
+            {formatDateTime(dateString)}
+          </div>
+        );
+      },
+    },
+  ];
+
+  // Only render when not insights page
+  if (
+    !isInsightsPage &&
+    hasPermission(userRoles, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+    ])
+  ) {
+    columns.push({
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <ProjectActionsCell
+          key={`actions-${row.original.id}`}
+          project={row.original}
         />
-      );
-    },
-  },
-  {
-    accessorKey: "client",
-    header: "Client",
-    cell: ({ row }) => {
-      return (
-        <Badge variant="outline" className="py-1 rounded-md [&>svg]:size-3.5">
-          <BackpackIcon className="mr-2" />
-          <span>{row.original.client}</span>
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: "logistics_person",
-    header: "Logistics Team Member",
-    cell: ({ row }) => {
-      return (
-        <Badge variant="outline" className="py-1 rounded-md [&>svg]:size-3.5">
-          <PersonIcon className="mr-2" />
-          <span>{row.original.employee}</span>
-        </Badge>
-      );
-    },
-  },
-  {
-    accessorKey: "created_at",
-    header: ({ column }) => (
-      <div className="hidden md:table-cell">
-        <DataTableColumnHeader column={column} title="Date" />
-      </div>
-    ),
-    cell: ({ row }) => {
-      const dateString = row.getValue("created_at");
-      return (
-        <div className="hidden md:table-cell">{formatDateTime(dateString)}</div>
-      );
-    },
-  },
-  {
-    accessorKey: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <ProjectActionsCell
-        key={`actions-${row.original.id}`}
-        project={row.original}
-      />
-    ),
-  },
-];
+      ),
+    });
+  }
+
+  return columns;
+};
