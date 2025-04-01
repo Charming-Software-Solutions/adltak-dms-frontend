@@ -13,17 +13,22 @@ import { hasPermission } from "@/lib/auth";
 import { formatExpiration } from "@/lib/utils";
 import { ProjectProduct } from "@/types/project";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
-import IconButton from "../buttons/IconButton";
+import QuantityAdjuster from "../QuantityAdjuster";
 
 type Props = {
   userRoles: UserRoleEnum[];
   projectStatus: ProjectStatusEnum;
   projectProduct: ProjectProduct;
+  isProjectsPage?: boolean;
 };
 
-const ItemCard = ({ userRoles, projectStatus, projectProduct }: Props) => {
+const ItemCard = ({
+  userRoles,
+  projectStatus,
+  projectProduct,
+  isProjectsPage = false,
+}: Props) => {
   const queryClient = useQueryClient();
 
   const { data: updatedProjectProduct } = useQuery({
@@ -81,6 +86,7 @@ const ItemCard = ({ userRoles, projectStatus, projectProduct }: Props) => {
         </div>
         {(projectStatus === ProjectStatusEnum.CONCLUDED ||
           projectStatus === ProjectStatusEnum.LOCKED) &&
+          isProjectsPage &&
           hasPermission(userRoles, [
             UserRoleEnum.ADMIN,
             UserRoleEnum.LOGISTICS_TEAM_MEMBER,
@@ -94,82 +100,56 @@ const ItemCard = ({ userRoles, projectStatus, projectProduct }: Props) => {
                   Used Quantity
                 </Badge>
               </div>
-
-              <div className="flex flex-row flex-grow w-full items-center gap-0 border rounded-md">
-                <IconButton
-                  className="p-0 border-none rounded-r-none rounded-l-sm flex-grow text-xs"
-                  variant="secondary"
-                  disabled={projectStatus === ProjectStatusEnum.LOCKED}
-                  onClick={() =>
-                    mutate({
-                      id: projectProduct.id,
-                      quantity: 1,
-                      isUsedQuantity: true,
-                    })
-                  }
-                >
-                  MIN
-                </IconButton>
-
-                <Separator orientation="vertical" className="h-10" />
-                <IconButton
-                  className="rounded-none transition-colors size-10 border-none hover:bg-muted "
-                  tooltip="Decrease quantity"
-                  disabled={
-                    currentUsedQuantity <= 1 ||
-                    projectStatus === ProjectStatusEnum.LOCKED
-                  }
-                  onClick={() =>
-                    mutate({
-                      id: projectProduct.id,
-                      quantity: currentUsedQuantity - 1,
-                      isUsedQuantity: true,
-                    })
-                  }
-                >
-                  <MinusIcon className="size-4" />
-                </IconButton>
-
-                <Separator orientation="vertical" className="h-10" />
-                <span className="text-sm min-w-[3ch] text-center tabular-nums inline-block select-none mx-4">
-                  {updatedProjectProduct?.used_quantity ??
-                    projectProduct.used_quantity}
-                </span>
-                <Separator orientation="vertical" className="h-10" />
-
-                <IconButton
-                  className="p-1 rounded-sm transition-colors size-10 border-none hover:bg-muted"
-                  tooltip="Increase quantity"
-                  disabled={
-                    currentUsedQuantity >= projectProduct.quantity ||
-                    projectStatus === ProjectStatusEnum.LOCKED
-                  }
-                  onClick={() =>
-                    mutate({
-                      id: projectProduct.id,
-                      quantity: currentUsedQuantity + 1,
-                      isUsedQuantity: true,
-                    })
-                  }
-                >
-                  <PlusIcon className="size-4" />
-                </IconButton>
-                <Separator orientation="vertical" className="h-10" />
-                <IconButton
-                  className="p-0 border-none rounded-r-sm rounded-l-none flex-grow text-xs"
-                  variant="secondary"
-                  disabled={projectStatus === ProjectStatusEnum.LOCKED}
-                  onClick={() =>
+              <QuantityAdjuster
+                value={currentUsedQuantity}
+                onChange={(newQuantity) =>
+                  mutate({
+                    id: projectProduct.id,
+                    quantity: newQuantity,
+                    isUsedQuantity: true,
+                  })
+                }
+                inputProps={{
+                  disabled: projectStatus === ProjectStatusEnum.LOCKED,
+                }}
+                minMax={{
+                  min: 1,
+                  max: projectProduct.quantity,
+                  disabled: projectStatus === ProjectStatusEnum.LOCKED,
+                  onMaxClick: () =>
                     mutate({
                       id: projectProduct.id,
                       quantity: projectProduct.quantity,
                       isUsedQuantity: true,
-                    })
-                  }
-                >
-                  MAX
-                </IconButton>
-              </div>
+                    }),
+                  onMinClick: () =>
+                    mutate({
+                      id: projectProduct.id,
+                      quantity: 1,
+                      isUsedQuantity: true,
+                    }),
+                }}
+                stepButtons={{
+                  decrementDisabled:
+                    currentUsedQuantity <= 1 ||
+                    projectStatus === ProjectStatusEnum.LOCKED,
+                  incrementDisabled:
+                    currentUsedQuantity >= projectProduct.quantity ||
+                    projectStatus === ProjectStatusEnum.LOCKED,
+                  onDecrementClick: () =>
+                    mutate({
+                      id: projectProduct.id,
+                      quantity: currentUsedQuantity - 1,
+                      isUsedQuantity: true,
+                    }),
+                  onIncrementClick: () =>
+                    mutate({
+                      id: projectProduct.id,
+                      quantity: currentUsedQuantity + 1,
+                      isUsedQuantity: true,
+                    }),
+                }}
+              />
             </div>
           )}
       </CardContent>

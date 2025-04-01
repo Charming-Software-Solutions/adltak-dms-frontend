@@ -136,11 +136,8 @@ export const ProjectColumns = (
         return (
           <ViewItemsDialog
             userRoles={userRoles}
-            projectStatus={project.status}
-            baReferenceNumber={project.ba_reference_number}
-            items={{
-              products: project.products,
-            }}
+            project={project}
+            isProjectsPage={true}
           />
         );
       },

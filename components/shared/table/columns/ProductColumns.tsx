@@ -33,11 +33,11 @@ import { formatDateTime, formatExpiration } from "@/lib/utils";
 import { Product } from "@/types/product";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, MinusIcon, PlusIcon } from "lucide-react";
+import { Eye } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import IconButton from "../../buttons/IconButton";
+import QuantityAdjuster from "../../QuantityAdjuster";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -282,8 +282,8 @@ export const ProductColumns = (
               {data?.length === 0 ? (
                 <span>No projects found</span>
               ) : (
-                data?.map((project, index) => (
-                  <AccordionItem value={project.name} key={index}>
+                data?.map((project) => (
+                  <AccordionItem value={project.name} key={project.id}>
                     <AccordionTrigger className="hover:no-underline">
                       <div className="flex items-center space-x-2">
                         <p className="hover:underline">{project.name}</p>
@@ -328,9 +328,9 @@ export const ProductColumns = (
                       </Card>
                       <ScrollArea className="h-56 border bg-muted p-4 rounded-md">
                         <div className="space-y-2">
-                          {project.products.map((projectProduct, index) => (
-                            <Card key={index}>
-                              <CardContent className="flex flex-col bg-none border-none items-start justify-between p-4 space-y-2.5 md:space-y-0 md:flex-row md:items-center">
+                          {project.products.map((projectProduct) => (
+                            <Card key={projectProduct.id}>
+                              <CardContent className="p-4 space-y-2.5">
                                 <div className="flex items-center gap-3">
                                   <Image
                                     src={
@@ -365,46 +365,45 @@ export const ProductColumns = (
                                     </div>
                                   </div>
                                 </div>
-                                <div className="flex gap-2 w-full md:w-auto">
-                                  <div className="flex flex-row w-full items-center justify-between border rounded-md p-2">
-                                    <IconButton
-                                      className="p-1 rounded-sm transition-colors size-6"
-                                      disabled={
-                                        projectProduct.quantity <= 1 ||
-                                        project.incoming_products_status ===
-                                          IncomingProductsStatus.RECEIVED
-                                      }
-                                      onClick={() =>
+
+                                <div className="flex gap-2 w-full md:w-auto items-center">
+                                  <Badge
+                                    className="text-xs p-3 rounded-lg truncate items-center"
+                                    variant={"outline"}
+                                  >
+                                    Incoming Quantity
+                                  </Badge>
+                                  <div className="">
+                                    <QuantityAdjuster
+                                      value={projectProduct.quantity}
+                                      onChange={(newQuantity) =>
                                         mutate({
                                           id: projectProduct.id,
-                                          quantity: projectProduct.quantity - 1,
+                                          quantity: newQuantity,
                                         })
                                       }
-                                      tooltip="Decrease quantity"
-                                    >
-                                      <MinusIcon className="size-4" />
-                                    </IconButton>
-
-                                    <span className="text-sm mx-2 w-6 text-center inline-block select-none">
-                                      {projectProduct.quantity}
-                                    </span>
-
-                                    <IconButton
-                                      className="p-1 rounded-sm transition-colors size-6"
-                                      disabled={
-                                        project.incoming_products_status ===
-                                        IncomingProductsStatus.RECEIVED
-                                      }
-                                      onClick={() =>
-                                        mutate({
-                                          id: projectProduct.id,
-                                          quantity: projectProduct.quantity + 1,
-                                        })
-                                      }
-                                      tooltip="Increase quantity"
-                                    >
-                                      <PlusIcon className="size-4" />
-                                    </IconButton>
+                                      stepButtons={{
+                                        decrementDisabled:
+                                          projectProduct.quantity <= 1 ||
+                                          project.incoming_products_status ===
+                                            IncomingProductsStatus.RECEIVED,
+                                        incrementDisabled:
+                                          project.incoming_products_status ===
+                                          IncomingProductsStatus.RECEIVED,
+                                        onDecrementClick: () =>
+                                          mutate({
+                                            id: projectProduct.id,
+                                            quantity:
+                                              projectProduct.quantity - 1,
+                                          }),
+                                        onIncrementClick: () =>
+                                          mutate({
+                                            id: projectProduct.id,
+                                            quantity:
+                                              projectProduct.quantity + 1,
+                                          }),
+                                      }}
+                                    />
                                   </div>
                                 </div>
                               </CardContent>

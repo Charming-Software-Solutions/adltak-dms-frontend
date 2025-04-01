@@ -118,16 +118,7 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
     cell: ({ row }) => {
       const project = row.original.project;
 
-      return (
-        <ViewItemsDialog
-          userRoles={userRoles}
-          projectStatus={project.status}
-          baReferenceNumber={project.ba_reference_number}
-          items={{
-            products: project.products,
-          }}
-        />
-      );
+      return <ViewItemsDialog userRoles={userRoles} project={project} />;
     },
   },
   {
