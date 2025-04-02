@@ -91,7 +91,7 @@ const TaskForm = ({ form, projects, className, warehousePersons }: Props) => {
         />
         <ComboBoxFormField
           items={projects.map((project) => ({
-            label: `ID: ${project.ba_reference_number} | Name: ${project.name} | Client: ${project.client}`,
+            label: project.name,
             value: project.id,
           }))}
           control={form.control}
