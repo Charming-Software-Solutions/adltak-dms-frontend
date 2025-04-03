@@ -57,8 +57,8 @@ const ProjectClient = ({ user, employee, projects, products }: Props) => {
       : visibleProjectColumns(user.roles).mobile,
     leftTools: {
       searchField: {
-        column: "ba_reference_number",
-        placeholder: "Search by ba reference number...",
+        column: "name",
+        placeholder: "Search by project name...",
       },
     },
   });
@@ -123,7 +123,11 @@ const ProjectClient = ({ user, employee, projects, products }: Props) => {
                         </AlertDescription>
                       </Alert>
                       <Card className="p-4">
-                        <ProjectAddProduct products={products} />
+                        <ProjectAddProduct
+                          products={products.filter(
+                            (product) => !product.discontinued,
+                          )}
+                        />
                       </Card>
                     </TabsContent>
                   </Tabs>
