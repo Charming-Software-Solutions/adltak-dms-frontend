@@ -5,6 +5,7 @@ import CustomFormField, {
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import MultiCheckboxFormField from "@/components/shared/MultiCheckboxFormField";
+import SwitchFormField from "@/components/shared/SwitchFormField";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormDescription, FormLabel } from "@/components/ui/form";
 import { USER_ROLES } from "@/constants";
@@ -51,7 +52,6 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     values: z.infer<typeof employeeFormSchema>,
     setOpen: (value: boolean) => void,
   ) => {
-    console.log(JSON.stringify(values));
     const formData = new FormData();
 
     formData.append("first_name", values.firstName);
@@ -162,24 +162,13 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
             />
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="flex flex-row items-center justify-between p-4">
-            <div className="space-y-0.5">
-              <FormLabel className="text-base">
-                Employee Active Status
-              </FormLabel>
-              <FormDescription className="text-xs">
-                Current active status of the selected employee.
-              </FormDescription>
-            </div>
-            <CustomFormField
-              fieldType={FormFieldType.SWITCH}
-              control={form.control}
-              name="status"
-              disabled={form.formState.isSubmitting}
-            />
-          </CardContent>
-        </Card>
+        <SwitchFormField
+          control={form.control}
+          name="status"
+          label="Employee Active Status"
+          description="Current active status of the selected employee."
+          disabled={form.formState.isSubmitting}
+        />
       </div>
     </Form>
   );
