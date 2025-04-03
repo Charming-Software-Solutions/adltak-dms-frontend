@@ -21,7 +21,7 @@ import {
 import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserRoleEnum } from "@/enums";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { hasPermission } from "@/lib/auth";
 import { filterProductsByExpiration, generateProductSKU } from "@/lib/utils";
@@ -56,7 +56,7 @@ const ProductClient = ({
   const [isMounted, setIsMounted] = useState(false);
 
   const isDesktop = useResponsive("desktop");
-  const { form, onSubmit } = useProductForm({ mode: "create" });
+  const { form, onSubmit } = useProductForm({ mode: FormModeEnum.CREATE });
 
   // Form values to watch for SKU generation
   const productName = form.watch("name");
@@ -189,7 +189,7 @@ const ProductClient = ({
                   brands={brands}
                   categories={categories}
                   types={types}
-                  mode="create"
+                  mode={FormModeEnum.CREATE}
                 />
                 <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
