@@ -4,7 +4,9 @@ import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
-import { Form } from "@/components/ui/form";
+import SwitchFormField from "@/components/shared/SwitchFormField";
+import { Card, CardContent } from "@/components/ui/card";
+import { Form, FormDescription, FormLabel } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { FormModeEnum } from "@/enums";
 import { createProduct, updateProduct } from "@/lib/actions/product.actions";
@@ -24,7 +26,7 @@ type Props = {
   brands: Brand[];
   categories: Category[];
   types: Type[];
-  mode: "create" | "edit";
+  mode: FormModeEnum;
   className?: string;
 };
 
@@ -33,7 +35,7 @@ export const useProductForm = ({
   mode,
 }: {
   product?: Product;
-  mode: "create" | "edit";
+  mode: FormModeEnum;
 }) => {
   const router = useRouter();
   const form = useForm<ProductFormData>({
@@ -46,6 +48,7 @@ export const useProductForm = ({
       type: product?.type.id ?? "",
       thumbnail: product?.thumbnail ?? "",
       area: product?.area ?? "",
+      discontinued: product?.discontinued ?? false,
     },
   });
 
@@ -60,13 +63,14 @@ export const useProductForm = ({
     formData.append("category", values.category);
     formData.append("type", values.type);
     formData.append("area", values.area);
+    formData.append("discontinued", values.discontinued.toString());
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
     }
 
     const result: ApiResponse<Product> =
-      mode === "create"
+      mode === FormModeEnum.CREATE
         ? await createProduct(formData)
         : await updateProduct(product!.id, formData);
 
@@ -80,7 +84,7 @@ export const useProductForm = ({
     // If successful
     showSuccessMessage(mode as FormModeEnum, "product");
     setOpen(false);
-    form.reset(mode === "create" ? undefined : values);
+    form.reset(mode === FormModeEnum.CREATE ? undefined : values);
     router.refresh();
   };
 
@@ -95,6 +99,9 @@ const ProductForm = ({
   mode,
   className,
 }: Props) => {
+  const formDisabled =
+    form.formState.isSubmitting || mode === FormModeEnum.EDIT;
+
   return (
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 h-full mb-1", className)}>
@@ -111,7 +118,7 @@ const ProductForm = ({
               name="name"
               label="Product Name"
               placeholder="Piattos"
-              disabled={form.formState.isSubmitting || mode === "edit"}
+              disabled={formDisabled}
             />
             <CustomFormField
               fieldType={FormFieldType.INPUT}
@@ -119,7 +126,7 @@ const ProductForm = ({
               name="sku"
               label="Product SKU"
               placeholder="SKU-123"
-              disabled={form.formState.isSubmitting || mode === "edit"}
+              disabled={formDisabled}
             />
           </div>
         </div>
@@ -137,7 +144,7 @@ const ProductForm = ({
           name="brand"
           label="Product Brand"
           placeholder="Select brand"
-          disabled={form.formState.isSubmitting || mode === "edit"}
+          disabled={formDisabled}
         >
           {brands.map((brand, key) => (
             <SelectItem key={key} value={brand.id}>
@@ -151,7 +158,7 @@ const ProductForm = ({
           name="category"
           label="Product Category"
           placeholder="Select category"
-          disabled={form.formState.isSubmitting || mode === "edit"}
+          disabled={formDisabled}
         >
           {categories.map((category, key) => (
             <SelectItem key={key} value={category.id}>
@@ -165,7 +172,7 @@ const ProductForm = ({
           name="type"
           label="Product Type"
           placeholder="Select type"
-          disabled={form.formState.isSubmitting || mode === "edit"}
+          disabled={formDisabled}
         >
           {types.map((brand, key) => (
             <SelectItem key={key} value={brand.id}>
@@ -173,6 +180,14 @@ const ProductForm = ({
             </SelectItem>
           ))}
         </CustomFormField>
+        {mode === FormModeEnum.EDIT && (
+          <SwitchFormField
+            control={form.control}
+            name="discontinued"
+            label="Discontinued"
+            description="Mark this option if the product is no longer available for sale or actively produced."
+          />
+        )}
       </div>
     </Form>
   );

@@ -20,6 +20,9 @@ export const productFormSchema = z.object({
   area: z.string().min(1, {
     message: "Area is required.",
   }),
+  discontinued: z.boolean({
+    required_error: " is required.",
+  }),
 });
 
 export const employeeFormSchema = z.object({

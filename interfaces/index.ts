@@ -4,7 +4,8 @@ export interface ICreateProduct {
   brand: string;
   category: string;
   type: string;
-  stock: number;
+  area: string;
+  discontinued: boolean;
 }
 
 export interface ICreateEmployee {
