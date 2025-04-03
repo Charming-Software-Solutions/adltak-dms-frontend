@@ -4,7 +4,7 @@ import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TASK_STATUS } from "@/constants";
-import { UserRoleEnum } from "@/enums";
+import { ProjectStatusEnum, UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { getEmployees } from "@/lib/actions/employee.actions";
 import { getProjects } from "@/lib/actions/project.actions";
@@ -125,7 +125,8 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
     accessorKey: "status_dropdown",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.status;
+      const task = row.original;
+      const status = task.status;
       const router = useRouter();
 
       return (
@@ -136,6 +137,10 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
           statuses={TASK_STATUS}
           mutationFn={updateTaskStatus}
           onSuccess={() => router.refresh()}
+          disabled={
+            task.project.status === ProjectStatusEnum.CONCLUDED ||
+            task.project.status === ProjectStatusEnum.LOCKED
+          }
         />
       );
     },
