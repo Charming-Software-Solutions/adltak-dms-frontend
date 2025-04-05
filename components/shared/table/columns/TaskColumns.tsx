@@ -3,10 +3,19 @@
 import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TASK_STATUS } from "@/constants";
-import { ProjectStatusEnum, UserRoleEnum } from "@/enums";
+import { FormModeEnum, ProjectStatusEnum, UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
-import { getEmployees } from "@/lib/actions/employee.actions";
+import {
+  getEmployees,
+  getWarehousePersonnelByProject,
+} from "@/lib/actions/employee.actions";
 import { getProjects } from "@/lib/actions/project.actions";
 import { deleteTask, updateTaskStatus } from "@/lib/actions/task.actions";
 import { hasPermission } from "@/lib/auth";
@@ -15,6 +24,7 @@ import { Task } from "@/types/task";
 import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import DialogFormButton from "../../buttons/DialogFormButton";
@@ -25,7 +35,6 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import StatusDropdown from "../../StatusDropDown";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { useRouter } from "next/navigation";
 
 export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
   return createColumnConfig({
@@ -75,8 +84,53 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
     accessorKey: "warehouse_person",
     header: "Warehouse Personnel",
     cell: ({ row }) => {
-      const warehousePerson = row.original.warehouse_person;
+      const task = row.original;
+      const warehousePerson = task.warehouse_person;
       const isDesktop = useResponsive("desktop");
+
+      const { data, isLoading } = useQuery({
+        queryKey: ["warehouse-personnel-by-project", task.project.name],
+        queryFn: async () =>
+          task.project.name
+            ? await getWarehousePersonnelByProject(task.project.name)
+            : [],
+        enabled: !!task.project.name,
+      });
+
+      // Show dialog only if there are 2 or more warehouse personnel
+      const multiplePersonnel = data && data.length >= 2;
+
+      if (isLoading) {
+        return <Skeleton className="h-4 w-auto" />;
+      }
+
+      if (multiplePersonnel) {
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <PersonIcon className="size-4 mr-2" /> View
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-4" align="start">
+              <div className="flex flex-col space-y-2">
+                <span className="text-sm font-semibold">
+                  Assigned Warehouse Personnel
+                </span>
+                {data.map((warehousePerson) => (
+                  <Badge
+                    key={warehousePerson.id}
+                    variant="outline"
+                    className="rounded-md p-2 text-sm"
+                  >
+                    {warehousePerson.first_name} {warehousePerson.last_name}
+                  </Badge>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        );
+      }
 
       return (
         <div className="flex items-center space-x-2">
@@ -196,6 +250,8 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
             setOpen={setOpenDialog}
           >
             <TaskForm
+              mode={FormModeEnum.EDIT}
+              task={task}
               form={form}
               projects={data?.projects ?? []}
               warehousePersons={data?.filteredWarehousePersons ?? []}

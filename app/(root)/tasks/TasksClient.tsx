@@ -15,7 +15,8 @@ import {
   visibleTaskColumns,
 } from "@/components/shared/table/columns/TaskColumns";
 import { Button } from "@/components/ui/button";
-import { UserRoleEnum } from "@/enums";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { useDataTable } from "@/hooks/use-datatable";
 import { hasPermission } from "@/lib/auth";
@@ -40,29 +41,64 @@ const TasksClient = ({
   warehousePersons,
 }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
-
   const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useTaskForm({ mode: "create" });
 
-  const filteredWarehousePersons = warehousePersons.filter(
-    (person) =>
-      person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
-      person.user.is_active,
+  // Checks if is warehouse personnel only and only if they
+  // have a single role which is the warehouse personnel
+  const isWarehousePersonnelOnly =
+    employee.user.roles.length === 1 &&
+    employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL);
+  const uniqueTasks = [
+    ...new Map(tasks.map((task) => [task.project.name, task])).values(),
+  ];
+
+  const ownTasks = tasks.filter(
+    (task) => task.warehouse_person.id === employee.id,
   );
 
-  const datTable = useDataTable({
-    columns: TaskColumns(employee.user.roles),
-    data: tasks,
-    visibleColumns: isDesktop
-      ? visibleTaskColumns(employee.user.roles).desktop
-      : visibleTaskColumns(employee.user.roles).mobile,
-    leftTools: {
-      searchField: {
-        column: "project",
-        placeholder: "Search project...",
+  const renderTaskTable = (tab: "all" | "my_tasks") => {
+    let filteredTasks: Task[] = [];
+
+    if (isWarehousePersonnelOnly) {
+      filteredTasks = ownTasks;
+    }
+
+    switch (tab) {
+      case "all":
+        filteredTasks = tasks;
+        break;
+      case "my_tasks":
+        filteredTasks = ownTasks;
+        break;
+      default:
+        break;
+    }
+
+    const dataTable = useDataTable({
+      columns: TaskColumns(employee.user.roles),
+      data: employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL)
+        ? filteredTasks
+        : uniqueTasks,
+      visibleColumns: isDesktop
+        ? visibleTaskColumns(employee.user.roles).desktop
+        : visibleTaskColumns(employee.user.roles).mobile,
+      leftTools: {
+        searchField: {
+          column: "project",
+          placeholder: "Search project...",
+        },
       },
-    },
-  });
+      tabsList: !isWarehousePersonnelOnly ? (
+        <TabsList>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="my_tasks">My Tasks</TabsTrigger>
+        </TabsList>
+      ) : null,
+    });
+
+    return dataTable;
+  };
 
   return (
     <React.Fragment>
@@ -90,9 +126,10 @@ const TasksClient = ({
                   <ResponsiveDialogTitle>Create Task</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
                 <TaskForm
+                  mode={FormModeEnum.CREATE}
                   form={form}
                   projects={projects}
-                  warehousePersons={filteredWarehousePersons}
+                  warehousePersons={warehousePersons}
                 />
                 <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
@@ -122,7 +159,20 @@ const TasksClient = ({
         </div>
       </Header>
 
-      <main className="main-container">{datTable.render()}</main>
+      <main className="main-container">
+        {ownTasks.length > 0 && !isWarehousePersonnelOnly ? (
+          <Tabs defaultValue="all" className="overflow-auto">
+            <TabsContent value="all">
+              {renderTaskTable("all").render()}
+            </TabsContent>
+            <TabsContent value="my_tasks">
+              {renderTaskTable("my_tasks").render()}
+            </TabsContent>
+          </Tabs>
+        ) : (
+          renderTaskTable("my_tasks").render()
+        )}
+      </main>
     </React.Fragment>
   );
 };

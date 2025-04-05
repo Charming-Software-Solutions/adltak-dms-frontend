@@ -2,7 +2,7 @@
 
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import { Form } from "@/components/ui/form";
-import { FormModeEnum } from "@/enums";
+import { FormModeEnum, ProjectStatusEnum, TaskStatusEnum } from "@/enums";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
@@ -19,8 +19,10 @@ import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<TaskFormData>;
+  mode: FormModeEnum;
   projects: Project[];
   warehousePersons: Employee[];
+  task?: Task;
   className?: string;
 };
 
@@ -70,7 +72,29 @@ export const useTaskForm = ({
   return { form, onSubmit };
 };
 
-const TaskForm = ({ form, projects, className, warehousePersons }: Props) => {
+const TaskForm = ({
+  form,
+  mode,
+  projects,
+  className,
+  warehousePersons,
+  task,
+}: Props) => {
+  const isDisabled =
+    form.formState.isSubmitting ||
+    (mode === FormModeEnum.EDIT &&
+      task &&
+      task.status === TaskStatusEnum.DELIVERED);
+
+  const projectList =
+    mode === FormModeEnum.CREATE
+      ? projects.filter(
+          (project) =>
+            project.status !== ProjectStatusEnum.CONCLUDED &&
+            project.status !== ProjectStatusEnum.LOCKED,
+        )
+      : projects;
+
   return (
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 px-1", className)}>
@@ -87,10 +111,10 @@ const TaskForm = ({ form, projects, className, warehousePersons }: Props) => {
           }}
           label="Warehouse Person"
           popOverSize="md:min-w-[28.5rem]"
-          disabled={form.formState.isSubmitting}
+          disabled={isDisabled}
         />
         <ComboBoxFormField
-          items={projects.map((project) => ({
+          items={projectList.map((project) => ({
             label: project.name,
             value: project.id,
           }))}
@@ -102,7 +126,7 @@ const TaskForm = ({ form, projects, className, warehousePersons }: Props) => {
           }}
           label="Project"
           popOverSize="md:min-w-[28.5rem]"
-          disabled={form.formState.isSubmitting}
+          disabled={isDisabled}
         />
       </div>
     </Form>
