@@ -389,6 +389,7 @@ export const ProductColumns = (
                                 project.incoming_products_status ===
                                   IncomingProductsStatus.RECEIVED ||
                                 !hasPermission(userRoles, [
+                                  UserRoleEnum.WAREHOUSE_PERSONNEL,
                                   UserRoleEnum.LOGISTICS_TEAM_MEMBER,
                                   UserRoleEnum.ADMIN,
                                 ])

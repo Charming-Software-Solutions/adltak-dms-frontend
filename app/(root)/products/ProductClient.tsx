@@ -71,7 +71,7 @@ const ProductClient = ({
   }));
 
   const renderProjectProductTable = (
-    condition: "brands" | "near_expiration" | "expired",
+    condition: "all" | "near_expiration" | "expired",
   ) => {
     if (!isMounted) return null;
 
@@ -79,8 +79,8 @@ const ProductClient = ({
 
     const commonTabsList = (
       <TabsList className="min-w-[20rem]">
-        <TabsTrigger value="brands" className="flex-grow">
-          Brands
+        <TabsTrigger value="all" className="flex-grow">
+          All
         </TabsTrigger>
         <TabsTrigger value="near_expiration" className="flex-grow">
           Near Expiration
@@ -243,9 +243,9 @@ const ProductClient = ({
         </div>
       </Header>
       <main className="main-container">
-        <Tabs defaultValue="brands">
-          <TabsContent value="brands">
-            {renderProjectProductTable("brands")}
+        <Tabs defaultValue="all">
+          <TabsContent value="all">
+            {renderProjectProductTable("all")}
           </TabsContent>
           <TabsContent value="near_expiration">
             {renderProjectProductTable("near_expiration")}
