@@ -2,6 +2,7 @@
 
 import { BadgeCheck, ChevronsUpDown, IdCard, LogOut } from "lucide-react";
 
+import { logout } from "@/auth/actions";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,8 +26,6 @@ import { USER_ROLES } from "@/constants";
 import { Employee, User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import NavUserProfile from "./NavUserProfile";
-import { logout } from "@/auth/actions";
-import { Badge } from "../ui/badge";
 
 export function NavUser({
   user,
@@ -52,13 +51,11 @@ export function NavUser({
                 lastName={employee.last_name}
                 subtitle={
                   user.roles.length > 1 ? (
-                    <Badge variant="outline" className="rounded-md">
+                    <span className="text-xs">
                       {USER_ROLES[user.roles[0]]} +{user.roles.length - 1}{" "}
-                    </Badge>
+                    </span>
                   ) : (
-                    <Badge variant="outline" className="rounded-md">
-                      {USER_ROLES[user.roles[0]]}
-                    </Badge>
+                    <span className="text-xs">{USER_ROLES[user.roles[0]]}</span>
                   )
                 }
                 alt="profile-image"
