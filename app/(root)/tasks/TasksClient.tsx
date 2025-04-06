@@ -46,9 +46,12 @@ const TasksClient = ({
 
   // Checks if is warehouse personnel only and only if they
   // have a single role which is the warehouse personnel
+  const hasWarehousePersonnelRole = employee.user.roles.includes(
+    UserRoleEnum.WAREHOUSE_PERSONNEL,
+  );
   const isWarehousePersonnelOnly =
-    employee.user.roles.length === 1 &&
-    employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL);
+    employee.user.roles.length === 1 && hasWarehousePersonnelRole;
+
   const uniqueTasks = [
     ...new Map(tasks.map((task) => [task.project.name, task])).values(),
   ];
@@ -89,12 +92,16 @@ const TasksClient = ({
           placeholder: "Search project...",
         },
       },
-      tabsList: !isWarehousePersonnelOnly ? (
+      tabsList: (
         <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="my_tasks">My Tasks</TabsTrigger>
+          <TabsTrigger value="all" disabled={isWarehousePersonnelOnly}>
+            All
+          </TabsTrigger>
+          {hasWarehousePersonnelRole && (
+            <TabsTrigger value="my_tasks">My Tasks</TabsTrigger>
+          )}
         </TabsList>
-      ) : null,
+      ),
     });
 
     return dataTable;
@@ -160,18 +167,17 @@ const TasksClient = ({
       </Header>
 
       <main className="main-container">
-        {ownTasks.length > 0 && !isWarehousePersonnelOnly ? (
-          <Tabs defaultValue="all" className="overflow-auto">
-            <TabsContent value="all">
-              {renderTaskTable("all").render()}
-            </TabsContent>
-            <TabsContent value="my_tasks">
-              {renderTaskTable("my_tasks").render()}
-            </TabsContent>
-          </Tabs>
-        ) : (
-          renderTaskTable("my_tasks").render()
-        )}
+        <Tabs
+          defaultValue={isWarehousePersonnelOnly ? "my_tasks" : "all"}
+          className="overflow-auto"
+        >
+          <TabsContent value="all">
+            {renderTaskTable("all").render()}
+          </TabsContent>
+          <TabsContent value="my_tasks">
+            {renderTaskTable("my_tasks").render()}
+          </TabsContent>
+        </Tabs>
       </main>
     </React.Fragment>
   );
