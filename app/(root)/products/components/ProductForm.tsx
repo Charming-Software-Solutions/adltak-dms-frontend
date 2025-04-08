@@ -5,8 +5,7 @@ import CustomFormField, {
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import SwitchFormField from "@/components/shared/SwitchFormField";
-import { Card, CardContent } from "@/components/ui/card";
-import { Form, FormDescription, FormLabel } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
 import { FormModeEnum } from "@/enums";
 import { createProduct, updateProduct } from "@/lib/actions/product.actions";
