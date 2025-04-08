@@ -6,10 +6,13 @@ import CustomFormField, {
   InputType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
+import SwitchFormField from "@/components/shared/SwitchFormField";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
+import { ASSET_STATUS } from "@/constants";
 import { FormModeEnum } from "@/enums";
 import { createAsset, updateAsset } from "@/lib/actions/asset.actions";
+import { getProjectByAsset } from "@/lib/actions/project.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
 import { AssetFormData, assetFormSchema } from "@/schemas";
@@ -17,13 +20,16 @@ import { ApiResponse } from "@/types/api";
 import { Asset } from "@/types/asset";
 import { Classification } from "@/types/generics";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import React from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<AssetFormData>;
+  mode: FormModeEnum;
   assetTypes: Classification[];
   brands: Classification[];
   className?: string;
@@ -37,7 +43,6 @@ export const useAssetForm = ({
   mode: FormModeEnum;
 }) => {
   const router = useRouter();
-
   const form = useForm<AssetFormData>({
     resolver: zodResolver(assetFormSchema),
     defaultValues: {
@@ -49,6 +54,8 @@ export const useAssetForm = ({
       brand: asset?.brand?.id ?? "",
       area: asset?.area ?? "",
       stock: asset?.stock ?? 1,
+      status: asset?.status ?? "",
+      archived: asset?.archived ?? false,
     },
   });
 
@@ -64,6 +71,8 @@ export const useAssetForm = ({
     formData.append("brand", values.brand);
     formData.append("area", values.area);
     formData.append("stock", values.stock.toString());
+    formData.append("status", values.status);
+    formData.append("archived", values.archived.toString());
 
     if (values.thumbnail instanceof File) {
       formData.append("thumbnail", values.thumbnail);
@@ -89,7 +98,7 @@ export const useAssetForm = ({
   return { form, onSubmit };
 };
 
-const AssetForm = ({ form, assetTypes, brands, className }: Props) => {
+const AssetForm = ({ form, mode, assetTypes, brands, className }: Props) => {
   return (
     <Form {...form}>
       <div className={cn("form-container", className)}>
@@ -118,22 +127,28 @@ const AssetForm = ({ form, assetTypes, brands, className }: Props) => {
             />
           </div>
         </div>
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="agency"
-          label="Agency"
-          placeholder="AdTalk"
-          disabled={form.formState.isSubmitting}
-        />
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="area"
-          label="Area"
-          placeholder="Quezon City"
-          disabled={form.formState.isSubmitting}
-        />
+        <div className="flex items-center space-x-2 w-full">
+          <div className="flex-grow">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="agency"
+              label="Agency"
+              placeholder="AdTalk"
+              disabled={form.formState.isSubmitting}
+            />
+          </div>
+          <div className="flex-grow">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="area"
+              label="Area"
+              placeholder="Quezon City"
+              disabled={form.formState.isSubmitting}
+            />
+          </div>
+        </div>
         <ComboBoxFormField
           items={brands.map((brand) => ({
             label: brand.name,
@@ -168,10 +183,36 @@ const AssetForm = ({ form, assetTypes, brands, className }: Props) => {
           inputType={InputType.NUMBER}
           control={form.control}
           name="stock"
-          label="Total Quantity"
+          label="Stock"
           placeholder="10"
           disabled={form.formState.isSubmitting}
         />
+
+        {mode === FormModeEnum.EDIT && (
+          <React.Fragment>
+            <CustomFormField
+              fieldType={FormFieldType.SELECT}
+              control={form.control}
+              name="status"
+              label="Status"
+              placeholder="Select status"
+              disabled={form.formState.isSubmitting}
+            >
+              {Object.keys(ASSET_STATUS).map((status, key) => (
+                <SelectItem key={key} value={status}>
+                  {ASSET_STATUS[status as keyof typeof ASSET_STATUS]}
+                </SelectItem>
+              ))}
+            </CustomFormField>
+            <SwitchFormField
+              control={form.control}
+              name="archived"
+              label="Archived"
+              description="Toggle to archive this asset. When archived, the asset will be 
+            removed from available lists but can be restored later if needed."
+            />
+          </React.Fragment>
+        )}
       </div>
     </Form>
   );

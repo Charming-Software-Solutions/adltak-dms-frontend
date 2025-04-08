@@ -79,6 +79,7 @@ const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
                   <ResponsiveDialogTitle>Add Asset</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
                 <AssetForm
+                  mode={FormModeEnum.CREATE}
                   form={form}
                   assetTypes={assetTypes}
                   brands={brands}

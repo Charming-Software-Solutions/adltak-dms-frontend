@@ -5,9 +5,9 @@ import AssetForm, {
 } from "@/app/(root)/assets/components/AssetForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ASSET_STATUS, imagePlaceholder } from "@/constants";
+import { imagePlaceholder } from "@/constants";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { deleteAsset, updateAssetStatus } from "@/lib/actions/asset.actions";
+import { deleteAsset } from "@/lib/actions/asset.actions";
 import { getAssetTypes } from "@/lib/actions/asset.classifcations.actions";
 import { getClassifications } from "@/lib/actions/classification.actions";
 import { hasPermission } from "@/lib/auth";
@@ -15,9 +15,8 @@ import { formatDateTime } from "@/lib/utils";
 import { Asset } from "@/types/asset";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Eye } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import {
   ResponsiveDialog,
@@ -27,12 +26,14 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "../../ResponsiveDialog";
-import StatusDropdown from "../../StatusDropDown";
 import DialogFormButton from "../../buttons/DialogFormButton";
 import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
+import { getProjectByAsset } from "@/lib/actions/project.actions";
 
 export const visibleAssetColumns = (userRole: UserRoleEnum[]) => {
   return createColumnConfig({
@@ -101,6 +102,7 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
         <AssetForm
           key={`form-${asset.id}`}
           form={form}
+          mode={FormModeEnum.EDIT}
           assetTypes={data?.assetTypes ?? []}
           brands={data?.brands ?? []}
         />
@@ -125,12 +127,6 @@ const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
           </div>
         </ResponsiveDialogFooter>
       </EditDialog>
-
-      <DeleteDialog
-        title="Delete Asset"
-        deleteAction={async () => await deleteAsset(asset.id)}
-        placeholder="Are you sure you want to delete the asset?"
-      />
     </div>
   );
 });
@@ -195,7 +191,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
       );
     },
   },
-  { accessorKey: "stock", header: "Total QTY" },
+  { accessorKey: "stock", header: "Stock" },
   {
     accessorKey: "area",
     header: "Area",
@@ -225,18 +221,102 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.original.status;
-      const router = useRouter();
+      const asset = row.original;
+      const [openDialog, setOpenDialog] = useState(false);
+      const { data: project } = useQuery({
+        queryKey: ["fetch-project-by-asset", row.id],
+        queryFn: async () => await getProjectByAsset(asset.name),
+        select: (response) => response.data,
+      });
+      const productsInProject = [
+        ...new Map(
+          project?.products.map((projectProduct) => [
+            projectProduct.product.brand.name,
+            projectProduct,
+          ]),
+        ).values(),
+      ];
+
+      // TODO: make the status from asset conditionally render the
+      // asset issue
+      // - add a resolve issue button that will resolve the selected
+      // issue
+      // - only allow 1 issue at a time
 
       return (
-        <StatusDropdown
-          id={row.original.id}
-          mutationKey="update-asset-status"
-          currentStatus={status}
-          statuses={ASSET_STATUS}
-          mutationFn={updateAssetStatus}
-          onSuccess={() => router.refresh()}
-        />
+        <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
+          <ResponsiveDialogTrigger>
+            <Button variant={"outline"}>
+              <Eye className="size-4 mr-2" /> View
+            </Button>
+          </ResponsiveDialogTrigger>
+          <ResponsiveDialogContent className="md:max-w-md">
+            <ResponsiveDialogHeader>
+              <ResponsiveDialogTitle>Asset Status</ResponsiveDialogTitle>
+            </ResponsiveDialogHeader>
+            <div className="grid gap-3 text-sm">
+              <Separator className="my-1" />
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">
+                  Status:{" "}
+                  <Badge variant={"outline"} className="rounded-md">
+                    Available
+                  </Badge>
+                </dt>
+                <dd>{asset.stock} QTY</dd>
+              </div>
+              <Separator className="my-1" />
+              <span>Assigned Project</span>
+              <div className="space-y-2 bg-muted border p-4 rounded-md">
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">In Use: </dt>
+                  <dd>
+                    {project?.assets.find(
+                      (projectAsset) => projectAsset.asset.name === asset.name,
+                    )?.quantity || 0}{" "}
+                    QTY
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Project Name: </dt>
+                  <dd>{project?.name}</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">
+                    BA Reference Number:{" "}
+                  </dt>
+                  <dd>{project?.ba_reference_number}</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Brands: </dt>
+                  <dd>
+                    {productsInProject
+                      .map(
+                        (projectProduct) => projectProduct.product.brand.name,
+                      )
+                      .join(", ")}
+                  </dd>
+                </div>
+              </div>
+              <Separator className="my-1" />
+              <span>Asset Issue</span>
+              <div className="space-y-2 bg-muted border p-4 rounded-md">
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Damaged: </dt>
+                  <dd>Some qty</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">For Repair: </dt>
+                  <dd>Some qty</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Lost: </dt>
+                  <dd>Some qty</dd>
+                </div>
+              </div>
+            </div>
+          </ResponsiveDialogContent>
+        </ResponsiveDialog>
       );
     },
   },
