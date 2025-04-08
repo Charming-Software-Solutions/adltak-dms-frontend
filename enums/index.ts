@@ -56,3 +56,8 @@ export enum IncomingProductsStatus {
   PENDING = "PENDING",
   RECEIVED = "RECEIVED",
 }
+
+export enum ItemTypeEnum {
+  PRODUCT = "PRODUCT",
+  ASSET = "ASSET",
+}

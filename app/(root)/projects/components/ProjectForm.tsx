@@ -6,7 +6,7 @@ import { FormModeEnum } from "@/enums";
 import { ICreateProject } from "@/interfaces";
 import { createProject, updateProject } from "@/lib/actions/project.actions";
 import { formatErrorResponse } from "@/lib/formatters";
-import { useProjectProductStore } from "@/lib/store";
+import { useProjectItemStore } from "@/lib/store";
 import { cn, showSuccessMessage } from "@/lib/utils";
 import { ProjectFormData, projectFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
@@ -33,7 +33,7 @@ export const useProjectForm = ({
   employee?: string;
 }) => {
   const router = useRouter();
-  const { items, clearItems } = useProjectProductStore();
+  const { items, clearItems } = useProjectItemStore();
 
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectFormSchema),
@@ -53,6 +53,7 @@ export const useProjectForm = ({
 
     // Get items directly from the zustand store
     const productItems = items.filter((item) => "product" in item);
+    const assetItems = items.filter((item) => "asset" in item);
 
     if (mode === FormModeEnum.CREATE && productItems.length > 0) {
       projectCreate = {
@@ -62,6 +63,10 @@ export const useProjectForm = ({
           product: object.product.id,
           quantity: object.quantity,
           expiration: object.expiration,
+        })),
+        assets: assetItems.map((object) => ({
+          asset: object.asset.id,
+          quantity: object.quantity,
         })),
         ba_reference_number: values.baReferenceNumber,
         client: values.client,
@@ -85,11 +90,12 @@ export const useProjectForm = ({
     }
 
     showSuccessMessage(mode as FormModeEnum, "project");
-    form.reset(values);
 
     if (mode === FormModeEnum.CREATE) {
       form.reset();
       clearItems();
+    } else {
+      form.reset(values);
     }
 
     setOpen(false);

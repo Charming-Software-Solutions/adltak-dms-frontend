@@ -1,27 +1,31 @@
-import { ProjectProduct } from "@/types/project";
+import { ProjectAsset, ProjectProduct } from "@/types/project";
 import { create } from "zustand";
 
-export type ProjectProductStoreState = {
-  items: ProjectProduct[];
+export type ProjectItem = ProjectProduct | ProjectAsset;
+
+export type ProjectItemStoreState = {
+  items: ProjectItem[];
 };
 
 type ProjectProductStoreActions = {
-  addItem: (item: ProjectProduct) => void;
+  addItem: (item: ProjectItem) => void;
   removeItem: (itemId: string) => void;
-  clearItems: () => void;
+  clearItems: (type?: "product" | "asset") => void;
   updateQuantity: (itemId: string, quantity: number) => void;
 };
 
-export type ProjectProductStore = ProjectProductStoreState &
+export type ProjectItemStore = ProjectItemStoreState &
   ProjectProductStoreActions;
 
-export const useProjectProductStore = create<ProjectProductStore>()((set) => ({
+export const useProjectItemStore = create<ProjectItemStore>()((set) => ({
   items: [],
 
-  addItem: (item: ProjectProduct) =>
+  addItem: (item: ProjectItem) =>
     set((state) => {
       // Check if the item already exists
       const existingItemIndex = state.items.findIndex((i) => i.id === item.id);
+
+      // If it exists, update the quantity
       if (existingItemIndex >= 0) {
         const updatedItems = [...state.items];
         const existingItem = updatedItems[existingItemIndex];
@@ -31,6 +35,7 @@ export const useProjectProductStore = create<ProjectProductStore>()((set) => ({
         };
         return { items: updatedItems };
       }
+
       return { items: [...state.items, item] };
     }),
 
@@ -39,7 +44,18 @@ export const useProjectProductStore = create<ProjectProductStore>()((set) => ({
       items: state.items.filter((item) => item.id !== itemId),
     })),
 
-  clearItems: () => set({ items: [] }),
+  clearItems: (type?: "product" | "asset") =>
+    set((state) => {
+      if (!type) {
+        return { items: [] };
+      }
+
+      return {
+        items: state.items.filter((item) =>
+          type === "product" ? !("product" in item) : !("asset" in item),
+        ),
+      };
+    }),
 
   updateQuantity: (itemId: string, quantity: number) =>
     set((state) => ({

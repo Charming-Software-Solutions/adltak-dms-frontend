@@ -21,25 +21,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useDataTable } from "@/hooks/use-datatable";
 import { hasPermission } from "@/lib/auth";
-import { useProjectProductStore } from "@/lib/store";
-import { Brand, Product } from "@/types/product";
+import { useProjectItemStore } from "@/lib/store";
+import { Brand } from "@/types/product";
 import { Project } from "@/types/project";
 import { User } from "@/types/user";
 import { AlertCircleIcon, FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import ProjectAddProduct from "./components/ProjectAddProduct";
+import ProjectAddItem from "./components/ProjectAddItem";
 import ProjectForm, { useProjectForm } from "./components/ProjectForm";
 
 type Props = {
   user: User;
   employee: string;
   projects: Project[];
-  products: Product[];
   brands: Brand[];
 };
 
-const ProjectClient = ({ user, employee, projects, products }: Props) => {
+const ProjectClient = ({ user, employee, projects }: Props) => {
   const [openDistributionDialog, setOpenDistributionDialog] = useState(false);
 
   const { form, onSubmit } = useProjectForm({
@@ -47,7 +46,7 @@ const ProjectClient = ({ user, employee, projects, products }: Props) => {
     employee: employee,
   });
   const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-  const { items, clearItems } = useProjectProductStore();
+  const { items, clearItems } = useProjectItemStore();
 
   const dataTable = useDataTable({
     columns: ProjectColumns(user.roles),
@@ -92,24 +91,18 @@ const ProjectClient = ({ user, employee, projects, products }: Props) => {
                   <span className="hidden sm:inline">Create Project</span>
                 </Button>
               </ResponsiveDialogTrigger>
-              <ResponsiveDialogContent className="max-w-xl">
+              <ResponsiveDialogContent className="max-w-lg">
                 <ResponsiveDialogHeader>
                   <ResponsiveDialogTitle>Create Project</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
                 <div className="space-y-2 px-4 md:px-0">
                   <Tabs defaultValue="details">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="details">Details</TabsTrigger>
                       <TabsTrigger value="products">Products</TabsTrigger>
+                      <TabsTrigger value="assets">Assets</TabsTrigger>
                     </TabsList>
                     <TabsContent value="details" className="space-y-2.5">
-                      <Alert>
-                        <AlertCircleIcon className="size-4" />
-                        <AlertDescription>
-                          The Products tab will enable once the details have
-                          been filled up.
-                        </AlertDescription>
-                      </Alert>
                       <Card className="p-4">
                         <ProjectForm form={form} />
                       </Card>
@@ -123,11 +116,19 @@ const ProjectClient = ({ user, employee, projects, products }: Props) => {
                         </AlertDescription>
                       </Alert>
                       <Card className="p-4">
-                        <ProjectAddProduct
-                          products={products.filter(
-                            (product) => !product.discontinued,
-                          )}
-                        />
+                        <ProjectAddItem itemType="product" />
+                      </Card>
+                    </TabsContent>
+                    <TabsContent value="assets" className="space-y-2.5">
+                      <Alert>
+                        <AlertCircleIcon className="size-4" />
+                        <AlertDescription>
+                          This will be the assets used for this specific
+                          project.
+                        </AlertDescription>
+                      </Alert>
+                      <Card className="p-4">
+                        <ProjectAddItem itemType="asset" />
                       </Card>
                     </TabsContent>
                   </Tabs>

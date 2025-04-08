@@ -33,7 +33,7 @@ export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => ({
     ba_reference_number: true,
     status: true,
     client: true,
-    products: true,
+    items: true,
     logistics_person: true,
     created_at: true,
     actions: hasPermission(userRoles, [
@@ -46,7 +46,7 @@ export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => ({
     ba_reference_number: true,
     status: true,
     client: true,
-    products: true,
+    items: true,
     logistics_person: true,
     created_at: true,
     actions: hasPermission(userRoles, [
@@ -128,8 +128,8 @@ export const ProjectColumns = (
       header: "Name",
     },
     {
-      accessorKey: "products",
-      header: "Products",
+      accessorKey: "items",
+      header: "Items",
       cell: ({ row }) => {
         const project = row.original;
 

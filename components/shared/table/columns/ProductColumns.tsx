@@ -23,6 +23,7 @@ import {
 import {
   FormModeEnum,
   IncomingProductsStatus,
+  ItemTypeEnum,
   ProjectStatusEnum,
   UserRoleEnum,
 } from "@/enums";
@@ -35,7 +36,7 @@ import {
 import {
   getProjectsByProduct,
   updateProjectIncomingProductsStatus,
-  updateProjectProductQuantity,
+  updateProjectItemQuantity,
 } from "@/lib/actions/project.actions";
 import { hasPermission } from "@/lib/auth";
 import { formatDateTime, formatExpiration } from "@/lib/utils";
@@ -225,7 +226,7 @@ export const ProductColumns = (
               <Accordion type="single" collapsible>
                 {data && data.length > 0 ? (
                   data.map((project, index) => (
-                    <AccordionItem value={project.name} key={index}>
+                    <AccordionItem value={project.id} key={index}>
                       <AccordionTrigger>{project.name}</AccordionTrigger>
                       <AccordionContent>
                         <div className="grid gap-3 text-sm">
@@ -324,7 +325,7 @@ export const ProductColumns = (
 
       const { mutate } = useMutation({
         mutationKey: ["update-project-product-quantity"],
-        mutationFn: updateProjectProductQuantity,
+        mutationFn: updateProjectItemQuantity,
         onSuccess: () => {
           queryClient.invalidateQueries({
             queryKey: ["get-projects-by-product", row.id],
@@ -450,6 +451,7 @@ export const ProductColumns = (
                                       value={projectProduct.quantity}
                                       onChange={(newQuantity) =>
                                         mutate({
+                                          itemType: ItemTypeEnum.PRODUCT,
                                           id: projectProduct.id,
                                           quantity: newQuantity,
                                         })
@@ -469,12 +471,14 @@ export const ProductColumns = (
                                           IncomingProductsStatus.RECEIVED,
                                         onDecrementClick: () =>
                                           mutate({
+                                            itemType: ItemTypeEnum.PRODUCT,
                                             id: projectProduct.id,
                                             quantity:
                                               projectProduct.quantity - 1,
                                           }),
                                         onIncrementClick: () =>
                                           mutate({
+                                            itemType: ItemTypeEnum.PRODUCT,
                                             id: projectProduct.id,
                                             quantity:
                                               projectProduct.quantity + 1,

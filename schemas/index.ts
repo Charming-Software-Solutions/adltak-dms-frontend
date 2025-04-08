@@ -50,15 +50,21 @@ export const employeeFormSchema = z.object({
   }),
 });
 
-export const projectProductSchema = z.object({
-  product: z.string().uuid({
-    message: "Item is required.",
-  }),
-  quantity: z.coerce.number().positive({
-    message: "Quantity must be a positive number.",
-  }),
-  expiration: z.coerce.date(),
-});
+export const projectItemSchema = z
+  .object({
+    item: z.string().uuid({
+      message: "Item is required.",
+    }),
+    quantity: z.coerce.number().positive({
+      message: "Quantity must be a positive number.",
+    }),
+    expiration: z.coerce.date().optional(),
+    type: z.enum(["product", "asset"]),
+  })
+  .refine((data) => data.type !== "product" || !!data.expiration, {
+    message: "Expiration date is required for products.",
+    path: ["expiration"],
+  });
 
 export const projectFormSchema = z.object({
   name: z.string().min(1, {
@@ -102,6 +108,10 @@ export const assetFormSchema = z.object({
   area: z.string().min(1, {
     message: "Area is required.",
   }),
+  status: z.string().min(1, {
+    message: "Status is required.",
+  }),
+  archived: z.boolean(),
 });
 
 export const classificationFormSchema = z.object({
@@ -167,7 +177,7 @@ export const loginSchema = z.object({
 export type ProductFormData = z.infer<typeof productFormSchema>;
 export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 export type ProjectFormData = z.infer<typeof projectFormSchema>;
-export type ProjectProductFormdata = z.infer<typeof projectProductSchema>;
+export type ProjectItemFormdata = z.infer<typeof projectItemSchema>;
 export type TaskFormData = z.infer<typeof taskFormSchema>;
 export type AssetFormData = z.infer<typeof assetFormSchema>;
 export type ClassificationFormData = z.infer<typeof classificationFormSchema>;

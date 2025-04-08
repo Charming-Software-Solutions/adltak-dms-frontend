@@ -6,14 +6,13 @@ export type Asset = BaseModel & {
   name: string;
   thumbnail?: string;
   code: string;
-  description?: string;
   type: Classification;
   status: AssetStatusEnum;
-  condition: AssetConditionEnum;
   stock: number;
   brand: Classification;
   area: string;
   agency: string;
+  archived: boolean;
 };
 
 export type AssetStatus = keyof typeof ASSET_STATUS;

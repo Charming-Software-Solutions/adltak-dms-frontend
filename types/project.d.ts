@@ -17,8 +17,17 @@ export type ProjectProduct = BaseModel & {
   remaining_quantity: number;
 };
 
+export type ProjectAsset = BaseModel & {
+  asset: Asset;
+  asset_name: string;
+  asset_type: string;
+  quantity: number;
+  used_quantity: number;
+};
+
 export type Project = BaseModel & {
   products: ProjectProduct[];
+  assets: ProjectAsset[];
   name: string;
   ba_reference_number: string;
   status: ProjectStatusEnum;

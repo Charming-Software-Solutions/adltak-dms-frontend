@@ -7,7 +7,6 @@ import ProjectClient from "./ProjectClient";
 export default async function Distributions() {
   const brands = await getBrands();
   const projects = await getProjects();
-  const products = await getProducts();
   const employee = await getCurrentUser({ withEmployeeProfile: true });
 
   return (
@@ -16,7 +15,6 @@ export default async function Distributions() {
       employee={employee.first_name}
       projects={projects}
       brands={brands}
-      products={products}
     />
   );
 }

@@ -2,11 +2,16 @@
 
 import { ICreateProject } from "@/interfaces";
 import { ApiResponse } from "@/types/api";
-import { Project, ProjectProduct } from "@/types/project";
+import { Project, ProjectAsset, ProjectProduct } from "@/types/project";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
-import { IncomingProductsStatus, ProjectStatusEnum } from "@/enums";
+import {
+  IncomingProductsStatus,
+  ItemTypeEnum,
+  ProjectStatusEnum,
+} from "@/enums";
 import { formatErrorResponse } from "../formatters";
+import { ProjectItem } from "../store";
 
 const PROJECT_URL = `${process.env.DOMAIN}/project/`;
 
@@ -46,6 +51,16 @@ async function getProjectsByProduct(productName: string): Promise<Project[]> {
     method: "GET",
   });
   return response.data ?? [];
+}
+
+async function getProjectByAsset(
+  assetName: string,
+): Promise<ApiResponse<Project>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}project-by-asset/?asset=${assetName}`,
+    method: "GET",
+  });
 }
 
 async function updateProject(
@@ -109,22 +124,28 @@ async function deleteProject(id: string): Promise<ApiResponse<string>> {
   });
 }
 
-// Project product related actions
+// Project item related actions
 
-async function updateProjectProductQuantity({
+async function updateProjectItemQuantity({
   id,
+  itemType,
   quantity,
   isUsedQuantity = false,
 }: {
   id: string;
+  itemType: ItemTypeEnum;
   quantity: number;
   isUsedQuantity?: boolean;
-}): Promise<ApiResponse<ProjectProduct>> {
+}): Promise<ApiResponse<ProjectItem>> {
   const fieldToUpdate = isUsedQuantity ? "used_quantity" : "quantity";
+  const url =
+    itemType === ItemTypeEnum.PRODUCT
+      ? `${PROJECT_URL}product/${id}/`
+      : `${PROJECT_URL}asset/${id}/`;
 
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: `${PROJECT_URL}product/${id}/`,
+    url: url,
     contentType: "application/json",
     method: "PATCH",
     body: JSON.stringify({
@@ -133,12 +154,18 @@ async function updateProjectProductQuantity({
   });
 }
 
-async function getProjectProductById(
+async function getProjectItemById(
   id: string,
-): Promise<ApiResponse<ProjectProduct>> {
+  itemType: ItemTypeEnum,
+): Promise<ApiResponse<ProjectItem>> {
+  const url =
+    itemType === ItemTypeEnum.PRODUCT
+      ? `${PROJECT_URL}product/${id}/`
+      : `${PROJECT_URL}asset/${id}/`;
+
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: `${PROJECT_URL}product/${id}/`,
+    url: url,
     method: "GET",
   });
 }
@@ -156,13 +183,14 @@ export {
   createProject,
   getProjects,
   getProjectsByProduct,
+  getProjectByAsset,
   getProjectById,
   updateProject,
   updateProjectIncomingProductsStatus,
   updateProjectStatus,
   deleteProject,
-  // Project product actions
+  // Project item actions
   getProjectProducts,
-  getProjectProductById,
-  updateProjectProductQuantity,
+  getProjectItemById,
+  updateProjectItemQuantity,
 };

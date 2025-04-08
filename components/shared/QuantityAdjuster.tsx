@@ -11,7 +11,7 @@ type QuantityAdjusterProps = {
   minMax?: {
     min: number;
     max: number;
-    disabled: boolean;
+    disabled?: boolean;
     onMinClick: () => void;
     onMaxClick: () => void;
   } | null;

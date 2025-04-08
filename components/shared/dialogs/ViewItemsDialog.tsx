@@ -8,11 +8,12 @@ import ItemCard from "../card/ItemCard";
 
 import { CopyButton } from "@/components/ui/copy-button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { UserRoleEnum } from "@/enums";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ItemTypeEnum, UserRoleEnum } from "@/enums";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
-  ResponsiveDialogDescription,
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
@@ -38,59 +39,82 @@ const ViewItemsDialog = ({
           <Eye className="size-4 mr-2" /> View
         </Button>
       </ResponsiveDialogTrigger>
-      <ResponsiveDialogContent className="max-w-md">
+      <ResponsiveDialogContent className="max-w-lg">
         <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>Products in Project</ResponsiveDialogTitle>
-          <ResponsiveDialogDescription>
-            <span className="flex items-center space-x-2 w-full">
-              <span className="font-semibold text-foreground">
-                BA Reference Number:
-              </span>
-              <span className="inline-flex items-center space-x-1">
-                <span className="font-normal text-muted-foreground">
-                  {project.ba_reference_number}
-                </span>
-                <CopyButton value={project.ba_reference_number} />
-              </span>
-            </span>
-            <span className="flex items-center space-x-2 w-full">
-              <span className="font-semibold text-foreground">
-                Project Name:
-              </span>
-              <span className="inline-flex items-center space-x-1">
-                <span className="font-normal text-muted-foreground">
-                  {project.name}
-                </span>
-                <CopyButton value={project.name} />
-              </span>
-            </span>
-            <span className="flex items-center space-x-2 w-full">
-              <span className="font-semibold text-foreground">
-                Total Products:
-              </span>
-              <span className="inline-flex items-center space-x-1">
-                <span className="font-normal text-muted-foreground">
-                  {project.products.length}
-                </span>
-              </span>
-            </span>
-          </ResponsiveDialogDescription>
+          <ResponsiveDialogTitle>Items in Project</ResponsiveDialogTitle>
         </ResponsiveDialogHeader>
-        <ScrollArea className="h-72 border bg-muted p-4 rounded-md">
-          <div className="flex flex-col gap-2">
-            {project.products.map((item, index) => {
-              return (
-                <ItemCard
-                  userRoles={userRoles}
-                  key={index}
-                  projectStatus={project.status}
-                  projectProduct={item}
-                  isProjectsPage={isProjectsPage}
-                />
-              );
-            })}
+        <div className="grid gap-3 text-sm">
+          <div className="flex items-center justify-between">
+            <dt className="text-muted-foreground">BA Reference Number</dt>
+            <div className="flex items-center">
+              {project.ba_reference_number}{" "}
+              <CopyButton
+                className="ml-1"
+                value={project.ba_reference_number}
+              />
+            </div>
           </div>
-        </ScrollArea>
+          <Separator className="my-1" />
+          <div className="flex items-center justify-between">
+            <dt className="text-muted-foreground">Total Products</dt>
+            <dd>{project.products.length} QTY</dd>
+          </div>
+          <Separator className="my-1" />
+          <div className="flex items-center justify-between">
+            <dt className="text-muted-foreground">Total Assets</dt>
+            <dd>{project.assets.length} QTY</dd>
+          </div>
+        </div>
+        <Tabs defaultValue="products" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="assets">Assets</TabsTrigger>
+          </TabsList>
+          <TabsContent value="products">
+            <ScrollArea className="h-72 border bg-muted p-4 rounded-md">
+              <div className="flex flex-col gap-2 h-full">
+                {project.products.length > 0 ? (
+                  project.products.map((projectProduct, index) => (
+                    <ItemCard
+                      key={index}
+                      itemType={ItemTypeEnum.PRODUCT}
+                      userRoles={userRoles}
+                      projectStatus={project.status}
+                      projectItem={projectProduct}
+                      isProjectsPage={isProjectsPage}
+                    />
+                  ))
+                ) : (
+                  <div className="flex flex-1 items-center justify-center">
+                    <span className="text-center">No Products.</span>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+          <TabsContent value="assets">
+            <ScrollArea className="h-72 border bg-muted p-4 rounded-md">
+              <div className="flex flex-col gap-2 h-full">
+                {project.assets.length > 0 ? (
+                  project.assets.map((projectAsset, index) => (
+                    <ItemCard
+                      key={index}
+                      itemType={ItemTypeEnum.ASSET}
+                      projectItem={projectAsset}
+                      userRoles={userRoles}
+                      projectStatus={project.status}
+                      isProjectsPage={isProjectsPage}
+                    />
+                  ))
+                ) : (
+                  <div className="flex flex-1 items-center justify-center">
+                    <span className="text-center">No Assets.</span>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </TabsContent>
+        </Tabs>
       </ResponsiveDialogContent>
     </ResponsiveDialog>
   );
