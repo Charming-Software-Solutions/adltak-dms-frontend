@@ -54,6 +54,7 @@ import {
   updateMaterialIssue,
 } from "@/lib/actions/material.actions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 
 export const visibleMaterialColumns = (userRole: UserRoleEnum[]) => {
   return createColumnConfig({
@@ -357,7 +358,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
               <div className="space-y-2">
                 {material.status === MaterialStatusEnum.AVAILABLE ? (
                   <React.Fragment>
-                    <Alert>
+                    <Alert className="bg-muted">
                       <AlertCircleIcon className="size-4" />
                       <AlertDescription>
                         Adding or removing items here directly affects available
@@ -377,11 +378,11 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                           material.stock - otherIssuesQuantity;
 
                         return (
-                          <div
+                          <Card
                             key={issueType}
-                            className="flex items-center justify-between py-2.5 px-3.5 bg-muted rounded-md border"
+                            className="flex items-center justify-between p-3"
                           >
-                            <dt className="flex items-center gap-2 text-muted-foreground">
+                            <dt className="flex items-center gap-2">
                               {IconComponent && (
                                 <IconComponent className="h-4 w-4" />
                               )}
@@ -402,6 +403,32 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                                       },
                                     },
                                   });
+                                }}
+                                minMax={{
+                                  min: 1,
+                                  max: remainingStock,
+                                  onMaxClick: () => {
+                                    mutate({
+                                      id: material.id,
+                                      issues_data: {
+                                        [issueType]: {
+                                          ...issueData,
+                                          quantity: remainingStock,
+                                        },
+                                      },
+                                    });
+                                  },
+                                  onMinClick: () => {
+                                    mutate({
+                                      id: material.id,
+                                      issues_data: {
+                                        [issueType]: {
+                                          ...issueData,
+                                          quantity: 1,
+                                        },
+                                      },
+                                    });
+                                  },
                                 }}
                                 stepButtons={{
                                   decrementDisabled: currentIssueQuantity <= 0,
@@ -426,7 +453,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                                   onIncrementClick: () => {
                                     const currentQuantity =
                                       updatedMaterial?.issues[issueEnum]
-                                        .quantity ?? issueData.quantity;
+                                        ?.quantity ?? issueData.quantity;
                                     mutate({
                                       id: material.id,
                                       issues_data: {
@@ -440,7 +467,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                                 }}
                               />
                             </dd>
-                          </div>
+                          </Card>
                         );
                       },
                     )}
