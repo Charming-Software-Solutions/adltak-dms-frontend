@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import IconButton from "./buttons/IconButton";
+import { LoaderIcon, MinusIcon, PlusIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Separator } from "../ui/separator";
-import { MinusIcon, PlusIcon } from "lucide-react";
+import IconButton from "./buttons/IconButton";
 
 type QuantityAdjusterProps = {
   value: number;
@@ -22,6 +22,7 @@ type QuantityAdjusterProps = {
     onIncrementClick: () => void;
   };
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  loading?: boolean;
 };
 
 const QuantityAdjuster = ({
@@ -30,6 +31,7 @@ const QuantityAdjuster = ({
   minMax,
   stepButtons,
   inputProps = {},
+  loading,
 }: QuantityAdjusterProps) => {
   const [inputValue, setInputValue] = useState(value.toString());
 
@@ -87,18 +89,22 @@ const QuantityAdjuster = ({
 
       <Separator orientation="vertical" className="h-10" />
 
-      <input
-        type="number"
-        className="min-w-[3ch] w-12 h-10 text-sm text-center tabular-nums border-none focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-        min={minMax ? minMax.min : undefined}
-        max={minMax ? minMax.max : undefined}
-        value={inputValue}
-        onChange={handleInputChange}
-        onBlur={handleInputBlur}
-        disabled={inputProps.disabled}
-        aria-label="Quantity"
-        {...inputProps}
-      />
+      {loading ? (
+        <LoaderIcon className="animate-spin min-w-[3ch] w-12 h-5" />
+      ) : (
+        <input
+          type="number"
+          className="min-w-[3ch] w-12 h-10 text-sm text-center tabular-nums border-none focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          min={minMax ? minMax.min : undefined}
+          max={minMax ? minMax.max : undefined}
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          disabled={inputProps.disabled}
+          aria-label="Quantity"
+          {...inputProps}
+        />
+      )}
 
       <Separator orientation="vertical" className="h-10" />
 

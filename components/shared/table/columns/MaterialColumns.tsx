@@ -257,15 +257,6 @@ export const MaterialColumns: ColumnDef<Material>[] = [
         queryFn: () => getMaterialById(material.id),
         select: (response) => response.data,
       });
-      const { mutate } = useMutation({
-        mutationKey: ["update-material-issue"],
-        mutationFn: updateMaterialIssue,
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["get-updated-material", material.id],
-          });
-        },
-      });
 
       const productsInProject = [
         ...new Map(
@@ -377,6 +368,16 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                         const maxAvailableForThisIssue =
                           material.stock - otherIssuesQuantity;
 
+                        const { mutate, isPending } = useMutation({
+                          mutationKey: ["update-material-issue", issueType],
+                          mutationFn: updateMaterialIssue,
+                          onSuccess: () => {
+                            queryClient.invalidateQueries({
+                              queryKey: ["get-updated-material", material.id],
+                            });
+                          },
+                        });
+
                         return (
                           <Card
                             key={issueType}
@@ -404,8 +405,10 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                                     },
                                   });
                                 }}
+                                inputProps={{ disabled: isPending }}
                                 minMax={{
                                   min: 1,
+                                  disabled: isPending,
                                   max: remainingStock,
                                   onMaxClick: () => {
                                     mutate({
@@ -431,11 +434,13 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                                   },
                                 }}
                                 stepButtons={{
-                                  decrementDisabled: currentIssueQuantity <= 0,
+                                  decrementDisabled:
+                                    currentIssueQuantity <= 0 || isPending,
                                   incrementDisabled:
                                     remainingStock <= 0 ||
                                     currentIssueQuantity >=
-                                      maxAvailableForThisIssue,
+                                      maxAvailableForThisIssue ||
+                                    isPending,
                                   onDecrementClick: () => {
                                     const currentQuantity =
                                       updatedMaterial?.issues[issueEnum]
@@ -465,6 +470,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                                     });
                                   },
                                 }}
+                                loading={isPending}
                               />
                             </dd>
                           </Card>
