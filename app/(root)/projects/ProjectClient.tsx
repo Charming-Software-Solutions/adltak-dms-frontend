@@ -75,6 +75,7 @@ const ProjectClient = ({ user, employee, projects }: Props) => {
           {hasPermission(user.roles, [
             UserRoleEnum.ADMIN,
             UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+            UserRoleEnum.PROJECT_MANAGER,
           ]) && (
             <ResponsiveDialog
               open={openDistributionDialog}

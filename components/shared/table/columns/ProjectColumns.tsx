@@ -39,6 +39,7 @@ export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => ({
     actions: hasPermission(userRoles, [
       UserRoleEnum.ADMIN,
       UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+      UserRoleEnum.PROJECT_MANAGER,
     ]),
   },
   mobile: {
@@ -52,6 +53,7 @@ export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => ({
     actions: hasPermission(userRoles, [
       UserRoleEnum.ADMIN,
       UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+      UserRoleEnum.PROJECT_MANAGER,
     ]),
   },
 });
@@ -150,15 +152,27 @@ export const ProjectColumns = (
         const router = useRouter();
 
         return (
-          <StatusDropdown
-            id={row.original.id}
-            mutationKey="update-project-status"
-            currentStatus={status}
-            statuses={PROJECT_STATUSES}
-            mutationFn={updateProjectStatus}
-            onSuccess={() => router.refresh()}
-            disabled={status === ProjectStatusEnum.LOCKED || isInsightsPage}
-          />
+          <React.Fragment>
+            {hasPermission(userRoles, [
+              UserRoleEnum.PROJECT_MANAGER,
+              UserRoleEnum.ADMIN,
+              UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+            ]) ? (
+              <StatusDropdown
+                id={row.original.id}
+                mutationKey="update-project-status"
+                currentStatus={status}
+                statuses={PROJECT_STATUSES}
+                mutationFn={updateProjectStatus}
+                onSuccess={() => router.refresh()}
+                disabled={status === ProjectStatusEnum.LOCKED || isInsightsPage}
+              />
+            ) : (
+              <Badge variant={"outline"} className="rounded-md">
+                {PROJECT_STATUSES[status]}
+              </Badge>
+            )}
+          </React.Fragment>
         );
       },
     },
@@ -210,6 +224,7 @@ export const ProjectColumns = (
     hasPermission(userRoles, [
       UserRoleEnum.ADMIN,
       UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+      UserRoleEnum.PROJECT_MANAGER,
     ])
   ) {
     columns.push({
