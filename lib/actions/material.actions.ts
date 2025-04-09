@@ -1,6 +1,6 @@
 "use server";
 
-import { Material, MaterialStatus } from "@/types/material";
+import { Material, MaterialIssue, MaterialStatus } from "@/types/material";
 import { fetchAndHandleResponse } from "../utils";
 import { ApiResponse } from "@/types/api";
 import { getSession } from "@/auth/session";
@@ -23,6 +23,14 @@ async function getMaterials(): Promise<Material[]> {
     method: "GET",
   });
   return response.data ?? [];
+}
+
+async function getMaterialById(id: string): Promise<ApiResponse<Material>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${MATERIAL_URL}${id}/`,
+    method: "GET",
+  });
 }
 
 async function updateMaterial(
@@ -63,10 +71,28 @@ async function deleteMaterial(id: string): Promise<ApiResponse<string>> {
   });
 }
 
+async function updateMaterialIssue({
+  id,
+  issues_data,
+}: {
+  id: string;
+  issues_data: Record<string, MaterialIssue>;
+}): Promise<ApiResponse<Material>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${MATERIAL_URL}${id}/`,
+    method: "PATCH",
+    contentType: "application/json",
+    body: JSON.stringify({ issues_data }),
+  });
+}
+
 export {
   createMaterial,
   getMaterials,
+  getMaterialById,
   updateMaterial,
   updateMaterialStatus,
   deleteMaterial,
+  updateMaterialIssue,
 };

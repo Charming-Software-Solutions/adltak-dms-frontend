@@ -27,12 +27,10 @@ export enum MaterialStatusEnum {
   UNAVAILABLE = "UNAVAILABLE",
 }
 
-export enum MaterialConditionEnum {
-  NEW = "NEW",
-  GOOD = "GOOD",
-  FAIR = "FAIR",
-  POOR = "POOR",
+export enum MaterialIssueEnum {
   DAMAGED = "DAMAGED",
+  FOR_REPAIR = "FOR_REPAIR",
+  LOST = "LOST",
 }
 
 export enum FormModeEnum {

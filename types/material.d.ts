@@ -1,6 +1,11 @@
-import { MaterialConditionEnum, MaterialStatusEnum } from "@/enums";
+import { MaterialIssueEnum, MaterialStatusEnum } from "@/enums";
 import { BaseModel, Classification } from "./generics";
 import { MATERIAL_STATUS } from "@/constants";
+
+export type MaterialIssue = BaseModel & {
+  quantity: number;
+  resolved: boolean;
+};
 
 export type Material = BaseModel & {
   name: string;
@@ -13,6 +18,7 @@ export type Material = BaseModel & {
   area: string;
   agency: string;
   archived: boolean;
+  issues: Record<MaterialIssueEnum, MaterialIssue>;
 };
 
 export type MaterialStatus = keyof typeof MATERIAL_STATUS;

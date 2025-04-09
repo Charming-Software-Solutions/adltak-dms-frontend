@@ -4,6 +4,7 @@ import {
   UserRoleEnum,
   TaskStatusEnum,
   IncomingProductsStatus,
+  MaterialIssueEnum,
 } from "@/enums";
 import { SelectItemType } from "@/types/primitives";
 
@@ -76,6 +77,12 @@ export const MATERIAL_STATUS: Record<MaterialStatusEnum, string> = {
   [MaterialStatusEnum.AVAILABLE]: "Available",
   [MaterialStatusEnum.IN_USE]: "In Use",
   [MaterialStatusEnum.UNAVAILABLE]: "Unavailable",
+} as const;
+
+export const MATERIAL_ISSUE: Record<MaterialIssueEnum, string> = {
+  [MaterialIssueEnum.DAMAGED]: "Damaged",
+  [MaterialIssueEnum.FOR_REPAIR]: "For Repair",
+  [MaterialIssueEnum.LOST]: "Lost",
 } as const;
 
 export const USER_ROLES: Record<UserRoleEnum, string> = {
