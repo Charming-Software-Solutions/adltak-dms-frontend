@@ -78,7 +78,7 @@ const HomeClient = ({ user, projects, metrics }: Props) => {
                 <CardDescription>Latest Projects</CardDescription>
               </div>
               <Button>
-                <Link href={"/distributions"}>View All</Link>
+                <Link href={"/projects"}>View All</Link>
                 <ExternalLinkIcon className="size-4 ml-2" />
               </Button>
             </CardHeader>

@@ -14,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { imagePlaceholder } from "@/constants";
-import { MaterialStatusEnum } from "@/enums";
+import { ItemTypeEnum, MaterialStatusEnum } from "@/enums";
 import { getMaterials } from "@/lib/actions/material.actions";
 import { getProducts } from "@/lib/actions/product.actions";
 import { useProjectItemStore } from "@/lib/store";
@@ -53,7 +53,7 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useProjectAddItemForm(itemType);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["fetch-project-items", itemType],
     queryFn: async () => {
       const filteredMaterials = (await getMaterials()).filter(
@@ -83,6 +83,20 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
       setErrorMessage("Item not found.");
       return;
     }
+
+    const isMaterialOverStock =
+      itemType === "material" &&
+      (items.find((i) => i.id === values.item)?.quantity || 0) +
+        values.quantity >
+        item.stock;
+
+    if (isMaterialOverStock) {
+      setErrorMessage("Item quantity has reached the limit.");
+      return;
+    }
+
+    // Remove error message when !isMaterialOverStock
+    setErrorMessage(null);
 
     const projectProduct = {
       id: `${item.id}-${values.expiration}`,
