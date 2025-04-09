@@ -59,7 +59,7 @@ export const projectItemSchema = z
       message: "Quantity must be a positive number.",
     }),
     expiration: z.coerce.date().optional(),
-    type: z.enum(["product", "asset"]),
+    type: z.enum(["product", "material"]),
   })
   .refine((data) => data.type !== "product" || !!data.expiration, {
     message: "Expiration date is required for products.",
@@ -87,7 +87,7 @@ export const taskFormSchema = z.object({
   }),
 });
 
-export const assetFormSchema = z.object({
+export const materialFormSchema = z.object({
   agency: z.string().min(1, {
     message: "Agency is required.",
   }),
@@ -179,7 +179,7 @@ export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 export type ProjectFormData = z.infer<typeof projectFormSchema>;
 export type ProjectItemFormdata = z.infer<typeof projectItemSchema>;
 export type TaskFormData = z.infer<typeof taskFormSchema>;
-export type AssetFormData = z.infer<typeof assetFormSchema>;
+export type MaterialFormData = z.infer<typeof materialFormSchema>;
 export type ClassificationFormData = z.infer<typeof classificationFormSchema>;
 export type ChangeEmailFormData = z.infer<typeof changeEmailFormSchema>;
 export type ChangePasswordFormData = z.infer<typeof changePasswordFormSchema>;

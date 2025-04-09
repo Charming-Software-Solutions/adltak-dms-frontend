@@ -1,5 +1,5 @@
 import {
-  AssetStatusEnum,
+  MaterialStatusEnum,
   ProjectStatusEnum,
   UserRoleEnum,
   TaskStatusEnum,
@@ -72,12 +72,10 @@ export const PROJECT_STATUSES: Record<ProjectStatusEnum, string> = {
   [ProjectStatusEnum.CANCELLED]: "Cancelled",
 } as const;
 
-export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
-  [AssetStatusEnum.AVAILABLE]: "Available",
-  [AssetStatusEnum.IN_USE]: "In Use",
-  [AssetStatusEnum.DAMAGED]: "Damaged",
-  [AssetStatusEnum.FOR_REPAIR]: "For Repair",
-  [AssetStatusEnum.LOST]: "Lost",
+export const MATERIAL_STATUS: Record<MaterialStatusEnum, string> = {
+  [MaterialStatusEnum.AVAILABLE]: "Available",
+  [MaterialStatusEnum.IN_USE]: "In Use",
+  [MaterialStatusEnum.UNAVAILABLE]: "Unavailable",
 } as const;
 
 export const USER_ROLES: Record<UserRoleEnum, string> = {

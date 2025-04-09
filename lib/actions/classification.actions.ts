@@ -18,8 +18,8 @@ function getClassificationUrl(classificationType: ClassificationType): string {
     case "product_type":
       url = `${url}/product/type/`;
       break;
-    case "asset_type":
-      url = `${url}/asset/type/`;
+    case "material_type":
+      url = `${url}/material/type/`;
     default:
       break;
   }
@@ -76,7 +76,7 @@ async function deleteClassification(
 
   if (response.status === 500) {
     throw new Error(
-      "Failed to delete classification due to existing connections to a product or asset.",
+      "Failed to delete classification due to existing connections to a product or material.",
     );
   }
 

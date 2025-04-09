@@ -53,7 +53,7 @@ export const useProjectForm = ({
 
     // Get items directly from the zustand store
     const productItems = items.filter((item) => "product" in item);
-    const assetItems = items.filter((item) => "asset" in item);
+    const materialItems = items.filter((item) => "material" in item);
 
     if (mode === FormModeEnum.CREATE && productItems.length > 0) {
       projectCreate = {
@@ -64,8 +64,8 @@ export const useProjectForm = ({
           quantity: object.quantity,
           expiration: object.expiration,
         })),
-        assets: assetItems.map((object) => ({
-          asset: object.asset.id,
+        materials: materialItems.map((object) => ({
+          material: object.material.id,
           quantity: object.quantity,
         })),
         ba_reference_number: values.baReferenceNumber,

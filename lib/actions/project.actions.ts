@@ -2,7 +2,7 @@
 
 import { ICreateProject } from "@/interfaces";
 import { ApiResponse } from "@/types/api";
-import { Project, ProjectAsset, ProjectProduct } from "@/types/project";
+import { Project, ProjectMaterial, ProjectProduct } from "@/types/project";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
 import {
@@ -53,12 +53,12 @@ async function getProjectsByProduct(productName: string): Promise<Project[]> {
   return response.data ?? [];
 }
 
-async function getProjectByAsset(
-  assetName: string,
+async function getProjectByMaterial(
+  materialName: string,
 ): Promise<ApiResponse<Project>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: `${PROJECT_URL}project-by-asset/?asset=${assetName}`,
+    url: `${PROJECT_URL}project-by-material/?material=${materialName}`,
     method: "GET",
   });
 }
@@ -141,7 +141,7 @@ async function updateProjectItemQuantity({
   const url =
     itemType === ItemTypeEnum.PRODUCT
       ? `${PROJECT_URL}product/${id}/`
-      : `${PROJECT_URL}asset/${id}/`;
+      : `${PROJECT_URL}material/${id}/`;
 
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
@@ -161,7 +161,7 @@ async function getProjectItemById(
   const url =
     itemType === ItemTypeEnum.PRODUCT
       ? `${PROJECT_URL}product/${id}/`
-      : `${PROJECT_URL}asset/${id}/`;
+      : `${PROJECT_URL}material/${id}/`;
 
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
@@ -183,7 +183,7 @@ export {
   createProject,
   getProjects,
   getProjectsByProduct,
-  getProjectByAsset,
+  getProjectByMaterial,
   getProjectById,
   updateProject,
   updateProjectIncomingProductsStatus,

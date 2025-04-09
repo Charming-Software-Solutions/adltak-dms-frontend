@@ -30,8 +30,8 @@ export interface ICreateProject {
     quantity: number;
     expiration: string;
   }[];
-  assets?: {
-    asset: string;
+  materials?: {
+    material: string;
     quantity: number;
   }[];
   ba_reference_number: string;
@@ -43,7 +43,7 @@ export interface ICreateTask {
   distribution: string;
 }
 
-export interface ICreateAsset {
+export interface ICreateMaterial {
   name: string;
   code: string;
   type: string;

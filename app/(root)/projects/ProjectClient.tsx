@@ -100,7 +100,7 @@ const ProjectClient = ({ user, employee, projects }: Props) => {
                     <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="details">Details</TabsTrigger>
                       <TabsTrigger value="products">Products</TabsTrigger>
-                      <TabsTrigger value="assets">Assets</TabsTrigger>
+                      <TabsTrigger value="materials">Materials</TabsTrigger>
                     </TabsList>
                     <TabsContent value="details" className="space-y-2.5">
                       <Card className="p-4">
@@ -119,16 +119,16 @@ const ProjectClient = ({ user, employee, projects }: Props) => {
                         <ProjectAddItem itemType="product" />
                       </Card>
                     </TabsContent>
-                    <TabsContent value="assets" className="space-y-2.5">
+                    <TabsContent value="materials" className="space-y-2.5">
                       <Alert>
                         <AlertCircleIcon className="size-4" />
                         <AlertDescription>
-                          This will be the assets used for this specific
+                          This will be the materials used for this specific
                           project.
                         </AlertDescription>
                       </Alert>
                       <Card className="p-4">
-                        <ProjectAddItem itemType="asset" />
+                        <ProjectAddItem itemType="material" />
                       </Card>
                     </TabsContent>
                   </Tabs>

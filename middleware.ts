@@ -7,7 +7,7 @@ const protectedRoutes = [
   "/projects",
   "/products",
   "/tasks",
-  "/assets",
+  "/materials",
   "/employee",
   "/classifications",
 ];

@@ -12,7 +12,7 @@ import {
 import { hasPermission } from "@/lib/auth";
 import { ProjectItem } from "@/lib/store";
 import { formatExpiration } from "@/lib/utils";
-import { ProjectAsset, ProjectProduct } from "@/types/project";
+import { ProjectMaterial, ProjectProduct } from "@/types/project";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import QuantityAdjuster from "../QuantityAdjuster";
@@ -37,12 +37,12 @@ const ItemCard = ({
   const projectItemData =
     itemType === ItemTypeEnum.PRODUCT
       ? (projectItem as ProjectProduct)
-      : (projectItem as ProjectAsset);
+      : (projectItem as ProjectMaterial);
 
   const itemDetails =
     itemType === ItemTypeEnum.PRODUCT
       ? (projectItemData as ProjectProduct).product
-      : (projectItemData as ProjectAsset).asset;
+      : (projectItemData as ProjectMaterial).material;
 
   const { data: updatedProjectItem } = useQuery({
     queryKey: ["get-updated-project-item", projectItem.id],

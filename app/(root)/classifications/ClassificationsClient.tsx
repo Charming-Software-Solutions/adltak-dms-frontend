@@ -34,7 +34,7 @@ type Props = {
     productBrands: Classification[];
     productCategories: Classification[];
     productTypes: Classification[];
-    assetTypes: Classification[];
+    materialTypes: Classification[];
   };
 };
 
@@ -52,7 +52,7 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
           ...classifications.productBrands,
           ...classifications.productCategories,
           ...classifications.productTypes,
-          ...classifications.assetTypes,
+          ...classifications.materialTypes,
         ];
         break;
       case "product_brand":
@@ -64,8 +64,8 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
       case "product_type":
         filteredClassifcations = classifications.productTypes;
         break;
-      case "asset_type":
-        filteredClassifcations = classifications.assetTypes;
+      case "material_type":
+        filteredClassifcations = classifications.materialTypes;
       default:
         break;
     }
@@ -145,7 +145,7 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
               Product Categories
             </TabsTrigger>
             <TabsTrigger value="product_type">Product Types</TabsTrigger>
-            <TabsTrigger value="asset_type">Asset Types</TabsTrigger>
+            <TabsTrigger value="material_type">Material Types</TabsTrigger>
           </TabsList>
           <TabsContent value="product_brand">
             {renderClassificationTable("product_brand").render()}
@@ -156,8 +156,8 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
           <TabsContent value="product_type">
             {renderClassificationTable("product_type").render()}
           </TabsContent>
-          <TabsContent value="asset_type">
-            {renderClassificationTable("asset_type").render()}
+          <TabsContent value="material_type">
+            {renderClassificationTable("material_type").render()}
           </TabsContent>
         </Tabs>
       </main>

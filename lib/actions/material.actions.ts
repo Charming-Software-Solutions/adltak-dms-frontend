@@ -1,51 +1,51 @@
 "use server";
 
-import { Asset, AssetStatus } from "@/types/asset";
+import { Material, MaterialStatus } from "@/types/material";
 import { fetchAndHandleResponse } from "../utils";
 import { ApiResponse } from "@/types/api";
 import { getSession } from "@/auth/session";
 
-const ASSET_URL = `${process.env.DOMAIN}/asset/`;
+const MATERIAL_URL = `${process.env.DOMAIN}/material/`;
 
-async function createAsset(body: FormData): Promise<ApiResponse<Asset>> {
+async function createMaterial(body: FormData): Promise<ApiResponse<Material>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: ASSET_URL,
+    url: MATERIAL_URL,
     method: "POST",
     body: body,
   });
 }
 
-async function getAssets(): Promise<Asset[]> {
-  const response = await fetchAndHandleResponse<Asset[]>({
+async function getMaterials(): Promise<Material[]> {
+  const response = await fetchAndHandleResponse<Material[]>({
     jwt: (await getSession())?.access,
-    url: ASSET_URL,
+    url: MATERIAL_URL,
     method: "GET",
   });
   return response.data ?? [];
 }
 
-async function updateAsset(
+async function updateMaterial(
   id: string,
   body: FormData,
-): Promise<ApiResponse<Asset>> {
+): Promise<ApiResponse<Material>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: `${ASSET_URL}${id}/`,
+    url: `${MATERIAL_URL}${id}/`,
     method: "PATCH",
     body: body,
   });
 }
 
-async function updateAssetStatus({
+async function updateMaterialStatus({
   id,
   status,
 }: {
   id: string;
-  status: AssetStatus;
-}): Promise<ApiResponse<Asset>> {
+  status: MaterialStatus;
+}): Promise<ApiResponse<Material>> {
   return fetchAndHandleResponse({
-    url: `${ASSET_URL}${id}/`,
+    url: `${MATERIAL_URL}${id}/`,
     jwt: (await getSession())?.access,
     method: "PATCH",
     contentType: "application/json",
@@ -55,12 +55,18 @@ async function updateAssetStatus({
   });
 }
 
-async function deleteAsset(id: string): Promise<ApiResponse<string>> {
+async function deleteMaterial(id: string): Promise<ApiResponse<string>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
-    url: `${ASSET_URL}${id}/`,
+    url: `${MATERIAL_URL}${id}/`,
     method: "DELETE",
   });
 }
 
-export { createAsset, getAssets, updateAsset, updateAssetStatus, deleteAsset };
+export {
+  createMaterial,
+  getMaterials,
+  updateMaterial,
+  updateMaterialStatus,
+  deleteMaterial,
+};

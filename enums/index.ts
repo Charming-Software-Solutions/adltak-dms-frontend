@@ -21,15 +21,13 @@ export enum ProjectStatusEnum {
   CANCELLED = "CANCELLED",
 }
 
-export enum AssetStatusEnum {
+export enum MaterialStatusEnum {
   AVAILABLE = "AVAILABLE",
   IN_USE = "IN_USE",
-  DAMAGED = "DAMAGED",
-  FOR_REPAIR = "FOR_REPAIR",
-  LOST = "LOST",
+  UNAVAILABLE = "UNAVAILABLE",
 }
 
-export enum AssetConditionEnum {
+export enum MaterialConditionEnum {
   NEW = "NEW",
   GOOD = "GOOD",
   FAIR = "FAIR",
@@ -59,5 +57,5 @@ export enum IncomingProductsStatus {
 
 export enum ItemTypeEnum {
   PRODUCT = "PRODUCT",
-  ASSET = "ASSET",
+  MATERIAL = "MATERIAL",
 }

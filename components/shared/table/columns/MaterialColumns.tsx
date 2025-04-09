@@ -1,18 +1,18 @@
 "use client";
 
-import AssetForm, {
-  useAssetForm,
-} from "@/app/(root)/assets/components/AssetForm";
+import MaterialForm, {
+  useMaterialForm,
+} from "@/app/(root)/materials/components/MaterialForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { imagePlaceholder } from "@/constants";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { deleteAsset } from "@/lib/actions/asset.actions";
-import { getAssetTypes } from "@/lib/actions/asset.classifcations.actions";
 import { getClassifications } from "@/lib/actions/classification.actions";
+import { getProjectByMaterial } from "@/lib/actions/project.actions";
 import { hasPermission } from "@/lib/auth";
 import { formatDateTime } from "@/lib/utils";
-import { Asset } from "@/types/asset";
+import { Material } from "@/types/material";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { ExternalLink, Eye } from "lucide-react";
@@ -27,15 +27,12 @@ import {
   ResponsiveDialogTrigger,
 } from "../../ResponsiveDialog";
 import DialogFormButton from "../../buttons/DialogFormButton";
-import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent } from "@/components/ui/card";
-import { getProjectByAsset } from "@/lib/actions/project.actions";
+import { getMaterialTypes } from "@/lib/actions/material.classifcations.actions";
 
-export const visibleAssetColumns = (userRole: UserRoleEnum[]) => {
+export const visibleMaterialColumns = (userRole: UserRoleEnum[]) => {
   return createColumnConfig({
     desktop: {
       thumbnail: true,
@@ -74,64 +71,66 @@ export const visibleAssetColumns = (userRole: UserRoleEnum[]) => {
   });
 };
 
-const AssetActionsCell = React.memo(({ asset }: { asset: Asset }) => {
-  const [openDialog, setOpenDialog] = useState(false);
+const MaterialActionsCell = React.memo(
+  ({ material }: { material: Material }) => {
+    const [openDialog, setOpenDialog] = useState(false);
 
-  const { form, onSubmit } = useAssetForm({
-    asset,
-    mode: FormModeEnum.EDIT,
-  });
+    const { form, onSubmit } = useMaterialForm({
+      material,
+      mode: FormModeEnum.EDIT,
+    });
 
-  const { data } = useQuery({
-    queryKey: ["edit-asset", asset.id],
-    queryFn: async () => {
-      const assetTypes = await getAssetTypes();
-      const brands = await getClassifications("product_brand");
-      return { assetTypes, brands };
-    },
-  });
+    const { data } = useQuery({
+      queryKey: ["edit-material", material.id],
+      queryFn: async () => {
+        const materialTypes = await getMaterialTypes();
+        const brands = await getClassifications("product_brand");
+        return { materialTypes, brands };
+      },
+    });
 
-  return (
-    <div className="flex items-center gap-2">
-      <EditDialog
-        key={`edit-dialog-${asset.id}`}
-        title="Edit Asset"
-        open={openDialog}
-        setOpen={setOpenDialog}
-      >
-        <AssetForm
-          key={`form-${asset.id}`}
-          form={form}
-          mode={FormModeEnum.EDIT}
-          assetTypes={data?.assetTypes ?? []}
-          brands={data?.brands ?? []}
-        />
-        <ResponsiveDialogFooter className="px-1">
-          <div className="dialog-footer">
-            <Button
-              variant={"outline"}
-              className="flex-grow w-full"
-              onClick={() => form.reset()}
-            >
-              Reset
-            </Button>
-            <DialogFormButton
-              onClick={form.handleSubmit((values) =>
-                onSubmit(values, setOpenDialog),
-              )}
-              disabled={form.formState.isSubmitting}
-              loading={form.formState.isSubmitting}
-            >
-              Save Changes
-            </DialogFormButton>
-          </div>
-        </ResponsiveDialogFooter>
-      </EditDialog>
-    </div>
-  );
-});
+    return (
+      <div className="flex items-center gap-2">
+        <EditDialog
+          key={`edit-dialog-${material.id}`}
+          title="Edit Material"
+          open={openDialog}
+          setOpen={setOpenDialog}
+        >
+          <MaterialForm
+            key={`form-${material.id}`}
+            form={form}
+            mode={FormModeEnum.EDIT}
+            materialTypes={data?.materialTypes ?? []}
+            brands={data?.brands ?? []}
+          />
+          <ResponsiveDialogFooter className="px-1">
+            <div className="dialog-footer">
+              <Button
+                variant={"outline"}
+                className="flex-grow w-full"
+                onClick={() => form.reset()}
+              >
+                Reset
+              </Button>
+              <DialogFormButton
+                onClick={form.handleSubmit((values) =>
+                  onSubmit(values, setOpenDialog),
+                )}
+                disabled={form.formState.isSubmitting}
+                loading={form.formState.isSubmitting}
+              >
+                Save Changes
+              </DialogFormButton>
+            </div>
+          </ResponsiveDialogFooter>
+        </EditDialog>
+      </div>
+    );
+  },
+);
 
-export const AssetColumns: ColumnDef<Asset>[] = [
+export const MaterialColumns: ColumnDef<Material>[] = [
   {
     accessorKey: "thumbnail",
     header: () => (
@@ -142,7 +141,7 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     cell: ({ row }) => {
       return (
         <Image
-          alt="Asset image"
+          alt="Material image"
           priority
           className="aspect-square rounded-md object-cover"
           height={64}
@@ -221,11 +220,11 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const asset = row.original;
+      const material = row.original;
       const [openDialog, setOpenDialog] = useState(false);
       const { data: project } = useQuery({
-        queryKey: ["fetch-project-by-asset", row.id],
-        queryFn: async () => await getProjectByAsset(asset.name),
+        queryKey: ["fetch-project-by-material", row.id],
+        queryFn: async () => await getProjectByMaterial(material.name),
         select: (response) => response.data,
       });
       const productsInProject = [
@@ -237,8 +236,8 @@ export const AssetColumns: ColumnDef<Asset>[] = [
         ).values(),
       ];
 
-      // TODO: make the status from asset conditionally render the
-      // asset issue
+      // TODO: make the status from material conditionally render the
+      // material issue
       // - add a resolve issue button that will resolve the selected
       // issue
       // - only allow 1 issue at a time
@@ -252,54 +251,59 @@ export const AssetColumns: ColumnDef<Asset>[] = [
           </ResponsiveDialogTrigger>
           <ResponsiveDialogContent className="md:max-w-md">
             <ResponsiveDialogHeader>
-              <ResponsiveDialogTitle>Asset Status</ResponsiveDialogTitle>
+              <ResponsiveDialogTitle>Material Status</ResponsiveDialogTitle>
             </ResponsiveDialogHeader>
             <div className="grid gap-3 text-sm">
               <Separator className="my-1" />
               <div className="flex items-center justify-between">
-                <dt className="text-muted-foreground">
-                  Status:{" "}
-                  <Badge variant={"outline"} className="rounded-md">
-                    Available
-                  </Badge>
-                </dt>
-                <dd>{asset.stock} QTY</dd>
+                <Badge variant={"outline"} className="rounded-md">
+                  Available Stock
+                </Badge>
+                <dd>{material.stock} QTY</dd>
               </div>
               <Separator className="my-1" />
               <span>Assigned Project</span>
               <div className="space-y-2 bg-muted border p-4 rounded-md">
-                <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">In Use: </dt>
-                  <dd>
-                    {project?.assets.find(
-                      (projectAsset) => projectAsset.asset.name === asset.name,
-                    )?.quantity || 0}{" "}
-                    QTY
-                  </dd>
-                </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">Project Name: </dt>
-                  <dd>{project?.name}</dd>
-                </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">
-                    BA Reference Number:{" "}
-                  </dt>
-                  <dd>{project?.ba_reference_number}</dd>
-                </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">Brands: </dt>
-                  <dd>
-                    {productsInProject
-                      .map(
-                        (projectProduct) => projectProduct.product.brand.name,
-                      )
-                      .join(", ")}
-                  </dd>
-                </div>
+                {project ? (
+                  <React.Fragment>
+                    <div className="flex items-center justify-between">
+                      <dt className="text-muted-foreground">In Use:</dt>
+                      <dd>
+                        {project.materials.find(
+                          (projectMaterial) =>
+                            projectMaterial.material.name === material.name,
+                        )?.quantity || 0}{" "}
+                        QTY
+                      </dd>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <dt className="text-muted-foreground">Project Name:</dt>
+                      <dd>{project.name}</dd>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <dt className="text-muted-foreground">
+                        BA Reference Number:
+                      </dt>
+                      <dd>{project.ba_reference_number}</dd>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <dt className="text-muted-foreground">Brands:</dt>
+                      <dd>
+                        {productsInProject
+                          .map(
+                            (projectProduct) =>
+                              projectProduct.product.brand.name,
+                          )
+                          .join(", ")}
+                      </dd>
+                    </div>
+                  </React.Fragment>
+                ) : (
+                  <span className="text-xs">No Project Found.</span>
+                )}
               </div>
               <Separator className="my-1" />
-              <span>Asset Issue</span>
+              <span>Material Issue</span>
               <div className="space-y-2 bg-muted border p-4 rounded-md">
                 <div className="flex items-center justify-between">
                   <dt className="text-muted-foreground">Damaged: </dt>
@@ -338,9 +342,9 @@ export const AssetColumns: ColumnDef<Asset>[] = [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => (
-      <AssetActionsCell
+      <MaterialActionsCell
         key={`actions-${row.original.id}`}
-        asset={row.original}
+        material={row.original}
       />
     ),
   },

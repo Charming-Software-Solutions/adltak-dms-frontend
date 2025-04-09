@@ -85,12 +85,12 @@ export const ActivityLogFilter = ({
             value: "producttype",
           },
           {
-            label: "Asset",
-            value: "asset",
+            label: "Material",
+            value: "material",
           },
           {
-            label: "Asset Type",
-            value: "assettype",
+            label: "Material Type",
+            value: "materialtype",
           },
           {
             label: "Allocation",

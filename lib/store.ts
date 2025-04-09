@@ -1,7 +1,7 @@
-import { ProjectAsset, ProjectProduct } from "@/types/project";
+import { ProjectMaterial, ProjectProduct } from "@/types/project";
 import { create } from "zustand";
 
-export type ProjectItem = ProjectProduct | ProjectAsset;
+export type ProjectItem = ProjectProduct | ProjectMaterial;
 
 export type ProjectItemStoreState = {
   items: ProjectItem[];
@@ -10,7 +10,7 @@ export type ProjectItemStoreState = {
 type ProjectProductStoreActions = {
   addItem: (item: ProjectItem) => void;
   removeItem: (itemId: string) => void;
-  clearItems: (type?: "product" | "asset") => void;
+  clearItems: (type?: "product" | "material") => void;
   updateQuantity: (itemId: string, quantity: number) => void;
 };
 
@@ -44,7 +44,7 @@ export const useProjectItemStore = create<ProjectItemStore>()((set) => ({
       items: state.items.filter((item) => item.id !== itemId),
     })),
 
-  clearItems: (type?: "product" | "asset") =>
+  clearItems: (type?: "product" | "material") =>
     set((state) => {
       if (!type) {
         return { items: [] };
@@ -52,7 +52,7 @@ export const useProjectItemStore = create<ProjectItemStore>()((set) => ({
 
       return {
         items: state.items.filter((item) =>
-          type === "product" ? !("product" in item) : !("asset" in item),
+          type === "product" ? !("product" in item) : !("material" in item),
         ),
       };
     }),

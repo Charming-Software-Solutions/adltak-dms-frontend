@@ -11,44 +11,44 @@ import {
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
 import {
-  AssetColumns,
-  visibleAssetColumns,
-} from "@/components/shared/table/columns/AssetColumns";
+  MaterialColumns,
+  visibleMaterialColumns,
+} from "@/components/shared/table/columns/MaterialColumns";
 import { Button } from "@/components/ui/button";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useResponsive } from "@/hooks";
 import { useDataTable } from "@/hooks/use-datatable";
 import { hasPermission } from "@/lib/auth";
-import { Asset } from "@/types/asset";
+import { Material } from "@/types/material";
 import { Classification } from "@/types/generics";
 import { User } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
-import AssetForm, { useAssetForm } from "./components/AssetForm";
+import MaterialForm, { useMaterialForm } from "./components/MaterialForm";
 
 type Props = {
   user: User;
-  assets: Asset[];
-  assetTypes: Classification[];
+  materials: Material[];
+  materialTypes: Classification[];
   brands: Classification[];
 };
 
-const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
+const MaterialsClient = ({ user, materials, materialTypes, brands }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const isDesktop = useResponsive("desktop");
-  const { form, onSubmit } = useAssetForm({ mode: FormModeEnum.CREATE });
+  const { form, onSubmit } = useMaterialForm({ mode: FormModeEnum.CREATE });
 
   const dataTable = useDataTable({
-    columns: AssetColumns,
-    data: assets,
+    columns: MaterialColumns,
+    data: materials,
     visibleColumns: isDesktop
-      ? visibleAssetColumns(user.roles).desktop
-      : visibleAssetColumns(user.roles).mobile,
+      ? visibleMaterialColumns(user.roles).desktop
+      : visibleMaterialColumns(user.roles).mobile,
     leftTools: {
       searchField: {
         column: "name",
-        placeholder: "Search asset...",
+        placeholder: "Search material...",
       },
     },
   });
@@ -71,17 +71,17 @@ const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
               <ResponsiveDialogTrigger>
                 <Button className="h-8">
                   <PlusCircle className="mr-9 md:mr-2 size-4" />
-                  <span className="hidden sm:inline">Add Asset</span>
+                  <span className="hidden sm:inline">Add Material</span>
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>
                 <ResponsiveDialogHeader className="px-1">
-                  <ResponsiveDialogTitle>Add Asset</ResponsiveDialogTitle>
+                  <ResponsiveDialogTitle>Add Material</ResponsiveDialogTitle>
                 </ResponsiveDialogHeader>
-                <AssetForm
+                <MaterialForm
                   mode={FormModeEnum.CREATE}
                   form={form}
-                  assetTypes={assetTypes}
+                  materialTypes={materialTypes}
                   brands={brands}
                 />
                 <ResponsiveDialogFooter className="px-1">
@@ -102,7 +102,7 @@ const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
                       }
                       loading={form.formState.isSubmitting}
                     >
-                      Add Asset
+                      Add Material
                     </DialogFormButton>
                   </div>
                 </ResponsiveDialogFooter>
@@ -116,4 +116,4 @@ const AssetsClient = ({ user, assets, assetTypes, brands }: Props) => {
   );
 };
 
-export default AssetsClient;
+export default MaterialsClient;

@@ -61,14 +61,14 @@ const ViewItemsDialog = ({
           </div>
           <Separator className="my-1" />
           <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Total Assets</dt>
-            <dd>{project.assets.length} QTY</dd>
+            <dt className="text-muted-foreground">Total Materials</dt>
+            <dd>{project.materials.length} QTY</dd>
           </div>
         </div>
         <Tabs defaultValue="products" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="assets">Assets</TabsTrigger>
+            <TabsTrigger value="materials">Materials</TabsTrigger>
           </TabsList>
           <TabsContent value="products">
             <ScrollArea className="h-72 border bg-muted p-4 rounded-md">
@@ -92,15 +92,15 @@ const ViewItemsDialog = ({
               </div>
             </ScrollArea>
           </TabsContent>
-          <TabsContent value="assets">
+          <TabsContent value="materials">
             <ScrollArea className="h-72 border bg-muted p-4 rounded-md">
               <div className="flex flex-col gap-2 h-full">
-                {project.assets.length > 0 ? (
-                  project.assets.map((projectAsset, index) => (
+                {project.materials.length > 0 ? (
+                  project.materials.map((projectMaterial, index) => (
                     <ItemCard
                       key={index}
-                      itemType={ItemTypeEnum.ASSET}
-                      projectItem={projectAsset}
+                      itemType={ItemTypeEnum.MATERIAL}
+                      projectItem={projectMaterial}
                       userRoles={userRoles}
                       projectStatus={project.status}
                       isProjectsPage={isProjectsPage}
@@ -108,7 +108,7 @@ const ViewItemsDialog = ({
                   ))
                 ) : (
                   <div className="flex flex-1 items-center justify-center">
-                    <span className="text-center">No Assets.</span>
+                    <span className="text-center">No Materials.</span>
                   </div>
                 )}
               </div>

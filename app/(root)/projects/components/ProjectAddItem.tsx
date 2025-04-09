@@ -14,15 +14,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { imagePlaceholder } from "@/constants";
-import { AssetStatusEnum } from "@/enums";
-import { getAssets } from "@/lib/actions/asset.actions";
+import { MaterialStatusEnum } from "@/enums";
+import { getMaterials } from "@/lib/actions/material.actions";
 import { getProducts } from "@/lib/actions/product.actions";
 import { useProjectItemStore } from "@/lib/store";
 import { cn, formatExpiration } from "@/lib/utils";
 import { ProjectItemFormdata, projectItemSchema } from "@/schemas";
-import { Asset } from "@/types/asset";
+import { Material } from "@/types/material";
 import { Product } from "@/types/product";
-import { ProjectAsset, ProjectProduct } from "@/types/project";
+import { ProjectMaterial, ProjectProduct } from "@/types/project";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, Trash } from "lucide-react";
@@ -31,7 +31,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-type ProjectItemType = "product" | "asset";
+type ProjectItemType = "product" | "material";
 
 type ProjectAddItemProps = {
   itemType: ProjectItemType;
@@ -56,14 +56,16 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["fetch-project-items", itemType],
     queryFn: async () => {
-      const filteredAssets = (await getAssets()).filter(
-        (asset) =>
-          asset.status === AssetStatusEnum.AVAILABLE && !asset.archived,
+      const filteredMaterials = (await getMaterials()).filter(
+        (material) =>
+          material.status === MaterialStatusEnum.AVAILABLE &&
+          !material.archived,
       );
       const filteredProducts = (await getProducts()).filter(
         (product) => !product.discontinued,
       );
-      const items = itemType === "product" ? filteredProducts : filteredAssets;
+      const items =
+        itemType === "product" ? filteredProducts : filteredMaterials;
       return items;
     },
   });
@@ -90,16 +92,16 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
       used_quantity: 0,
       remaining_quantity: 0,
     };
-    const projectAsset = {
+    const projectMaterial = {
       id: item.id,
-      asset: item as Asset,
-      asset_name: "",
-      asset_type: "",
+      material: item as Material,
+      material_name: "",
+      material_type: "",
       quantity: values.quantity,
       used_quantity: 0,
     };
 
-    addItem(itemType === "product" ? projectProduct : projectAsset);
+    addItem(itemType === "product" ? projectProduct : projectMaterial);
   };
 
   return (
@@ -110,7 +112,7 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
             label: item.name,
             value: item.id,
             children:
-              itemType === "asset" ? (
+              itemType === "material" ? (
                 <Badge
                   key={item.id}
                   variant="outline"
@@ -124,11 +126,15 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
           name="item"
           placeholder={{
             triggerPlaceholder:
-              itemType === "product" ? "Select product..." : "Select asset...",
+              itemType === "product"
+                ? "Select product..."
+                : "Select material...",
             searchPlaceholder:
-              itemType === "product" ? "Search product..." : "Search asset...",
+              itemType === "product"
+                ? "Search product..."
+                : "Search material...",
           }}
-          label={itemType === "product" ? "Product" : "Asset"}
+          label={itemType === "product" ? "Product" : "Material"}
           popOverSize="md:min-w-[26rem]"
           disabled={form.formState.isSubmitting}
         />
@@ -160,7 +166,7 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
             disabled={!form.formState.isValid}
             onClick={() => form.handleSubmit(onSubmit)()}
           >
-            {itemType === "product" ? "Add Product" : "Add Asset"}
+            {itemType === "product" ? "Add Product" : "Add Material"}
           </Button>
           <Button
             variant="outline"
@@ -168,7 +174,7 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
             disabled={items.length === 0}
             onClick={() => clearItems(itemType)}
           >
-            {itemType === "product" ? "Clear Products" : "Clear Assets"}
+            {itemType === "product" ? "Clear Products" : "Clear Materials"}
           </Button>
         </div>
         {errorMessage && (
@@ -196,16 +202,18 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
             <div className="flex flex-col gap-2">
               {items
                 .filter((item) =>
-                  itemType === "product" ? "product" in item : "asset" in item,
+                  itemType === "product"
+                    ? "product" in item
+                    : "material" in item,
                 )
                 .map((object, index) => {
                   const projectItem =
                     itemType === "product"
                       ? (object as ProjectProduct).product
-                      : (object as ProjectAsset).asset;
+                      : (object as ProjectMaterial).material;
                   const isDecrementDisabled = object.quantity <= 1;
                   const isIncrementDisabled =
-                    itemType === "asset"
+                    itemType === "material"
                       ? object.quantity >= projectItem.stock
                       : false;
 
@@ -262,7 +270,7 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
                                 updateQuantity(object.id, newQuantity)
                               }
                               minMax={
-                                itemType === "asset"
+                                itemType === "material"
                                   ? {
                                       min: 1,
                                       max: projectItem.stock,

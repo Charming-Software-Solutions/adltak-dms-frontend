@@ -9,18 +9,16 @@ import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import SwitchFormField from "@/components/shared/SwitchFormField";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
-import { ASSET_STATUS } from "@/constants";
-import { FormModeEnum } from "@/enums";
-import { createAsset, updateAsset } from "@/lib/actions/asset.actions";
-import { getProjectByAsset } from "@/lib/actions/project.actions";
+import { MATERIAL_STATUS } from "@/constants";
+import { FormModeEnum, MaterialStatusEnum } from "@/enums";
+import { createMaterial, updateMaterial } from "@/lib/actions/material.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
-import { AssetFormData, assetFormSchema } from "@/schemas";
+import { MaterialFormData, materialFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
-import { Asset } from "@/types/asset";
 import { Classification } from "@/types/generics";
+import { Material } from "@/types/material";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -28,39 +26,39 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 type Props = {
-  form: UseFormReturn<AssetFormData>;
+  form: UseFormReturn<MaterialFormData>;
   mode: FormModeEnum;
-  assetTypes: Classification[];
+  materialTypes: Classification[];
   brands: Classification[];
   className?: string;
 };
 
-export const useAssetForm = ({
-  asset = undefined,
+export const useMaterialForm = ({
+  material = undefined,
   mode,
 }: {
-  asset?: Asset;
+  material?: Material;
   mode: FormModeEnum;
 }) => {
   const router = useRouter();
-  const form = useForm<AssetFormData>({
-    resolver: zodResolver(assetFormSchema),
+  const form = useForm<MaterialFormData>({
+    resolver: zodResolver(materialFormSchema),
     defaultValues: {
-      agency: asset?.agency ?? "",
-      name: asset?.name ?? "",
-      code: asset?.code ?? "",
-      type: asset?.type.id ?? "",
-      thumbnail: asset?.thumbnail ?? undefined,
-      brand: asset?.brand?.id ?? "",
-      area: asset?.area ?? "",
-      stock: asset?.stock ?? 1,
-      status: asset?.status ?? "",
-      archived: asset?.archived ?? false,
+      agency: material?.agency ?? "",
+      name: material?.name ?? "",
+      code: material?.code ?? "",
+      type: material?.type.id ?? "",
+      thumbnail: material?.thumbnail ?? undefined,
+      brand: material?.brand?.id ?? "",
+      area: material?.area ?? "",
+      stock: material?.stock ?? 1,
+      status: material?.status ?? MaterialStatusEnum.AVAILABLE,
+      archived: material?.archived ?? false,
     },
   });
 
   const onSubmit = async (
-    values: z.infer<typeof assetFormSchema>,
+    values: z.infer<typeof materialFormSchema>,
     setOpen: (value: boolean) => void,
   ) => {
     const formData = new FormData();
@@ -78,10 +76,10 @@ export const useAssetForm = ({
       formData.append("thumbnail", values.thumbnail);
     }
 
-    const result: ApiResponse<Asset> =
+    const result: ApiResponse<Material> =
       mode === FormModeEnum.CREATE
-        ? await createAsset(formData)
-        : await updateAsset(asset!.id, formData);
+        ? await createMaterial(formData)
+        : await updateMaterial(material!.id, formData);
 
     if (result.errors) {
       toast.error(formatErrorResponse(result.errors), {
@@ -90,7 +88,7 @@ export const useAssetForm = ({
       return;
     }
 
-    showSuccessMessage(mode as FormModeEnum, "asset");
+    showSuccessMessage(mode as FormModeEnum, "material");
     setOpen(false);
     form.reset(mode === FormModeEnum.CREATE ? undefined : values);
     router.refresh();
@@ -98,7 +96,15 @@ export const useAssetForm = ({
   return { form, onSubmit };
 };
 
-const AssetForm = ({ form, mode, assetTypes, brands, className }: Props) => {
+const MaterialForm = ({
+  form,
+  mode,
+  materialTypes,
+  brands,
+  className,
+}: Props) => {
+  console.log(form.formState);
+
   return (
     <Form {...form}>
       <div className={cn("form-container", className)}>
@@ -172,7 +178,7 @@ const AssetForm = ({ form, mode, assetTypes, brands, className }: Props) => {
           placeholder="Select type"
           disabled={form.formState.isSubmitting}
         >
-          {assetTypes.map((type, key) => (
+          {materialTypes.map((type, key) => (
             <SelectItem key={key} value={type.id}>
               {type.name}
             </SelectItem>
@@ -198,9 +204,9 @@ const AssetForm = ({ form, mode, assetTypes, brands, className }: Props) => {
               placeholder="Select status"
               disabled={form.formState.isSubmitting}
             >
-              {Object.keys(ASSET_STATUS).map((status, key) => (
+              {Object.keys(MATERIAL_STATUS).map((status, key) => (
                 <SelectItem key={key} value={status}>
-                  {ASSET_STATUS[status as keyof typeof ASSET_STATUS]}
+                  {MATERIAL_STATUS[status as keyof typeof MATERIAL_STATUS]}
                 </SelectItem>
               ))}
             </CustomFormField>
@@ -208,7 +214,7 @@ const AssetForm = ({ form, mode, assetTypes, brands, className }: Props) => {
               control={form.control}
               name="archived"
               label="Archived"
-              description="Toggle to archive this asset. When archived, the asset will be 
+              description="Toggle to archive this material. When archived, the material will be 
             removed from available lists but can be restored later if needed."
             />
           </React.Fragment>
@@ -218,4 +224,4 @@ const AssetForm = ({ form, mode, assetTypes, brands, className }: Props) => {
   );
 };
 
-export default AssetForm;
+export default MaterialForm;

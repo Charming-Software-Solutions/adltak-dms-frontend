@@ -7,7 +7,7 @@ import { Product } from "./product";
 import { Employee } from "./user";
 import { PROJECT_STATUSES } from "@/constants";
 import { BaseModel } from "./generics";
-import { Asset } from "./asset";
+import { Material } from "./material";
 
 export type ProjectProduct = BaseModel & {
   product: Product;
@@ -17,17 +17,17 @@ export type ProjectProduct = BaseModel & {
   remaining_quantity: number;
 };
 
-export type ProjectAsset = BaseModel & {
-  asset: Asset;
-  asset_name: string;
-  asset_type: string;
+export type ProjectMaterial = BaseModel & {
+  material: Material;
+  material_name: string;
+  material_type: string;
   quantity: number;
   used_quantity: number;
 };
 
 export type Project = BaseModel & {
   products: ProjectProduct[];
-  assets: ProjectAsset[];
+  materials: ProjectMaterial[];
   name: string;
   ba_reference_number: string;
   status: ProjectStatusEnum;

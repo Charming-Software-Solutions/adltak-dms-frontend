@@ -52,9 +52,9 @@ const NAV_LINKS: NavLink[] = [
     route: "/tasks",
   },
   {
-    label: "Assets",
+    label: "Materials",
     icon: <Archive className="size-4" />,
-    route: "/assets",
+    route: "/materials",
   },
   {
     label: "Classifications",
