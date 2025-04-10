@@ -39,7 +39,7 @@ const HomeClient = ({ user, projects, metrics }: Props) => {
   return (
     <React.Fragment>
       <Header>{null}</Header>
-      <main className="flex flex-1 flex-col p-4 lg:px-6">
+      <main className="main-container">
         <div className="grid auto-rows-min gap-6 md:grid-cols-4 pb-2">
           <MetricCard
             title={"Monthly Projects"}
@@ -67,29 +67,25 @@ const HomeClient = ({ user, projects, metrics }: Props) => {
           />
           <div className="flex items-center gap-2"></div>
         </div>
-        <div className="flex flex-1 flex-col gap-8">
-          <Card className="min-h-[100vh] flex-1 rounded-xl overflow-auto md:min-h-min pb-10">
-            <CardHeader className="flex flex-row justify-between items-start">
-              <div className="space-y-2">
-                <CardTitle>Recent Projects</CardTitle>
-                <CardDescription>Latest Projects</CardDescription>
-              </div>
-              <Button>
-                <Link href={"/projects"}>View All</Link>
-                <ExternalLinkIcon className="size-4 ml-2" />
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-auto">
-                <DataTable
-                  table={table}
-                  visibleColumns={visibleProjectColumns(user.roles)}
-                  showPagination={false}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="min-h-screen rounded-xl overflow-x-auto max-w-screen-xl md:min-h-min pb-10">
+          <CardHeader className="flex flex-row justify-between items-start">
+            <div className="space-y-2">
+              <CardTitle>Recent Projects</CardTitle>
+              <CardDescription>Latest Projects</CardDescription>
+            </div>
+            <Button>
+              <Link href={"/projects"}>View All</Link>
+              <ExternalLinkIcon className="size-4 ml-2" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <DataTable
+              table={table}
+              visibleColumns={visibleProjectColumns(user.roles)}
+              showPagination={false}
+            />
+          </CardContent>
+        </Card>
       </main>
     </React.Fragment>
   );

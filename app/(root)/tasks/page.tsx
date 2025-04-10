@@ -6,12 +6,14 @@ import { getTasks } from "@/lib/actions/task.actions";
 import TasksClient from "./TasksClient";
 import type { SearchParams } from "nuqs/server";
 import { loadTaskSearchParams } from "@/lib/searchParams";
+import { Suspense } from "react";
+import LoadingSpinnerIcon from "@/components/ui/loading-spinner";
 
 type Props = {
   searchParams: Promise<SearchParams>;
 };
 
-export default async function TasksPage({ searchParams }: Props) {
+async function TasksServer({ searchParams }: Props) {
   const projects = await getProjects();
   const employee = await getCurrentUser({ withEmployeeProfile: true });
   const allowedRoles = [
@@ -38,5 +40,13 @@ export default async function TasksPage({ searchParams }: Props) {
           person.user.is_active,
       )}
     />
+  );
+}
+
+export default function TasksPage({ searchParams }: Props) {
+  return (
+    <Suspense fallback={<LoadingSpinnerIcon />}>
+      <TasksServer searchParams={searchParams} />
+    </Suspense>
   );
 }

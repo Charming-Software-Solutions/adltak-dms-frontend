@@ -1,6 +1,5 @@
 import { getCurrentUser } from "@/auth/currentUser";
 import {
-  getDistributionFlowComparison,
   getMontlyProjects,
   getProductsAboutToExpireCount,
   getProductsExpiredCount,
@@ -9,8 +8,10 @@ import {
 import { getProjects } from "@/lib/actions/project.actions";
 import { InsightsMetrics } from "@/types/metrics";
 import HomeClient from "./Client";
+import { Suspense } from "react";
+import LoadingSpinnerIcon from "@/components/ui/loading-spinner";
 
-export default async function Home() {
+async function HomeServer() {
   const projects = await getProjects();
   const user = await getCurrentUser();
   const metrics: InsightsMetrics = {
@@ -21,4 +22,12 @@ export default async function Home() {
   };
 
   return <HomeClient user={user!} projects={projects} metrics={metrics} />;
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<LoadingSpinnerIcon />}>
+      <HomeServer />
+    </Suspense>
+  );
 }

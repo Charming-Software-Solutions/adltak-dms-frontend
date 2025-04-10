@@ -5,12 +5,14 @@ import { getProjectProducts } from "@/lib/actions/project.actions";
 import ProductClient from "./ProductClient";
 import type { SearchParams } from "nuqs/server";
 import { loadProductSearchParams } from "@/lib/searchParams";
+import { Suspense } from "react";
+import LoadingSpinnerIcon from "@/components/ui/loading-spinner";
 
 type Props = {
   searchParams: Promise<SearchParams>;
 };
 
-export default async function Products({ searchParams }: Props) {
+async function ProductsServer({ searchParams }: Props) {
   const products = await getProducts(
     await loadProductSearchParams(searchParams),
   );
@@ -29,5 +31,13 @@ export default async function Products({ searchParams }: Props) {
       projectProducts={projectProducts}
       classifications={{ brands, categories, types }}
     />
+  );
+}
+
+export default function ProductsPage({ searchParams }: Props) {
+  return (
+    <Suspense fallback={<LoadingSpinnerIcon />}>
+      <ProductsServer searchParams={searchParams} />
+    </Suspense>
   );
 }

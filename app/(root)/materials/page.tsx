@@ -5,12 +5,14 @@ import { getClassifications } from "@/lib/actions/classification.actions";
 import MaterialsClient from "./MaterialsClient";
 import type { SearchParams } from "nuqs/server";
 import { loadMaterialSearchParams } from "@/lib/searchParams";
+import { Suspense } from "react";
+import LoadingSpinnerIcon from "@/components/ui/loading-spinner";
 
 type Props = {
   searchParams: Promise<SearchParams>;
 };
 
-export default async function Materials({ searchParams }: Props) {
+async function MaterialsServer({ searchParams }: Props) {
   const materials = await getMaterials(
     await loadMaterialSearchParams(searchParams),
   );
@@ -25,5 +27,13 @@ export default async function Materials({ searchParams }: Props) {
       materialTypes={materialTypes}
       brands={brands}
     />
+  );
+}
+
+export default function MaterialsPage({ searchParams }: Props) {
+  return (
+    <Suspense fallback={<LoadingSpinnerIcon />}>
+      <MaterialsServer searchParams={searchParams} />
+    </Suspense>
   );
 }
