@@ -125,6 +125,8 @@ const MaterialIssueRow = ({
           minMax={{
             min: 1,
             disabled: isPending,
+            minDisabled: remainingStock === 0,
+            maxDisabled: currentIssueQuantity >= remainingStock,
             max: remainingStock,
             onMaxClick: () => {
               mutate({

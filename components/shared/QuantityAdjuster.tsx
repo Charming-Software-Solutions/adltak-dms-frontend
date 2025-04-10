@@ -11,6 +11,8 @@ type QuantityAdjusterProps = {
   minMax?: {
     min: number;
     max: number;
+    minDisabled?: boolean;
+    maxDisabled?: boolean;
     disabled?: boolean;
     onMinClick: () => void;
     onMaxClick: () => void;
@@ -68,7 +70,7 @@ const QuantityAdjuster = ({
             className="p-0 border-none rounded-r-none rounded-l-sm flex-grow text-xs"
             variant="secondary"
             disabled={minMax.disabled}
-            onClick={minMax.onMinClick}
+            onClick={minMax.onMinClick || minMax.minDisabled}
           >
             MIN
           </IconButton>
@@ -125,7 +127,7 @@ const QuantityAdjuster = ({
           <IconButton
             className="p-0 border-none rounded-r-sm rounded-l-none flex-grow text-xs"
             variant="secondary"
-            disabled={minMax.disabled}
+            disabled={minMax.disabled || minMax.maxDisabled}
             onClick={minMax.onMaxClick}
           >
             MAX
