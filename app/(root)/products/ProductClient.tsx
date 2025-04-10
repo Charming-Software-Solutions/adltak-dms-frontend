@@ -15,7 +15,10 @@ import {
   ProductColumns,
   visibleProductColumns,
 } from "@/components/shared/table/columns/ProductColumns";
-import { ProjectProductColumns } from "@/components/shared/table/columns/ProjectProductColumns";
+import {
+  ProjectProductColumns,
+  visibleProjectProductColumns,
+} from "@/components/shared/table/columns/ProjectProductColumns";
 import { DataTable } from "@/components/shared/table/data-table";
 import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
@@ -162,7 +165,10 @@ const ProductClient = ({
             </div>
           </DataTable>
         ) : (
-          <DataTable table={projectProductTable}>
+          <DataTable
+            table={projectProductTable}
+            visibleColumns={visibleProjectProductColumns}
+          >
             <div className="flex items-center justify-between">
               <DataTableSearch
                 table={productTable}

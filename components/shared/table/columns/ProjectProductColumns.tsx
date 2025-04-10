@@ -1,32 +1,19 @@
 "use client";
 
 import { imagePlaceholder } from "@/constants";
+import { formatExpiration } from "@/lib/utils";
 import { ProjectProduct } from "@/types/project";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
-import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { formatExpiration } from "@/lib/utils";
 
-export const visibleProjectProductColumns = () => {
-  return createColumnConfig({
-    desktop: {
-      thumbnail: true,
-      name: true,
-      sku: true,
-      ba_reference_number: true,
-      quantity: true,
-      expiration: true,
-    },
-    mobile: {
-      thumbnail: true,
-      name: true,
-      sku: true,
-      ba_reference_number: true,
-      quantity: true,
-      expiration: true,
-    },
-  });
+export const visibleProjectProductColumns = {
+  thumbnail: true,
+  name: true,
+  sku: true,
+  ba_reference_number: true,
+  quantity: true,
+  expiration: true,
 };
 
 export const ProjectProductColumns: ColumnDef<ProjectProduct>[] = [
