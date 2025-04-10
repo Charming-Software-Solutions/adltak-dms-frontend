@@ -24,9 +24,11 @@ import { Classification } from "@/types/generics";
 import { Material } from "@/types/material";
 import { User } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import MaterialFilter from "./components/MaterialFilter";
 import MaterialForm, { useMaterialForm } from "./components/MaterialForm";
+import { CSVLink } from "react-csv";
+import { formatDateTime } from "@/lib/utils";
 
 type Props = {
   user: User;
@@ -44,16 +46,32 @@ const MaterialsClient = ({ user, materials, materialTypes, brands }: Props) => {
     data: materials,
   });
 
+  const materialsToExport = useMemo(() => {
+    return materials.map((material) => ({
+      code: material.code,
+      agency: material.agency,
+      name: material.name,
+      brand: material.brand.name,
+      type: material.type.name,
+      stock: material.stock,
+      area: material.area,
+      created_at: formatDateTime(material.created_at, true),
+    }));
+  }, [materials]);
+
   return (
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
-            <FileIcon className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Export
-            </span>
-          </Button>
+          <CSVLink data={materialsToExport}>
+            <Button size="sm" variant="outline" className="h-8 gap-1">
+              <FileIcon className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Export
+              </span>
+            </Button>
+          </CSVLink>
+
           {hasPermission(user.roles, [
             UserRoleEnum.ADMIN,
             UserRoleEnum.LOGISTICS_TEAM_MEMBER,

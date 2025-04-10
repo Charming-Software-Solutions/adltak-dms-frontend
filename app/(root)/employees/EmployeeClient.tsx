@@ -24,6 +24,9 @@ import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import EmployeeForm, { useEmployeeForm } from "./components/EmployeeForm";
+import { CSVLink } from "react-csv";
+import { formatDateTime } from "@/lib/utils";
+import { USER_ROLES } from "@/constants";
 
 type Props = {
   employees: Employee[];
@@ -90,17 +93,28 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
     [filteredEmployees],
   );
 
+  const employeesToExport = useMemo(() => {
+    return filteredEmployees.all.map((employee) => ({
+      email: employee.user.email,
+      status: employee.user.is_active ? "Active" : "Deactivated",
+      roles: employee.user.roles.map((role) => USER_ROLES[role]).join(", "),
+      created_at: formatDateTime(employee.created_at, true),
+    }));
+  }, [employees]);
+
   return (
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
           <div className="flex space-x-2">
-            <Button size="sm" variant="outline" className="h-8 gap-1">
-              <FileIcon className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Export
-              </span>
-            </Button>
+            <CSVLink data={employeesToExport}>
+              <Button size="sm" variant="outline" className="h-8 gap-1">
+                <FileIcon className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Export
+                </span>
+              </Button>
+            </CSVLink>
           </div>
 
           <ResponsiveDialog open={openUserDialog} setOpen={setOpenUserDialog}>

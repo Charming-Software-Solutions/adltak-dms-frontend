@@ -28,6 +28,8 @@ import React, { useState, useMemo } from "react";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
 import TaskFilter from "./components/TaskFilter";
 import { DataTableSearch } from "@/components/shared/table/data-table-search";
+import { CSVLink } from "react-csv";
+import { formatDateTime } from "@/lib/utils";
 
 type Props = {
   employee: Employee;
@@ -60,6 +62,14 @@ const TasksClient = ({
   const ownTasks = useMemo(() => {
     return tasks.filter((task) => task.warehouse_person.id === employee.id);
   }, [tasks, employee.id]);
+
+  const tasksToExport = employee.user.roles.includes(
+    UserRoleEnum.WAREHOUSE_PERSONNEL,
+  )
+    ? isWarehousePersonnelOnly
+      ? ownTasks
+      : tasks
+    : uniqueTasks;
 
   const renderTaskTable = (tab: "all" | "my_tasks") => {
     let filteredTasks: Task[] = [];
@@ -118,12 +128,22 @@ const TasksClient = ({
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
-            <FileIcon className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Export
-            </span>
-          </Button>
+          <CSVLink
+            data={tasksToExport.map((task) => ({
+              warehouse_person: `${task.warehouse_person.first_name} ${task.warehouse_person.last_name}`,
+              ba_reference_number: task.project.ba_reference_number,
+              project: task.project.name,
+              created_at: formatDateTime(task.created_at, true),
+              updated_at: formatDateTime(task.updated_at, true),
+            }))}
+          >
+            <Button size="sm" variant="outline" className="h-8 gap-1">
+              <FileIcon className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Export
+              </span>
+            </Button>
+          </CSVLink>
           {hasPermission(employee.user.roles, [
             UserRoleEnum.ADMIN,
             UserRoleEnum.PROJECT_MANAGER,

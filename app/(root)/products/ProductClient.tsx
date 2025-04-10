@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useDataTable } from "@/hooks/use-data-table";
+import { useProductFilters } from "@/hooks/use-filters";
 import { hasPermission } from "@/lib/auth";
 import {
   filterProductsByExpiration,
@@ -36,11 +37,10 @@ import { Product, ProductSKU } from "@/types/product";
 import { ProjectProduct } from "@/types/project";
 import { User } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { CSVLink } from "react-csv";
 import ProductFilter from "./components/ProductFilter";
 import ProductForm, { useProductForm } from "./components/ProductForm";
-import { useProductFilters } from "@/hooks/use-filters";
 
 type Props = {
   user: User;
@@ -68,12 +68,17 @@ const ProductClient = ({
   const productCategory = form.watch("category");
   const productType = form.watch("type");
 
-  const productsToExport = products.map((product) => ({
-    ...product,
-    brand: product.brand.name,
-    category: product.category.name,
-    type: product.type.name,
-  }));
+  const productsExport = useMemo(() => {
+    return products.map((product) => ({
+      name: product.name,
+      sku: product.sku,
+      brand: product.brand.name,
+      category: product.category.name,
+      type: product.type.name,
+      stock: product.stock,
+      area: product.area,
+    }));
+  }, [products]);
 
   const renderProjectProductTable = (
     condition: "all" | "near_expiration" | "expired",
@@ -188,7 +193,7 @@ const ProductClient = ({
     <React.Fragment>
       <Header overrideHeaderTitle="Products">
         <div className="flex items-center justify-end gap-2">
-          <CSVLink data={productsToExport}>
+          <CSVLink data={productsExport}>
             <Button size="sm" variant="outline" className="h-8 gap-1">
               <FileIcon className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
