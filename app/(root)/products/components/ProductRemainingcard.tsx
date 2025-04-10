@@ -77,35 +77,50 @@ const ProductRemainingCard = ({
           </div>
         </div>
         <Separator />
-        <div className="w-full grid grid-cols-2">
-          <div className="flex flex-col space-y-2">
-            <span className="font-semibold">Allocate Product</span>
-            <ProductTransferComboBox
-              projects={availableProjects ?? []}
-              onTransfer={(project) =>
-                mutate({
-                  id: projectProduct.id,
-                  project: project?.id,
-                  operation: "allocate",
-                })
-              }
-            />
-          </div>
-          <div className="flex flex-col space-y-2">
-            <span className="font-semibold">Pull Out Product</span>
-            <Button
-              onClick={() =>
-                mutate({ id: projectProduct.id, operation: "pull_out" })
-              }
-            >
-              {isPending ? (
-                <Loader2 className="animate-spin mr-2" />
-              ) : (
-                <span>Pull Out</span>
-              )}
-            </Button>
-          </div>
+        <div className="flex flex-col space-y-2 w-full">
+          <span className="font-semibold">Pull Out Product</span>
+          <Button
+            className="flex-grow w-full"
+            onClick={() =>
+              mutate({ id: projectProduct.id, operation: "pull_out" })
+            }
+          >
+            {isPending ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : (
+              <span>Pull Out</span>
+            )}
+          </Button>
         </div>
+        {/* <div className="w-full grid grid-cols-2"> */}
+        {/*   <div className="flex flex-col space-y-2"> */}
+        {/*     <span className="font-semibold">Allocate Product</span> */}
+        {/*     <ProductTransferComboBox */}
+        {/*       projects={availableProjects ?? []} */}
+        {/*       onTransfer={(project) => */}
+        {/*         mutate({ */}
+        {/*           id: projectProduct.id, */}
+        {/*           project: project?.id, */}
+        {/*           operation: "allocate", */}
+        {/*         }) */}
+        {/*       } */}
+        {/*     /> */}
+        {/*   </div> */}
+        {/*   <div className="flex flex-col space-y-2"> */}
+        {/*     <span className="font-semibold">Pull Out Product</span> */}
+        {/*     <Button */}
+        {/*       onClick={() => */}
+        {/*         mutate({ id: projectProduct.id, operation: "pull_out" }) */}
+        {/*       } */}
+        {/*     > */}
+        {/*       {isPending ? ( */}
+        {/*         <Loader2 className="animate-spin mr-2" /> */}
+        {/*       ) : ( */}
+        {/*         <span>Pull Out</span> */}
+        {/*       )} */}
+        {/*     </Button> */}
+        {/*   </div> */}
+        {/* </div> */}
       </CardContent>
     </Card>
   );
