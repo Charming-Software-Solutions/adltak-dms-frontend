@@ -1,6 +1,7 @@
 "use client";
 
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
+import FilterBadge from "@/components/shared/filter/FilterBadge";
 import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
@@ -14,12 +15,16 @@ import {
   ProjectColumns,
   visibleProjectColumns,
 } from "@/components/shared/table/columns/ProjectColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { useDataTable } from "@/hooks/use-datatable";
+import { PROJECT_STATUSES } from "@/constants";
+import { FormModeEnum, ProjectStatusEnum, UserRoleEnum } from "@/enums";
+import { useDataTable } from "@/hooks/use-data-table";
+import { useProjectFilters } from "@/hooks/use-filters";
 import { hasPermission } from "@/lib/auth";
 import { useProjectItemStore } from "@/lib/store";
 import { Brand } from "@/types/product";
@@ -27,8 +32,8 @@ import { Project } from "@/types/project";
 import { User } from "@/types/user";
 import { AlertCircleIcon, FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
-import { useMediaQuery } from "react-responsive";
 import ProjectAddItem from "./components/ProjectAddItem";
+import ProjectFilter from "./components/ProjectFilter";
 import ProjectForm, { useProjectForm } from "./components/ProjectForm";
 
 type Props = {
@@ -40,26 +45,18 @@ type Props = {
 
 const ProjectClient = ({ user, employee, projects }: Props) => {
   const [openDistributionDialog, setOpenDistributionDialog] = useState(false);
+  const [projectFilters, setProjectFilters] = useProjectFilters();
+  const { status, start_date, end_date } = projectFilters;
 
   const { form, onSubmit } = useProjectForm({
     mode: FormModeEnum.CREATE,
     employee: employee,
   });
-  const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
   const { items, clearItems } = useProjectItemStore();
 
-  const dataTable = useDataTable({
+  const { table } = useDataTable({
     columns: ProjectColumns(user.roles),
     data: projects,
-    visibleColumns: isDesktop
-      ? visibleProjectColumns(user.roles).desktop
-      : visibleProjectColumns(user.roles).mobile,
-    leftTools: {
-      searchField: {
-        column: "name",
-        placeholder: "Search by project name...",
-      },
-    },
   });
 
   return (
@@ -170,7 +167,43 @@ const ProjectClient = ({ user, employee, projects }: Props) => {
         </div>
       </Header>
       <main className="grid flex-1 items-start p-4 lg:px-6 h-[200px]">
-        <div className="space-y-2">{dataTable.render()}</div>
+        <div className="space-y-2 overflow-auto">
+          <DataTable
+            table={table}
+            visibleColumns={visibleProjectColumns(user.roles)}
+          >
+            <div className="flex items-center justify-between">
+              <DataTableSearch
+                table={table}
+                column={"name"}
+                placeholder={"Search project by name.."}
+              />
+              <ProjectFilter />
+            </div>
+            <div className="flex items-center space-x-2 overflow-auto">
+              {start_date && end_date && (
+                <FilterBadge
+                  key="dateRange"
+                  onRemove={() => {
+                    setProjectFilters({ start_date: null, end_date: null });
+                  }}
+                  label="Date"
+                  value={`${start_date.toLocaleDateString()} - ${end_date.toLocaleDateString()}`}
+                />
+              )}
+              {status && (
+                <FilterBadge
+                  key="status"
+                  onRemove={() => {
+                    setProjectFilters({ status: "" });
+                  }}
+                  label="Status"
+                  value={PROJECT_STATUSES[status as ProjectStatusEnum]}
+                />
+              )}
+            </div>
+          </DataTable>
+        </div>
       </main>
     </React.Fragment>
   );

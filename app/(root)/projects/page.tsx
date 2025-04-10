@@ -1,12 +1,19 @@
 import { getCurrentUser } from "@/auth/currentUser";
-import { getProducts } from "@/lib/actions/product.actions";
 import { getBrands } from "@/lib/actions/product.classications.actions";
 import { getProjects } from "@/lib/actions/project.actions";
 import ProjectClient from "./ProjectClient";
+import type { SearchParams } from "nuqs/server";
+import { loadProjectSearchParams } from "@/lib/searchParams";
 
-export default async function Distributions() {
+type Props = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function Projects({ searchParams }: Props) {
   const brands = await getBrands();
-  const projects = await getProjects();
+  const projects = await getProjects(
+    await loadProjectSearchParams(searchParams),
+  );
   const employee = await getCurrentUser({ withEmployeeProfile: true });
 
   return (

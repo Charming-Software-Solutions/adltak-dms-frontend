@@ -1,11 +1,17 @@
 "use server";
 
 import { Material, MaterialIssue, MaterialStatus } from "@/types/material";
-import { fetchAndHandleResponse } from "../utils";
+import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
 import { ApiResponse } from "@/types/api";
 import { getSession } from "@/auth/session";
 
 const MATERIAL_URL = `${process.env.DOMAIN}/material/`;
+
+type MaterialFilters = {
+  brand: string;
+  status: string;
+  material_type: string;
+};
 
 async function createMaterial(body: FormData): Promise<ApiResponse<Material>> {
   return fetchAndHandleResponse({
@@ -16,10 +22,12 @@ async function createMaterial(body: FormData): Promise<ApiResponse<Material>> {
   });
 }
 
-async function getMaterials(): Promise<Material[]> {
+async function getMaterials(filters?: MaterialFilters): Promise<Material[]> {
+  const url = createFilteredUrl(filters ?? {}, MATERIAL_URL);
+
   const response = await fetchAndHandleResponse<Material[]>({
     jwt: (await getSession())?.access,
-    url: MATERIAL_URL,
+    url: url,
     method: "GET",
   });
   return response.data ?? [];

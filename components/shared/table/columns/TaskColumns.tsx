@@ -33,51 +33,88 @@ import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import StatusDropdown from "../../StatusDropDown";
-import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import React from "react";
 
 export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
-  return createColumnConfig({
-    desktop: {
-      warehouse_person: true,
-      project_client: true,
-      project: true,
-      project_products: true,
-      status_dropdown: hasPermission(userRoles, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_MANAGER,
-        UserRoleEnum.WAREHOUSE_PERSONNEL,
-      ]),
-      status_badge: hasPermission(userRoles, [
-        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
-      ]),
-      created_at: true,
-      actions: hasPermission(userRoles, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_MANAGER,
-      ]),
-    },
-    mobile: {
-      warehouse_person: true,
-      project_client: true,
-      project: true,
-      project_products: true,
-      status_dropdown: hasPermission(userRoles, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_MANAGER,
-        UserRoleEnum.WAREHOUSE_PERSONNEL,
-      ]),
-      status_badge: hasPermission(userRoles, [
-        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
-      ]),
-      created_at: true,
-      actions: hasPermission(userRoles, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_MANAGER,
-      ]),
+  return {
+    warehouse_person: true,
+    project_client: true,
+    project: true,
+    project_products: true,
+    status_dropdown: hasPermission(userRoles, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.PROJECT_MANAGER,
+      UserRoleEnum.WAREHOUSE_PERSONNEL,
+    ]),
+    status_badge: hasPermission(userRoles, [
+      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+    ]),
+    created_at: true,
+    actions: hasPermission(userRoles, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.PROJECT_MANAGER,
+    ]),
+  };
+};
+
+const TaskActionsCell = React.memo(({ task }: { task: Task }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const { form, onSubmit } = useTaskForm({ task, mode: "edit" });
+
+  const { data } = useQuery({
+    queryKey: ["edit-task"],
+    queryFn: async () => {
+      const projects = await getProjects();
+      const warehousePersons = await getEmployees();
+      const filteredWarehousePersons = warehousePersons.filter(
+        (person) =>
+          person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
+          person.user.is_active,
+      );
+      return { projects, filteredWarehousePersons };
     },
   });
-};
+
+  return (
+    <div className="flex items-center gap-2">
+      <EditDialog title="Edit Task" open={openDialog} setOpen={setOpenDialog}>
+        <TaskForm
+          mode={FormModeEnum.EDIT}
+          task={task}
+          form={form}
+          projects={data?.projects ?? []}
+          warehousePersons={data?.filteredWarehousePersons ?? []}
+        />
+        <ResponsiveDialogFooter className="px-1">
+          <div className="dialog-footer">
+            <Button
+              variant={"outline"}
+              className="flex-grow w-full"
+              onClick={() => form.reset()}
+            >
+              Reset
+            </Button>
+            <DialogFormButton
+              onClick={form.handleSubmit((values) =>
+                onSubmit(values, setOpenDialog),
+              )}
+              disabled={form.formState.isSubmitting}
+              loading={form.formState.isSubmitting}
+            >
+              Save Changes
+            </DialogFormButton>
+          </div>
+        </ResponsiveDialogFooter>
+      </EditDialog>
+      <DeleteDialog
+        title="Delete Task"
+        deleteAction={async () => await deleteTask(task.id)}
+        placeholder="Are you sure you want to delete the task?"
+      />
+    </div>
+  );
+});
 
 export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
   {
@@ -147,7 +184,7 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
     },
   },
   {
-    accessorKey: "poject_client",
+    accessorKey: "project_client",
     accessorFn: (row) => row.project.client,
     header: "Client",
     cell: ({ row }) => {
@@ -224,66 +261,10 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const task = row.original;
-      const [openDialog, setOpenDialog] = useState(false);
-      const { form, onSubmit } = useTaskForm({ task, mode: "edit" });
-
-      const { data } = useQuery({
-        queryKey: ["edit-task"],
-        queryFn: async () => {
-          const projects = await getProjects();
-          const warehousePersons = await getEmployees();
-          const filteredWarehousePersons = warehousePersons.filter(
-            (person) =>
-              person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
-              person.user.is_active,
-          );
-          return { projects, filteredWarehousePersons };
-        },
-      });
-
-      return (
-        <div className="flex items-center gap-2">
-          <EditDialog
-            title="Edit Task"
-            open={openDialog}
-            setOpen={setOpenDialog}
-          >
-            <TaskForm
-              mode={FormModeEnum.EDIT}
-              task={task}
-              form={form}
-              projects={data?.projects ?? []}
-              warehousePersons={data?.filteredWarehousePersons ?? []}
-            />
-            <ResponsiveDialogFooter className="px-1">
-              <div className="dialog-footer">
-                <Button
-                  variant={"outline"}
-                  className="flex-grow w-full"
-                  onClick={() => form.reset()}
-                >
-                  Reset
-                </Button>
-                <DialogFormButton
-                  onClick={form.handleSubmit((values) =>
-                    onSubmit(values, setOpenDialog),
-                  )}
-                  disabled={form.formState.isSubmitting}
-                  loading={form.formState.isSubmitting}
-                >
-                  Save Changes
-                </DialogFormButton>
-              </div>
-            </ResponsiveDialogFooter>
-          </EditDialog>
-          <DeleteDialog
-            title="Delete Task"
-            deleteAction={async () => await deleteTask(task.id)}
-            placeholder="Are you sure you want to delete the task?"
-          />
-        </div>
-      );
+      <TaskActionsCell
+        key={`actions-${row.original.id}`}
+        task={row.original}
+      />;
     },
   },
 ];

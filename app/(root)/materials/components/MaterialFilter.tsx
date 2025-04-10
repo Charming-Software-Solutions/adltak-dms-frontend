@@ -1,5 +1,7 @@
 "use client";
 
+import React, { useState } from "react";
+
 import FilterDialog from "@/components/shared/filter/FilterDialog";
 import FilterSelect from "@/components/shared/filter/FilterSelect";
 import { ResponsiveDialogFooter } from "@/components/shared/ResponsiveDialog";
@@ -18,33 +20,40 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { useProductFilters } from "@/hooks/use-filters";
+import { MATERIAL_STATUS } from "@/constants";
+import { useMaterialFilters } from "@/hooks/use-filters";
 import { cn } from "@/lib/utils";
 import { Classification } from "@/types/generics";
+import { SelectItemType } from "@/types/primitives";
 import { Check, ChevronsUpDown } from "lucide-react";
-import React, { useState } from "react";
 
-type ProductFilterProps = {
+type MaterialFilterProps = {
   classfications: {
     brands: Classification[];
-    categories: Classification[];
     types: Classification[];
   };
   isFilteredByBrands?: boolean;
 };
 
-const ProductFilter = ({
+const MaterialFilter = ({
   classfications,
   isFilteredByBrands = false,
-}: ProductFilterProps) => {
-  const [productFilters, setProductFilters] = useProductFilters();
-  const { brand, category, product_type } = productFilters;
+}: MaterialFilterProps) => {
+  const [materialFilters, setMaterialFilters] = useMaterialFilters();
+  const { brand, status, material_type } = materialFilters;
   const [openBrandFilter, setOpenBrandFilter] = useState(false);
   const [openDialogFilter, setOpenDialogFilter] = useState(false);
 
   const selectedBrandName = classfications.brands.find(
     (b) => b.name === brand,
   )?.name;
+
+  const statusItems: SelectItemType[] = Object.keys(MATERIAL_STATUS).map(
+    (key) => ({
+      value: key,
+      label: MATERIAL_STATUS[key as keyof typeof MATERIAL_STATUS],
+    }),
+  );
 
   if (isFilteredByBrands) {
     return (
@@ -71,7 +80,7 @@ const ProductFilter = ({
                     key={brandItem.id}
                     value={brandItem.name}
                     onSelect={(currentValue: string) => {
-                      setProductFilters({
+                      setMaterialFilters({
                         brand: currentValue,
                       });
                     }}
@@ -93,7 +102,7 @@ const ProductFilter = ({
                 <CommandGroup>
                   <CommandItem
                     className="p-2"
-                    onSelect={() => setProductFilters({ brand: null })}
+                    onSelect={() => setMaterialFilters({ brand: null })}
                   >
                     Clear
                   </CommandItem>
@@ -109,27 +118,25 @@ const ProductFilter = ({
   return (
     <FilterDialog open={openDialogFilter} setOpen={setOpenDialogFilter}>
       <FilterSelect
-        name="Category"
-        items={classfications.categories.map((category) => ({
-          label: category.name,
-          value: category.name,
-        }))}
-        placeholder="Select category"
-        onChange={(value) => setProductFilters({ category: value })}
-        onRemove={() => setProductFilters({ category: "" })}
-        value={category}
+        name="Status"
+        items={statusItems}
+        placeholder="Select status"
+        onChange={(value) => setMaterialFilters({ status: value })}
+        onRemove={() => setMaterialFilters({ status: "" })}
+        value={status}
         className="px-4"
       />
+
       <FilterSelect
         name="Type"
-        items={classfications.types.map((type) => ({
+        items={(classfications.types || []).map((type) => ({
           label: type.name,
           value: type.name,
         }))}
         placeholder="Select Type"
-        onChange={(value) => setProductFilters({ product_type: value })}
-        onRemove={() => setProductFilters({ product_type: "" })}
-        value={product_type}
+        onChange={(value) => setMaterialFilters({ material_type: value })}
+        onRemove={() => setMaterialFilters({ material_type: "" })}
+        value={material_type}
         className="px-4"
       />
       <ResponsiveDialogFooter className="px-4">
@@ -138,9 +145,10 @@ const ProductFilter = ({
             variant="outline"
             className="flex-grow w-full"
             onClick={() =>
-              setProductFilters({
-                category: "",
-                product_type: "",
+              setMaterialFilters({
+                brand: "",
+                status: "",
+                material_type: "",
               })
             }
           >
@@ -158,4 +166,4 @@ const ProductFilter = ({
   );
 };
 
-export default ProductFilter;
+export default MaterialFilter;

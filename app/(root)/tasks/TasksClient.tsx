@@ -10,15 +10,13 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
-import {
-  TaskColumns,
-  visibleTaskColumns,
-} from "@/components/shared/table/columns/TaskColumns";
+import { TaskColumns } from "@/components/shared/table/columns/TaskColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
-import { useDataTable } from "@/hooks/use-datatable";
+import { useDataTable } from "@/hooks/use-data-table";
 import { hasPermission } from "@/lib/auth";
 import { Project } from "@/types/project";
 import { Task } from "@/types/task";
@@ -26,6 +24,7 @@ import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
+import TaskFilter from "./components/TaskFilter";
 
 type Props = {
   employee: Employee;
@@ -41,7 +40,6 @@ const TasksClient = ({
   warehousePersons,
 }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useTaskForm({ mode: "create" });
 
   // Checks if is warehouse personnel only and only if they
@@ -78,33 +76,38 @@ const TasksClient = ({
         break;
     }
 
-    const dataTable = useDataTable({
+    const { table } = useDataTable({
       columns: TaskColumns(employee.user.roles),
       data: employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL)
         ? filteredTasks
         : uniqueTasks,
-      visibleColumns: isDesktop
-        ? visibleTaskColumns(employee.user.roles).desktop
-        : visibleTaskColumns(employee.user.roles).mobile,
-      leftTools: {
-        searchField: {
-          column: "project",
-          placeholder: "Search project...",
-        },
-      },
-      tabsList: (
-        <TabsList>
-          <TabsTrigger value="all" disabled={isWarehousePersonnelOnly}>
-            All
-          </TabsTrigger>
-          {hasWarehousePersonnelRole && (
-            <TabsTrigger value="my_tasks">My Tasks</TabsTrigger>
-          )}
-        </TabsList>
-      ),
     });
 
-    return dataTable;
+    // TODO: fix search field causing extreme lag in the client
+
+    return (
+      <DataTable table={table}>
+        <div className="flex items-center space-x-2">
+          <DataTableSearch
+            table={table}
+            column={"project"}
+            placeholder={"Search project..."}
+          />
+          <div>
+            <TabsList>
+              <TabsTrigger value="all" disabled={isWarehousePersonnelOnly}>
+                All
+              </TabsTrigger>
+              {hasWarehousePersonnelRole && (
+                <TabsTrigger value="my_tasks">My Tasks</TabsTrigger>
+              )}
+            </TabsList>
+          </div>
+
+          <TaskFilter />
+        </div>
+      </DataTable>
+    );
   };
 
   return (
@@ -171,11 +174,9 @@ const TasksClient = ({
           defaultValue={isWarehousePersonnelOnly ? "my_tasks" : "all"}
           className="overflow-auto"
         >
-          <TabsContent value="all">
-            {renderTaskTable("all").render()}
-          </TabsContent>
+          <TabsContent value="all">{renderTaskTable("all")}</TabsContent>
           <TabsContent value="my_tasks">
-            {renderTaskTable("my_tasks").render()}
+            {renderTaskTable("my_tasks")}
           </TabsContent>
         </Tabs>
       </main>

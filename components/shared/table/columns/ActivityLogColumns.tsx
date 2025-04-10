@@ -49,22 +49,12 @@ import {
 } from "@/components/ui/popover";
 
 export const visibileActivityLogColumns = {
-  desktop: {
-    employee: true,
-    roles: true,
-    type: true,
-    module: true,
-    details: true,
-    datetime: true,
-  },
-  mobile: {
-    employee: true,
-    roles: true,
-    type: true,
-    module: true,
-    details: true,
-    datetime: true,
-  },
+  employee: true,
+  roles: true,
+  type: true,
+  module: true,
+  details: true,
+  datetime: true,
 };
 
 const typeBadgeColors: Record<string, string> = {

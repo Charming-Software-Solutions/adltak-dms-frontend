@@ -9,100 +9,36 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
   VisibilityState,
+  flexRender,
+  Table as ReactTable,
 } from "@tanstack/react-table";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { DataTablePagination } from "./data-table-pagination";
-import { DataTableSearch } from "./data-table-search";
-import { DataTableToolbar } from "./data-table-toolbar";
+import { cn } from "@/lib/utils";
 
 export interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  table: ReactTable<TData>;
   visibleColumns?: VisibilityState;
   showPagination?: boolean;
-  leftTools?: {
-    searchField?: {
-      column: string;
-      placeholder: string;
-      className?: string;
-    };
-    extra?: React.ReactNode;
-  };
-  filters?: React.ReactNode;
-  tabsList?: React.ReactNode;
-  filterOnBottom?: React.ReactNode;
+  className?: string;
 }
 
 export function DataTable<TData, TValue>({
-  columns,
-  data,
+  table,
   visibleColumns = {},
   showPagination = true,
-  leftTools,
-  filters,
-  tabsList,
-  filterOnBottom = undefined,
-}: DataTableProps<TData, TValue> & {
-  visibleColumns?: Record<string, boolean>;
-}) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>(visibleColumns);
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-    },
-    initialState: {
-      pagination: {
-        pageSize: 6,
-      },
-    },
-  });
-
+  children,
+  className,
+}: PropsWithChildren<
+  DataTableProps<TData, TValue> & {
+    visibleColumns?: Record<string, boolean>;
+  }
+>) {
   return (
-    <div className="flex flex-col gap-3.5 py-1">
-      <DataTableToolbar
-        leftTools={
-          <div className="flex items-center space-x-2">
-            <DataTableSearch
-              table={table}
-              column={leftTools?.searchField?.column || ""}
-              placeholder={leftTools?.searchField?.placeholder || ""}
-            />
-            {leftTools?.extra}
-          </div>
-        }
-        filters={filters}
-        tabsList={tabsList}
-        filterOnBottom={filterOnBottom}
-      />
-
-      <div className="rounded-md border">
+    <div className={cn("flex flex-col gap-2.5 overflow-auto", className)}>
+      {children}
+      <div className="rounded-md border overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -148,7 +84,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
                   No results.

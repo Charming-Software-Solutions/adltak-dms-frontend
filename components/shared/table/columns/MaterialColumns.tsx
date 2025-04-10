@@ -3,15 +3,12 @@
 import MaterialForm, {
   useMaterialForm,
 } from "@/app/(root)/materials/components/MaterialForm";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  imagePlaceholder,
-  MATERIAL_ISSUE,
-  MATERIAL_STATUS,
-  PROJECT_STATUSES,
-} from "@/constants";
+import { imagePlaceholder, MATERIAL_STATUS } from "@/constants";
 import {
   FormModeEnum,
   MaterialIssueEnum,
@@ -19,6 +16,11 @@ import {
   UserRoleEnum,
 } from "@/enums";
 import { getClassifications } from "@/lib/actions/classification.actions";
+import {
+  getMaterialById,
+  updateMaterialIssue,
+} from "@/lib/actions/material.actions";
+import { getMaterialTypes } from "@/lib/actions/material.classifcations.actions";
 import { getProjectByMaterial } from "@/lib/actions/project.actions";
 import { hasPermission } from "@/lib/auth";
 import { formatDateTime } from "@/lib/utils";
@@ -35,6 +37,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
+import QuantityAdjuster from "../../QuantityAdjuster";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -45,54 +48,139 @@ import {
 } from "../../ResponsiveDialog";
 import DialogFormButton from "../../buttons/DialogFormButton";
 import EditDialog from "../../dialogs/EditDialog";
-import { createColumnConfig } from "../column.config";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { getMaterialTypes } from "@/lib/actions/material.classifcations.actions";
-import QuantityAdjuster from "../../QuantityAdjuster";
-import {
-  getMaterialById,
-  updateMaterialIssue,
-} from "@/lib/actions/material.actions";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Card } from "@/components/ui/card";
 
 export const visibleMaterialColumns = (userRole: UserRoleEnum[]) => {
-  return createColumnConfig({
-    desktop: {
-      thumbnail: true,
-      agency: true,
-      name: true,
-      code: true,
-      product: true,
-      type: true,
-      stock: true,
-      status: true,
-      area: true,
-      brand: true,
-      created_at: true,
-      actions: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
-      ]),
-    },
-    mobile: {
-      thumbnail: true,
-      agency: true,
-      name: true,
-      code: true,
-      product: true,
-      type: true,
-      stock: true,
-      status: true,
-      area: true,
-      brand: true,
-      created_at: true,
-      actions: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
-      ]),
+  return {
+    thumbnail: true,
+    agency: true,
+    name: true,
+    code: true,
+    product: true,
+    type: true,
+    stock: true,
+    status: true,
+    area: true,
+    brand: true,
+    created_at: true,
+    actions: hasPermission(userRole, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+    ]),
+  };
+};
+
+type MaterialIssueRowProps = {
+  materialId: string;
+  issueType: string;
+  issueData: any;
+  currentIssueQuantity: number;
+  remainingStock: number;
+  IconComponent?: React.ComponentType<{ className?: string }>;
+};
+
+const MaterialIssueRow = ({
+  materialId,
+  issueType,
+  issueData,
+  currentIssueQuantity,
+  remainingStock,
+  IconComponent,
+}: MaterialIssueRowProps) => {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["update-material-issue", issueType],
+    mutationFn: updateMaterialIssue,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get-updated-material", materialId],
+      });
     },
   });
+
+  const maxAvailableForThisIssue = remainingStock; // adjust accordingly
+
+  return (
+    <Card key={issueType} className="flex items-center justify-between p-3">
+      <dt className="flex items-center gap-2">
+        {IconComponent && <IconComponent className="h-4 w-4" />}
+        <span>{issueType}</span>
+      </dt>
+      <dd>
+        <QuantityAdjuster
+          value={currentIssueQuantity}
+          onChange={(newQuantity) => {
+            mutate({
+              id: materialId,
+              issues_data: {
+                [issueType]: {
+                  ...issueData,
+                  quantity: newQuantity,
+                },
+              },
+            });
+          }}
+          inputProps={{ disabled: isPending }}
+          minMax={{
+            min: 1,
+            disabled: isPending,
+            max: remainingStock,
+            onMaxClick: () => {
+              mutate({
+                id: materialId,
+                issues_data: {
+                  [issueType]: {
+                    ...issueData,
+                    quantity: remainingStock,
+                  },
+                },
+              });
+            },
+            onMinClick: () => {
+              mutate({
+                id: materialId,
+                issues_data: {
+                  [issueType]: {
+                    ...issueData,
+                    quantity: 1,
+                  },
+                },
+              });
+            },
+          }}
+          stepButtons={{
+            decrementDisabled: currentIssueQuantity <= 0 || isPending,
+            incrementDisabled:
+              currentIssueQuantity >= maxAvailableForThisIssue || isPending,
+            onDecrementClick: () => {
+              mutate({
+                id: materialId,
+                issues_data: {
+                  [issueType]: {
+                    ...issueData,
+                    quantity: currentIssueQuantity - 1,
+                  },
+                },
+              });
+            },
+            onIncrementClick: () => {
+              mutate({
+                id: materialId,
+                issues_data: {
+                  [issueType]: {
+                    ...issueData,
+                    quantity: currentIssueQuantity + 1,
+                  },
+                },
+              });
+            },
+          }}
+          loading={isPending}
+        />
+      </dd>
+    </Card>
+  );
 };
 
 const MaterialActionsCell = React.memo(
@@ -245,8 +333,8 @@ export const MaterialColumns: ColumnDef<Material>[] = [
     header: "Status",
     cell: ({ row }) => {
       const material = row.original;
-      const queryClient = useQueryClient();
       const [openDialog, setOpenDialog] = useState(false);
+
       const { data: project } = useQuery({
         queryKey: ["fetch-project-by-material", row.id],
         queryFn: async () => await getProjectByMaterial(material.name),
@@ -273,6 +361,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
 
       const remainingStock = material.stock - totalIssuesQuantity;
 
+      // Define your icon mapping as before
       const MATERIAL_ISSUE_ICONS = {
         [MaterialIssueEnum.DAMAGED]: Ban,
         [MaterialIssueEnum.FOR_REPAIR]: Wrench,
@@ -295,7 +384,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
               <span>Material Inventory Status</span>
               <div className="space-y-2 bg-muted border p-4 rounded-md">
                 <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">Avaialble Stock:</dt>
+                  <dt className="text-muted-foreground">Available Stock:</dt>
                   <dd>{remainingStock} QTY</dd>
                 </div>
                 <div className="flex items-center justify-between">
@@ -307,7 +396,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
               <span>Assigned Project</span>
               <div className="space-y-2 bg-muted border p-4 rounded-md">
                 {project ? (
-                  <React.Fragment>
+                  <>
                     <div className="flex items-center justify-between">
                       <dt className="text-muted-foreground">In Use:</dt>
                       <dd>
@@ -339,7 +428,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                           .join(", ")}
                       </dd>
                     </div>
-                  </React.Fragment>
+                  </>
                 ) : (
                   <span className="text-xs">No Project Found.</span>
                 )}
@@ -348,7 +437,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
               <span>Material Issue</span>
               <div className="space-y-2">
                 {material.status === MaterialStatusEnum.AVAILABLE ? (
-                  <React.Fragment>
+                  <>
                     <Alert className="bg-muted">
                       <AlertCircleIcon className="size-4" />
                       <AlertDescription>
@@ -361,123 +450,23 @@ export const MaterialColumns: ColumnDef<Material>[] = [
                         const issueEnum = issueType as MaterialIssueEnum;
                         const IconComponent = MATERIAL_ISSUE_ICONS[issueEnum];
                         const currentIssueQuantity =
-                          updatedMaterial?.issues[issueEnum].quantity ??
+                          updatedMaterial?.issues[issueEnum]?.quantity ??
                           issueData.quantity;
-                        const otherIssuesQuantity =
-                          totalIssuesQuantity - currentIssueQuantity;
-                        const maxAvailableForThisIssue =
-                          material.stock - otherIssuesQuantity;
-
-                        const { mutate, isPending } = useMutation({
-                          mutationKey: ["update-material-issue", issueType],
-                          mutationFn: updateMaterialIssue,
-                          onSuccess: () => {
-                            queryClient.invalidateQueries({
-                              queryKey: ["get-updated-material", material.id],
-                            });
-                          },
-                        });
 
                         return (
-                          <Card
+                          <MaterialIssueRow
                             key={issueType}
-                            className="flex items-center justify-between p-3"
-                          >
-                            <dt className="flex items-center gap-2">
-                              {IconComponent && (
-                                <IconComponent className="h-4 w-4" />
-                              )}
-                              {MATERIAL_ISSUE[issueEnum]}
-                            </dt>
-
-                            <dd>
-                              <QuantityAdjuster
-                                key={issueType}
-                                value={currentIssueQuantity}
-                                onChange={(newQuantity) => {
-                                  mutate({
-                                    id: material.id,
-                                    issues_data: {
-                                      [issueType]: {
-                                        ...issueData,
-                                        quantity: newQuantity,
-                                      },
-                                    },
-                                  });
-                                }}
-                                inputProps={{ disabled: isPending }}
-                                minMax={{
-                                  min: 1,
-                                  disabled: isPending,
-                                  max: remainingStock,
-                                  onMaxClick: () => {
-                                    mutate({
-                                      id: material.id,
-                                      issues_data: {
-                                        [issueType]: {
-                                          ...issueData,
-                                          quantity: remainingStock,
-                                        },
-                                      },
-                                    });
-                                  },
-                                  onMinClick: () => {
-                                    mutate({
-                                      id: material.id,
-                                      issues_data: {
-                                        [issueType]: {
-                                          ...issueData,
-                                          quantity: 1,
-                                        },
-                                      },
-                                    });
-                                  },
-                                }}
-                                stepButtons={{
-                                  decrementDisabled:
-                                    currentIssueQuantity <= 0 || isPending,
-                                  incrementDisabled:
-                                    remainingStock <= 0 ||
-                                    currentIssueQuantity >=
-                                      maxAvailableForThisIssue ||
-                                    isPending,
-                                  onDecrementClick: () => {
-                                    const currentQuantity =
-                                      updatedMaterial?.issues[issueEnum]
-                                        ?.quantity ?? issueData.quantity;
-                                    mutate({
-                                      id: material.id,
-                                      issues_data: {
-                                        [issueType]: {
-                                          ...issueData,
-                                          quantity: currentQuantity - 1,
-                                        },
-                                      },
-                                    });
-                                  },
-                                  onIncrementClick: () => {
-                                    const currentQuantity =
-                                      updatedMaterial?.issues[issueEnum]
-                                        ?.quantity ?? issueData.quantity;
-                                    mutate({
-                                      id: material.id,
-                                      issues_data: {
-                                        [issueType]: {
-                                          ...issueData,
-                                          quantity: currentQuantity + 1,
-                                        },
-                                      },
-                                    });
-                                  },
-                                }}
-                                loading={isPending}
-                              />
-                            </dd>
-                          </Card>
+                            materialId={material.id}
+                            issueType={issueType}
+                            issueData={issueData}
+                            currentIssueQuantity={currentIssueQuantity}
+                            remainingStock={remainingStock}
+                            IconComponent={IconComponent}
+                          />
                         );
                       },
                     )}
-                  </React.Fragment>
+                  </>
                 ) : (
                   <div className="space-y-2 bg-muted border p-4 rounded-md text-center text-muted-foreground">
                     Material issue management is only available for materials

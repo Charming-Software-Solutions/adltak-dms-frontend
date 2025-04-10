@@ -5,9 +5,10 @@ import {
   ActivityLogColumns,
   visibileActivityLogColumns,
 } from "@/components/shared/table/columns/ActivityLogColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
-import { useResponsive } from "@/hooks";
-import { useDataTable } from "@/hooks/use-datatable";
+import { useDataTable } from "@/hooks/use-data-table";
 import { ActivityLog } from "@/types/activityLog";
 import { FileIcon } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
@@ -19,7 +20,6 @@ type Props = {
 };
 
 const ActivityLogsClient = ({ activityLogs }: Props) => {
-  const isDesktop = useResponsive("desktop");
   const [filters, setFilters] = useQueryStates(
     {
       role: parseAsString.withDefault(""),
@@ -32,24 +32,9 @@ const ActivityLogsClient = ({ activityLogs }: Props) => {
     },
   );
 
-  const dataTable = useDataTable({
+  const { table } = useDataTable({
     columns: ActivityLogColumns,
     data: activityLogs,
-    visibleColumns: isDesktop
-      ? visibileActivityLogColumns.desktop
-      : visibileActivityLogColumns.mobile,
-    leftTools: {
-      searchField: {
-        column: "employee",
-        placeholder: "Search by employee...",
-        className: "w-[100rem]",
-      },
-    },
-    filters: (
-      <div className="flex ml-2 gap-2">
-        <ActivityLogFilter filters={filters} setFilters={setFilters} />
-      </div>
-    ),
   });
 
   return (
@@ -62,7 +47,22 @@ const ActivityLogsClient = ({ activityLogs }: Props) => {
           </span>
         </Button>
       </Header>
-      <main className="main-container">{dataTable.render()}</main>
+      <main className="main-container">
+        <DataTable
+          table={table}
+          visibleColumns={visibileActivityLogColumns}
+          className="w-full"
+        >
+          <div className="flex items-center justify-between">
+            <DataTableSearch
+              table={table}
+              column={"employee"}
+              placeholder={"Search by employee..."}
+            />
+            <ActivityLogFilter filters={filters} setFilters={setFilters} />
+          </div>
+        </DataTable>
+      </main>
     </React.Fragment>
   );
 };

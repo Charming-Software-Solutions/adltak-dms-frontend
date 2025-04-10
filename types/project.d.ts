@@ -36,4 +36,4 @@ export type Project = BaseModel & {
   employee: string;
 };
 
-export type DistributionStatus = keyof typeof PROJECT_STATUSES;
+export type ProjectStatus = keyof typeof PROJECT_STATUSES;

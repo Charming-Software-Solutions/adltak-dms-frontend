@@ -3,7 +3,7 @@
 import { ICreateProject } from "@/interfaces";
 import { ApiResponse } from "@/types/api";
 import { Project, ProjectMaterial, ProjectProduct } from "@/types/project";
-import { fetchAndHandleResponse } from "../utils";
+import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
 import {
   IncomingProductsStatus,
@@ -14,6 +14,12 @@ import { formatErrorResponse } from "../formatters";
 import { ProjectItem } from "../store";
 
 const PROJECT_URL = `${process.env.DOMAIN}/project/`;
+
+type ProjectFilters = {
+  status: string;
+  start_date: Date | null;
+  end_date: Date | null;
+};
 
 async function createProject(
   body: ICreateProject,
@@ -27,10 +33,12 @@ async function createProject(
   });
 }
 
-async function getProjects(): Promise<Project[]> {
+async function getProjects(filters?: ProjectFilters): Promise<Project[]> {
+  const url = createFilteredUrl(filters ?? {}, PROJECT_URL);
+
   const response = await fetchAndHandleResponse<Project[]>({
     jwt: (await getSession())?.access,
-    url: PROJECT_URL,
+    url: url,
     method: "GET",
   });
   return response.data ?? [];

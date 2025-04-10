@@ -240,3 +240,19 @@ export function showSuccessMessage(mode: FormModeEnum, object: string) {
 export function formatExpiration(expiration: string): string {
   return format(new Date(expiration), "ddMMMyyyy").toUpperCase();
 }
+
+export function createFilteredUrl<T extends Record<string, unknown>>(
+  filters: T,
+  baseUrl: string,
+): string {
+  const queryParams = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && String(value).trim() !== "") {
+      queryParams.append(key, String(value));
+    }
+  });
+
+  const queryString = queryParams.toString();
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+}

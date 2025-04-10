@@ -15,14 +15,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useDataTable } from "@/hooks/use-data-table";
 import { InsightsMetrics } from "@/types/metrics";
 import { Project } from "@/types/project";
 import { User } from "@/types/user";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import { ClipboardCheck, FolderKanban, TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { useMediaQuery } from "react-responsive";
+import React from "react";
 
 type Props = {
   user: User;
@@ -31,13 +31,10 @@ type Props = {
 };
 
 const HomeClient = ({ user, projects, metrics }: Props) => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const { table } = useDataTable({
+    columns: ProjectColumns(user.roles, true),
+    data: projects,
+  });
 
   return (
     <React.Fragment>
@@ -83,18 +80,13 @@ const HomeClient = ({ user, projects, metrics }: Props) => {
               </Button>
             </CardHeader>
             <CardContent>
-              {isMounted ? (
+              <div className="overflow-auto">
                 <DataTable
-                  columns={ProjectColumns(user.roles, true)}
-                  data={projects.slice(0, 5)}
+                  table={table}
+                  visibleColumns={visibleProjectColumns(user.roles)}
                   showPagination={false}
-                  visibleColumns={
-                    isDesktop
-                      ? visibleProjectColumns(user.roles).desktop
-                      : visibleProjectColumns(user.roles).mobile
-                  }
                 />
-              ) : null}
+              </div>
             </CardContent>
           </Card>
         </div>

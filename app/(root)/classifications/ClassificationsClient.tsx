@@ -1,5 +1,6 @@
 "use client";
 
+import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
 import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
@@ -13,20 +14,19 @@ import {
   getClassificationColumns,
   visibleClassificationColumns,
 } from "@/components/shared/table/columns/ClassificationColumns";
+import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
-import { useDataTable } from "@/hooks/use-datatable";
+import { useDataTable } from "@/hooks/use-data-table";
 import { hasPermission } from "@/lib/auth";
 import { Classification, ClassificationType } from "@/types/generics";
+import { User } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
 import ClassificationForm, {
   useClassificationForm,
 } from "./components/ClassificationForm";
-import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
-import { User } from "@/types/user";
 
 type Props = {
   user: User;
@@ -44,11 +44,11 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
   const renderClassificationTable = (
     classificationType: ClassificationType,
   ) => {
-    let filteredClassifcations: Classification[] = [];
+    let filteredClassifications: Classification[] = [];
 
     switch (classificationType) {
       case "all":
-        filteredClassifcations = [
+        filteredClassifications = [
           ...classifications.productBrands,
           ...classifications.productCategories,
           ...classifications.productTypes,
@@ -56,30 +56,35 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
         ];
         break;
       case "product_brand":
-        filteredClassifcations = classifications.productBrands;
+        filteredClassifications = classifications.productBrands;
         break;
       case "product_category":
-        filteredClassifcations = classifications.productCategories;
+        filteredClassifications = classifications.productCategories;
         break;
       case "product_type":
-        filteredClassifcations = classifications.productTypes;
+        filteredClassifications = classifications.productTypes;
         break;
       case "material_type":
-        filteredClassifcations = classifications.materialTypes;
+        filteredClassifications = classifications.materialTypes;
+        break;
       default:
         break;
     }
-    const dataTable = useDataTable({
+
+    const { table } = useDataTable({
       columns: getClassificationColumns(classificationType),
-      data: filteredClassifcations,
-      visibleColumns: isDesktop
-        ? visibleClassificationColumns(user.roles).desktop
-        : visibleClassificationColumns(user.roles).mobile,
+      data: filteredClassifications,
     });
-    return dataTable;
+
+    return (
+      <DataTable
+        table={table}
+        showPagination={true}
+        visibleColumns={visibleClassificationColumns(user.roles)}
+      />
+    );
   };
 
-  const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useClassificationForm({ mode: "create" });
 
   return (
@@ -148,16 +153,16 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
             <TabsTrigger value="material_type">Material Types</TabsTrigger>
           </TabsList>
           <TabsContent value="product_brand">
-            {renderClassificationTable("product_brand").render()}
+            {renderClassificationTable("product_brand")}
           </TabsContent>
           <TabsContent value="product_category">
-            {renderClassificationTable("product_category").render()}
+            {renderClassificationTable("product_category")}
           </TabsContent>
           <TabsContent value="product_type">
-            {renderClassificationTable("product_type").render()}
+            {renderClassificationTable("product_type")}
           </TabsContent>
           <TabsContent value="material_type">
-            {renderClassificationTable("material_type").render()}
+            {renderClassificationTable("material_type")}
           </TabsContent>
         </Tabs>
       </main>

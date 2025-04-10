@@ -14,10 +14,12 @@ export default async function Products({ searchParams }: Props) {
   const products = await getProducts(
     await loadProductSearchParams(searchParams),
   );
-  const projectProducts = await getProjectProducts();
-  const brands = await getClassifications("product_brand");
-  const categories = await getClassifications("product_category");
-  const types = await getClassifications("product_type");
+  const [projectProducts, brands, categories, types] = await Promise.all([
+    getProjectProducts(),
+    getClassifications("product_brand"),
+    getClassifications("product_category"),
+    getClassifications("product_type"),
+  ]);
   const user = await getCurrentUser();
 
   return (
@@ -25,9 +27,7 @@ export default async function Products({ searchParams }: Props) {
       user={user!}
       products={products}
       projectProducts={projectProducts}
-      brands={brands}
-      categories={categories}
-      types={types}
+      classifications={{ brands, categories, types }}
     />
   );
 }

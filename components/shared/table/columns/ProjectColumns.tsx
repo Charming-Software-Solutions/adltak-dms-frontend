@@ -27,8 +27,8 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import StatusDropdown from "../../StatusDropDown";
 import { DataTableColumnHeader } from "../data-table-column-header";
 
-export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => ({
-  desktop: {
+export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => {
+  return {
     name: true,
     ba_reference_number: true,
     status: true,
@@ -41,22 +41,8 @@ export const visibleProjectColumns = (userRoles: UserRoleEnum[]) => ({
       UserRoleEnum.LOGISTICS_TEAM_MEMBER,
       UserRoleEnum.PROJECT_MANAGER,
     ]),
-  },
-  mobile: {
-    name: true,
-    ba_reference_number: true,
-    status: true,
-    client: true,
-    items: true,
-    logistics_person: true,
-    created_at: true,
-    actions: hasPermission(userRoles, [
-      UserRoleEnum.ADMIN,
-      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
-      UserRoleEnum.PROJECT_MANAGER,
-    ]),
-  },
-});
+  };
+};
 
 const ProjectActionsCell = React.memo(({ project }: { project: Project }) => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -107,7 +93,6 @@ export const ProjectColumns = (
   userRoles: UserRoleEnum[],
   isInsightsPage = false,
 ): ColumnDef<Project>[] => {
-  // Define the basic columns array
   const columns: ColumnDef<Project>[] = [
     {
       accessorKey: "ba_reference_number",

@@ -24,23 +24,13 @@ import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
 
 export const visibileEmployeeColumns = {
-  desktop: {
-    profile_image: true,
-    email: true,
-    status: true,
-    name: true,
-    roles: true,
-    actions: true,
-    created_at: true,
-  },
-  mobile: {
-    profile_image: true,
-    email: true,
-    name: true,
-    status: true,
-    roles: true,
-    actions: true,
-  },
+  profile_image: true,
+  email: true,
+  status: true,
+  name: true,
+  roles: true,
+  actions: true,
+  created_at: true,
 };
 
 const EmployeeActionsCell = React.memo(

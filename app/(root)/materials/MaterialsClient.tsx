@@ -14,16 +14,18 @@ import {
   MaterialColumns,
   visibleMaterialColumns,
 } from "@/components/shared/table/columns/MaterialColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
-import { useDataTable } from "@/hooks/use-datatable";
+import { useDataTable } from "@/hooks/use-data-table";
 import { hasPermission } from "@/lib/auth";
-import { Material } from "@/types/material";
 import { Classification } from "@/types/generics";
+import { Material } from "@/types/material";
 import { User } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
+import MaterialFilter from "./components/MaterialFilter";
 import MaterialForm, { useMaterialForm } from "./components/MaterialForm";
 
 type Props = {
@@ -35,22 +37,11 @@ type Props = {
 
 const MaterialsClient = ({ user, materials, materialTypes, brands }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
-
-  const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useMaterialForm({ mode: FormModeEnum.CREATE });
 
-  const dataTable = useDataTable({
+  const { table } = useDataTable({
     columns: MaterialColumns,
     data: materials,
-    visibleColumns: isDesktop
-      ? visibleMaterialColumns(user.roles).desktop
-      : visibleMaterialColumns(user.roles).mobile,
-    leftTools: {
-      searchField: {
-        column: "name",
-        placeholder: "Search material...",
-      },
-    },
   });
 
   return (
@@ -111,7 +102,30 @@ const MaterialsClient = ({ user, materials, materialTypes, brands }: Props) => {
           )}
         </div>
       </Header>
-      <main className="main-container">{dataTable.render()}</main>
+      <main className="main-container">
+        <DataTable
+          table={table}
+          visibleColumns={visibleMaterialColumns(user.roles)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <DataTableSearch
+                table={table}
+                column={"name"}
+                placeholder={"Search material..."}
+              />
+              <MaterialFilter
+                isFilteredByBrands={true}
+                classfications={{ brands: brands, types: materialTypes }}
+              />
+            </div>
+
+            <MaterialFilter
+              classfications={{ brands: brands, types: materialTypes }}
+            />
+          </div>
+        </DataTable>
+      </main>
     </React.Fragment>
   );
 };

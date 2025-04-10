@@ -14,11 +14,12 @@ import {
   EmployeeColumns,
   visibileEmployeeColumns,
 } from "@/components/shared/table/columns/EmployeeColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
-import { useDataTable } from "@/hooks/use-datatable";
+import { useDataTable } from "@/hooks/use-data-table";
 import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
 import React, { useState } from "react";
@@ -66,21 +67,19 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
       (employee) => employee.user.id !== currentAdmin.user.id,
     );
 
-    const dataTable = useDataTable({
+    const { table } = useDataTable({
       columns: EmployeeColumns,
       data: filteredEmployees,
-      visibleColumns: isDesktop
-        ? visibileEmployeeColumns.desktop
-        : visibileEmployeeColumns.mobile,
-      leftTools: {
-        searchField: {
-          column: "email",
-          placeholder: "Search email...",
-          className: "w-[100rem]",
-        },
-      },
-      tabsList: (
-        <div>
+    });
+
+    return (
+      <DataTable table={table} visibleColumns={visibileEmployeeColumns}>
+        <div className="flex items-center justify-between">
+          <DataTableSearch
+            table={table}
+            column={"email"}
+            placeholder={"Search email..."}
+          />
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="logistics">Logistics Team Member</TabsTrigger>
@@ -88,13 +87,9 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
             <TabsTrigger value="warehouse">Warehouse Personnel</TabsTrigger>
           </TabsList>
         </div>
-      ),
-    });
-
-    return dataTable;
+      </DataTable>
+    );
   };
-
-  const isDesktop = useResponsive("desktop");
 
   return (
     <React.Fragment>
@@ -149,17 +144,15 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
       </Header>
       <main className="grid flex-1 items-start px-4 pt-2 lg:px-6 h-[200px]">
         <Tabs defaultValue="all">
-          <TabsContent value="all">
-            {renderEmployeeTable("all").render()}
-          </TabsContent>
+          <TabsContent value="all">{renderEmployeeTable("all")}</TabsContent>
           <TabsContent value="logistics">
-            {renderEmployeeTable("logistics").render()}
+            {renderEmployeeTable("logistics")}
           </TabsContent>
           <TabsContent value="project">
-            {renderEmployeeTable("project").render()}
+            {renderEmployeeTable("project")}
           </TabsContent>
           <TabsContent value="warehouse">
-            {renderEmployeeTable("warehouse").render()}
+            {renderEmployeeTable("warehouse")}
           </TabsContent>
         </Tabs>
       </main>

@@ -18,18 +18,11 @@ import DialogFormButton from "../../buttons/DialogFormButton";
 import { toast } from "sonner";
 
 export const visibleClassificationColumns = (userRoles: UserRoleEnum[]) => {
-  return createColumnConfig({
-    desktop: {
-      name: true,
-      description: true,
-      actions: hasPermission(userRoles, [UserRoleEnum.ADMIN]),
-    },
-    mobile: {
-      name: true,
-      description: true,
-      actions: hasPermission(userRoles, [UserRoleEnum.ADMIN]),
-    },
-  });
+  return {
+    name: true,
+    description: true,
+    actions: hasPermission(userRoles, [UserRoleEnum.ADMIN]),
+  };
 };
 
 const ClassificationActionsCell = React.memo(

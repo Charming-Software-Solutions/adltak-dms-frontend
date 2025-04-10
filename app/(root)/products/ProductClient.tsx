@@ -1,6 +1,7 @@
 "use client";
 
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
+import FilterBadge from "@/components/shared/filter/FilterBadge";
 import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
@@ -14,49 +15,50 @@ import {
   ProductColumns,
   visibleProductColumns,
 } from "@/components/shared/table/columns/ProductColumns";
-import {
-  ProjectProductColumns,
-  visibleProjectProductColumns,
-} from "@/components/shared/table/columns/ProjectProductColumns";
+import { ProjectProductColumns } from "@/components/shared/table/columns/ProjectProductColumns";
 import { DataTable } from "@/components/shared/table/data-table";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
+import { useDataTable } from "@/hooks/use-data-table";
 import { hasPermission } from "@/lib/auth";
-import { filterProductsByExpiration, generateProductSKU } from "@/lib/utils";
+import {
+  filterProductsByExpiration,
+  formatFilterValue,
+  generateProductSKU,
+} from "@/lib/utils";
 import { Classification } from "@/types/generics";
-import { Category, Product, ProductSKU, Type } from "@/types/product";
+import { Product, ProductSKU } from "@/types/product";
 import { ProjectProduct } from "@/types/project";
 import { User } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CSVLink } from "react-csv";
 import ProductFilter from "./components/ProductFilter";
 import ProductForm, { useProductForm } from "./components/ProductForm";
+import { useProductFilters } from "@/hooks/use-filters";
 
 type Props = {
   user: User;
   products: Product[];
   projectProducts: ProjectProduct[];
-  brands: Classification[];
-  categories: Category[];
-  types: Type[];
+  classifications: {
+    brands: Classification[];
+    categories: Classification[];
+    types: Classification[];
+  };
 };
 
 const ProductClient = ({
   user,
   products,
   projectProducts,
-  brands,
-  categories,
-  types,
+  classifications,
 }: Props) => {
   const [open, setOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useProductForm({ mode: FormModeEnum.CREATE });
+  const [productFilters, setProductFilters] = useProductFilters();
 
   // Form values to watch for SKU generation
   const productName = form.watch("name");
@@ -73,8 +75,6 @@ const ProductClient = ({
   const renderProjectProductTable = (
     condition: "all" | "near_expiration" | "expired",
   ) => {
-    if (!isMounted) return null;
-
     const categorizedProducts = filterProductsByExpiration(projectProducts);
 
     const commonTabsList = (
@@ -91,18 +91,6 @@ const ProductClient = ({
       </TabsList>
     );
 
-    const getVisibleColumns = (isProjectProduct: boolean) => {
-      return isDesktop
-        ? (isProjectProduct
-            ? visibleProjectProductColumns()
-            : visibleProductColumns(user.roles)
-          ).desktop
-        : (isProjectProduct
-            ? visibleProjectProductColumns()
-            : visibleProductColumns(user.roles)
-          ).mobile;
-    };
-
     const getProjectProducts = () => {
       switch (condition) {
         case "near_expiration":
@@ -117,43 +105,78 @@ const ProductClient = ({
     const isProductProject =
       condition === "near_expiration" || condition === "expired";
 
+    const { table: productTable } = useDataTable({
+      columns: ProductColumns(user.roles),
+      data: products,
+    });
+    const { table: projectProductTable } = useDataTable({
+      columns: ProjectProductColumns,
+      data: getProjectProducts(),
+    });
+
     return (
       <React.Fragment>
         {!isProductProject ? (
           <DataTable
-            columns={ProductColumns(user.roles)}
-            data={products}
-            visibleColumns={getVisibleColumns(isProductProject)}
-            leftTools={{
-              searchField: {
-                column: "name",
-                placeholder: "Search product...",
-              },
-              extra: <ProductFilter brands={brands} />,
-            }}
-            tabsList={commonTabsList}
-          />
+            table={productTable}
+            visibleColumns={visibleProductColumns(user.roles)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <DataTableSearch
+                  table={productTable}
+                  column={"name"}
+                  placeholder={"Search product..."}
+                />
+                <ProductFilter
+                  classfications={classifications}
+                  isFilteredByBrands={true}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                {commonTabsList}
+                <ProductFilter classfications={classifications} />
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2 flex-wrap w-full flex-grow">
+              {Object.entries(productFilters).map(([key, value]) => {
+                if (key !== "expiration" && value) {
+                  return (
+                    <FilterBadge
+                      key={key}
+                      label={
+                        key === "product_type"
+                          ? "Type"
+                          : key.charAt(0).toUpperCase() + key.slice(1)
+                      }
+                      value={formatFilterValue(value.toString())}
+                      onRemove={() => {
+                        setProductFilters({ [key]: "" });
+                      }}
+                    />
+                  );
+                }
+                return null;
+              })}
+            </div>
+          </DataTable>
         ) : (
-          <DataTable
-            columns={ProjectProductColumns}
-            data={getProjectProducts()}
-            visibleColumns={getVisibleColumns(isProductProject)}
-            leftTools={{
-              searchField: {
-                column: "ba_reference_number",
-                placeholder: "Search BA ref number...",
-              },
-            }}
-            tabsList={commonTabsList}
-          />
+          <DataTable table={projectProductTable}>
+            <div className="flex items-center justify-between">
+              <DataTableSearch
+                table={productTable}
+                column={"ba_reference_number"}
+                placeholder={"Search BA ref number..."}
+              />
+
+              {commonTabsList}
+            </div>
+          </DataTable>
         )}
       </React.Fragment>
     );
   };
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   return (
     <React.Fragment>
@@ -186,10 +209,10 @@ const ProductClient = ({
                 <ProductForm
                   form={form}
                   className="px-4 md:px-1 pb-2"
-                  brands={brands}
-                  categories={categories}
-                  types={types}
                   mode={FormModeEnum.CREATE}
+                  brands={classifications.brands}
+                  categories={classifications.categories}
+                  types={classifications.types}
                 />
                 <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
@@ -243,7 +266,7 @@ const ProductClient = ({
         </div>
       </Header>
       <main className="main-container">
-        <Tabs defaultValue="all">
+        <Tabs defaultValue="all" className="overflow-auto">
           <TabsContent value="all">
             {renderProjectProductTable("all")}
           </TabsContent>

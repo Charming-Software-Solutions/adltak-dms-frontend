@@ -2,12 +2,18 @@
 
 import { ApiResponse } from "@/types/api";
 import { Task } from "@/types/task";
-import { fetchAndHandleResponse } from "../utils";
+import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
 import { TaskStatusEnum, UserRoleEnum } from "@/enums";
 import { getSession } from "@/auth/session";
 import { formatErrorResponse } from "../formatters";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
+
+type TaskFilter = {
+  status: string;
+  start_date: Date | null;
+  end_date: Date | null;
+};
 
 async function createTask(body: FormData): Promise<ApiResponse<Task>> {
   return fetchAndHandleResponse({
@@ -21,6 +27,7 @@ async function createTask(body: FormData): Promise<ApiResponse<Task>> {
 async function getTasks(
   userId?: string,
   roles?: UserRoleEnum[],
+  filters?: TaskFilter,
 ): Promise<Task[]> {
   let params = "";
 
@@ -28,9 +35,11 @@ async function getTasks(
     params = `?user_id=${userId}`;
   }
 
+  const url = createFilteredUrl(filters ?? {}, TASK_URL);
+
   const response = await fetchAndHandleResponse<Task[]>({
     jwt: (await getSession())?.access,
-    url: `${TASK_URL}${params}`,
+    url: `${url}${params}`,
     method: "GET",
   });
 

@@ -60,7 +60,6 @@ import {
   ResponsiveDialogTrigger,
 } from "../../ResponsiveDialog";
 import StatusDropdown from "../../StatusDropDown";
-import { createColumnConfig } from "../column.config";
 
 function useFetchProjectsByProduct(productName: string, rowId: string) {
   return useQuery({
@@ -70,38 +69,21 @@ function useFetchProjectsByProduct(productName: string, rowId: string) {
 }
 
 export const visibleProductColumns = (userRoles: UserRoleEnum[]) => {
-  return createColumnConfig({
-    desktop: {
-      thumbnail: true,
-      name: true,
-      project: true,
-      sku: true,
-      classifications: true,
-      incoming_products: true,
-      remaining_products: true,
-      stock: true,
-      area: true,
-      actions: hasPermission(userRoles, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
-      ]),
-    },
-    mobile: {
-      thumbnail: true,
-      name: true,
-      project: true,
-      sku: true,
-      classifications: true,
-      incoming_products: true,
-      remaining_products: true,
-      stock: true,
-      area: true,
-      actions: hasPermission(userRoles, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_TEAM_MEMBER,
-      ]),
-    },
-  });
+  return {
+    thumbnail: true,
+    name: true,
+    project: true,
+    sku: true,
+    classifications: true,
+    incoming_products: true,
+    remaining_products: true,
+    stock: true,
+    area: true,
+    actions: hasPermission(userRoles, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+    ]),
+  };
 };
 
 const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
