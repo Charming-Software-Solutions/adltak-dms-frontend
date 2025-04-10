@@ -2,7 +2,7 @@ import { createLoader, parseAsIsoDate, parseAsString } from "nuqs/server";
 
 // Parsers
 
-export const activityLogSearchParams = {
+export const activityLogParsers = {
   role: parseAsString.withDefault(""),
   type: parseAsString.withDefault(""),
   module: parseAsString.withDefault(""),
@@ -30,7 +30,7 @@ export const materialParsers = {
 };
 
 // Loader Exports
-export const loadActivityLogSearchPrams = createLoader(activityLogSearchParams);
+export const loadActivityLogSearchPrams = createLoader(activityLogParsers);
 export const loadProductSearchParams = createLoader(productParsers);
 export const loadProjectSearchParams = createLoader(projectParsers);
 export const loadTaskSearchParams = createLoader(taskParsers);

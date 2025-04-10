@@ -8,18 +8,17 @@ import {
 import { DataTable } from "@/components/shared/table/data-table";
 import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
-import { useDataTable } from "@/hooks/use-data-table";
-import { ActivityLog } from "@/types/activityLog";
-import { FileIcon } from "lucide-react";
-import { parseAsString, useQueryStates } from "nuqs";
-import React, { useMemo } from "react";
-import { ActivityLogFilter } from "./components/ActivityLogFilter";
-import { CSVLink } from "react-csv";
-import { User } from "@/types/user";
-import { hasPermission } from "@/lib/auth";
-import { UserRoleEnum } from "@/enums";
-import { formatDateTime } from "@/lib/utils";
 import { USER_ROLES } from "@/constants";
+import { UserRoleEnum } from "@/enums";
+import { useDataTable } from "@/hooks/use-data-table";
+import { hasPermission } from "@/lib/auth";
+import { formatDateTime } from "@/lib/utils";
+import { ActivityLog } from "@/types/activityLog";
+import { User } from "@/types/user";
+import { FileIcon } from "lucide-react";
+import React, { useMemo } from "react";
+import { CSVLink } from "react-csv";
+import { ActivityLogFilter } from "./components/ActivityLogFilter";
 
 type Props = {
   activityLogs: ActivityLog[];
@@ -27,21 +26,11 @@ type Props = {
 };
 
 const ActivityLogsClient = ({ activityLogs, user }: Props) => {
-  const [filters, setFilters] = useQueryStates(
-    {
-      role: parseAsString.withDefault(""),
-      type: parseAsString.withDefault(""),
-      module: parseAsString.withDefault(""),
-    },
-    {
-      history: "push",
-      shallow: false,
-    },
-  );
+  const memoizedActivityLogs = useMemo(() => activityLogs, [activityLogs]);
 
   const { table } = useDataTable({
     columns: ActivityLogColumns,
-    data: activityLogs,
+    data: memoizedActivityLogs,
   });
 
   const logsToExport = useMemo(() => {
@@ -82,7 +71,7 @@ const ActivityLogsClient = ({ activityLogs, user }: Props) => {
               column={"employee"}
               placeholder={"Search by employee..."}
             />
-            <ActivityLogFilter filters={filters} setFilters={setFilters} />
+            <ActivityLogFilter />
           </div>
         </DataTable>
       </main>

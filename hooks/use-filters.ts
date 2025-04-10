@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  activityLogParsers,
   materialParsers,
   productParsers,
   projectParsers,
@@ -56,6 +57,20 @@ export function useMaterialFilters() {
       brand: materialParsers.brand,
       status: materialParsers.status,
       material_type: materialParsers.material_type,
+    },
+    {
+      history: "push",
+      shallow: false,
+    },
+  );
+}
+
+export function useActivityLogFilters() {
+  return useQueryStates(
+    {
+      role: activityLogParsers.role,
+      type: activityLogParsers.type,
+      module: activityLogParsers.module,
     },
     {
       history: "push",
