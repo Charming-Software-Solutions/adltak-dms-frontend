@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatErrorResponse } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { ApiResponse } from "@/types/api";
 import { useMutation } from "@tanstack/react-query";
@@ -33,13 +34,15 @@ const StatusDropdown = <T extends string, R>({
   const { mutate, isPending } = useMutation({
     mutationKey: [mutationKey],
     mutationFn: mutationFn,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (response.errors) {
+        toast.error(formatErrorResponse(response.errors), {
+          position: "top-center",
+          duration: 2000,
+        });
+      }
+
       onSuccess();
-    },
-    onError: (error: any) => {
-      toast.error(error.message, {
-        position: "top-center",
-      });
     },
   });
 
@@ -49,7 +52,7 @@ const StatusDropdown = <T extends string, R>({
         <Button
           variant="outline"
           disabled={disabled || isPending}
-          className="w-full flex justify-between items-center"
+          className="w-[12rem] flex justify-between items-center"
         >
           {isPending ? (
             <LoaderIcon className="animate-spin" />

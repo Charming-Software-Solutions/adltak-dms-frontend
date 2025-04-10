@@ -55,19 +55,13 @@ async function updateTaskStatus({
   id: string;
   status: TaskStatusEnum;
 }): Promise<ApiResponse<Task>> {
-  const response = await fetchAndHandleResponse<Task>({
+  return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
     url: `${TASK_URL}${id}/update-status/`,
     contentType: "application/json",
     method: "PATCH",
     body: JSON.stringify({ status }),
   });
-
-  if (response.errors) {
-    throw new Error(formatErrorResponse(response.errors));
-  }
-
-  return response;
 }
 
 async function deleteTask(id: string): Promise<ApiResponse<string>> {

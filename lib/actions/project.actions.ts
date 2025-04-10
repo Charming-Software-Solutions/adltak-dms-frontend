@@ -108,20 +108,13 @@ async function updateProjectStatus({
   id: string;
   status: ProjectStatusEnum;
 }): Promise<ApiResponse<Project>> {
-  const response = await fetchAndHandleResponse<Project>({
+  return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
     url: `${PROJECT_URL}${id}/update-status/`,
     contentType: "application/json",
     method: "PATCH",
     body: JSON.stringify({ status }),
   });
-
-  console.log(status);
-
-  if (response.errors) {
-    throw new Error(formatErrorResponse(response.errors));
-  }
-  return response;
 }
 
 async function deleteProject(id: string): Promise<ApiResponse<string>> {
