@@ -4,8 +4,14 @@ import { getEmployees } from "@/lib/actions/employee.actions";
 import { getProjects } from "@/lib/actions/project.actions";
 import { getTasks } from "@/lib/actions/task.actions";
 import TasksClient from "./TasksClient";
+import type { SearchParams } from "nuqs/server";
+import { loadTaskSearchParams } from "@/lib/searchParams";
 
-export default async function TasksPage() {
+type Props = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function TasksPage({ searchParams }: Props) {
   const projects = await getProjects();
   const employee = await getCurrentUser({ withEmployeeProfile: true });
   const allowedRoles = [
@@ -19,7 +25,7 @@ export default async function TasksPage() {
   )
     ? await getEmployees()
     : [];
-  const tasks = await getTasks();
+  const tasks = await getTasks(await loadTaskSearchParams(searchParams));
 
   return (
     <TasksClient

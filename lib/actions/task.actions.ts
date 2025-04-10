@@ -24,22 +24,12 @@ async function createTask(body: FormData): Promise<ApiResponse<Task>> {
   });
 }
 
-async function getTasks(
-  userId?: string,
-  roles?: UserRoleEnum[],
-  filters?: TaskFilter,
-): Promise<Task[]> {
-  let params = "";
-
-  if (userId && roles && roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL)) {
-    params = `?user_id=${userId}`;
-  }
-
+async function getTasks(filters?: TaskFilter): Promise<Task[]> {
   const url = createFilteredUrl(filters ?? {}, TASK_URL);
 
   const response = await fetchAndHandleResponse<Task[]>({
     jwt: (await getSession())?.access,
-    url: `${url}${params}`,
+    url: url,
     method: "GET",
   });
 
