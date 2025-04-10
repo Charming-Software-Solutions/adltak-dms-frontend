@@ -10,9 +10,11 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@/components/shared/ResponsiveDialog";
-import { TaskColumns } from "@/components/shared/table/columns/TaskColumns";
+import {
+  TaskColumns,
+  visibleTaskColumns,
+} from "@/components/shared/table/columns/TaskColumns";
 import { DataTable } from "@/components/shared/table/data-table";
-import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
@@ -22,9 +24,10 @@ import { Project } from "@/types/project";
 import { Task } from "@/types/task";
 import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import TaskForm, { useTaskForm } from "./components/TaskForm";
 import TaskFilter from "./components/TaskFilter";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 
 type Props = {
   employee: Employee;
@@ -42,21 +45,21 @@ const TasksClient = ({
   const [openDialog, setOpenDialog] = useState(false);
   const { form, onSubmit } = useTaskForm({ mode: "create" });
 
-  // Checks if is warehouse personnel only and only if they
-  // have a single role which is the warehouse personnel
   const hasWarehousePersonnelRole = employee.user.roles.includes(
     UserRoleEnum.WAREHOUSE_PERSONNEL,
   );
   const isWarehousePersonnelOnly =
     employee.user.roles.length === 1 && hasWarehousePersonnelRole;
 
-  const uniqueTasks = [
-    ...new Map(tasks.map((task) => [task.project.name, task])).values(),
-  ];
+  const uniqueTasks = useMemo(() => {
+    return [
+      ...new Map(tasks.map((task) => [task.project.name, task])).values(),
+    ];
+  }, [tasks]);
 
-  const ownTasks = tasks.filter(
-    (task) => task.warehouse_person.id === employee.id,
-  );
+  const ownTasks = useMemo(() => {
+    return tasks.filter((task) => task.warehouse_person.id === employee.id);
+  }, [tasks, employee.id]);
 
   const renderTaskTable = (tab: "all" | "my_tasks") => {
     let filteredTasks: Task[] = [];
@@ -83,17 +86,18 @@ const TasksClient = ({
         : uniqueTasks,
     });
 
-    // TODO: fix search field causing extreme lag in the client
-
     return (
-      <DataTable table={table}>
-        <div className="flex items-center space-x-2">
+      <DataTable
+        table={table}
+        visibleColumns={visibleTaskColumns(employee.user.roles)}
+      >
+        <div className="flex items-center justify-between">
           <DataTableSearch
             table={table}
             column={"project"}
             placeholder={"Search project..."}
           />
-          <div>
+          <div className="flex items-center space-x-2">
             <TabsList>
               <TabsTrigger value="all" disabled={isWarehousePersonnelOnly}>
                 All
@@ -102,9 +106,9 @@ const TasksClient = ({
                 <TabsTrigger value="my_tasks">My Tasks</TabsTrigger>
               )}
             </TabsList>
-          </div>
 
-          <TaskFilter />
+            <TaskFilter />
+          </div>
         </div>
       </DataTable>
     );
