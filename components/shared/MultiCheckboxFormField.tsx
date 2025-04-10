@@ -42,6 +42,7 @@ const MultiCheckboxFormField = ({
             <FormItem className="flex flex-row items-start space-x-3 space-y-0">
               <FormControl>
                 <Checkbox
+                  disabled={disabled}
                   checked={field.value?.includes(item.value)}
                   onCheckedChange={(checked) => {
                     return checked

@@ -55,6 +55,7 @@ const EmployeeActionsCell = React.memo(
             key={`form-employee-${employee.id}`}
             form={form}
             mode={FormModeEnum.EDIT}
+            employee={employee}
           />
           <ResponsiveDialogFooter className="px-1">
             <div className="flex flex-row w-full gap-2">
