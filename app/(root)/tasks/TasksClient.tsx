@@ -17,7 +17,7 @@ import {
 import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FormModeEnum, UserRoleEnum } from "@/enums";
+import { FormModeEnum, TaskStatusEnum, UserRoleEnum } from "@/enums";
 import { useDataTable } from "@/hooks/use-data-table";
 import { hasPermission } from "@/lib/auth";
 import { Project } from "@/types/project";
@@ -30,6 +30,9 @@ import TaskFilter from "./components/TaskFilter";
 import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { CSVLink } from "react-csv";
 import { formatDateTime } from "@/lib/utils";
+import { useTaskFilters } from "@/hooks/use-filters";
+import FilterBadge from "@/components/shared/filter/FilterBadge";
+import { TASK_STATUS } from "@/constants";
 
 type Props = {
   employee: Employee;
@@ -46,6 +49,8 @@ const TasksClient = ({
 }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const { form, onSubmit } = useTaskForm({ mode: "create" });
+  const [taskFilters, setTaskFilters] = useTaskFilters();
+  const { status, start_date, end_date } = taskFilters;
 
   const hasWarehousePersonnelRole = employee.user.roles.includes(
     UserRoleEnum.WAREHOUSE_PERSONNEL,
@@ -116,9 +121,30 @@ const TasksClient = ({
                 <TabsTrigger value="my_tasks">My Tasks</TabsTrigger>
               )}
             </TabsList>
-
             <TaskFilter />
           </div>
+        </div>
+        <div className="flex items-start gap-2 flex-wrap w-full flex-grow">
+          {status && (
+            <FilterBadge
+              key="status"
+              onRemove={() => {
+                setTaskFilters({ status: "" });
+              }}
+              label="Status"
+              value={TASK_STATUS[status as TaskStatusEnum]}
+            />
+          )}
+          {start_date && end_date && (
+            <FilterBadge
+              key="dateRange"
+              onRemove={() => {
+                setTaskFilters({ start_date: null, end_date: null });
+              }}
+              label="Date"
+              value={`${start_date.toLocaleDateString()} - ${end_date.toLocaleDateString()}`}
+            />
+          )}
         </div>
       </DataTable>
     );

@@ -12,13 +12,15 @@ import { USER_ROLES } from "@/constants";
 import { UserRoleEnum } from "@/enums";
 import { useDataTable } from "@/hooks/use-data-table";
 import { hasPermission } from "@/lib/auth";
-import { formatDateTime } from "@/lib/utils";
+import { capitalize, formatDateTime, formatFilterValue } from "@/lib/utils";
 import { ActivityLog } from "@/types/activityLog";
 import { User } from "@/types/user";
 import { FileIcon } from "lucide-react";
 import React, { useMemo } from "react";
 import { CSVLink } from "react-csv";
 import { ActivityLogFilter } from "./components/ActivityLogFilter";
+import { useActivityLogFilters } from "@/hooks/use-filters";
+import FilterBadge from "@/components/shared/filter/FilterBadge";
 
 type Props = {
   activityLogs: ActivityLog[];
@@ -27,6 +29,7 @@ type Props = {
 
 const ActivityLogsClient = ({ activityLogs, user }: Props) => {
   const memoizedActivityLogs = useMemo(() => activityLogs, [activityLogs]);
+  const [activityLogFilters, setActivityLogFilters] = useActivityLogFilters();
 
   const { table } = useDataTable({
     columns: ActivityLogColumns,
@@ -72,6 +75,21 @@ const ActivityLogsClient = ({ activityLogs, user }: Props) => {
               placeholder={"Search by employee..."}
             />
             <ActivityLogFilter />
+          </div>
+          <div className="flex items-start gap-2 flex-wrap w-full flex-grow">
+            {Object.entries(activityLogFilters).map(
+              ([key, value]) =>
+                value && (
+                  <FilterBadge
+                    key={key}
+                    label={capitalize(key)}
+                    value={formatFilterValue(value)}
+                    onRemove={() => {
+                      setActivityLogFilters({ [key]: "" });
+                    }}
+                  />
+                ),
+            )}
           </div>
         </DataTable>
       </main>

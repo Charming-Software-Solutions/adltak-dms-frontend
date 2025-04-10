@@ -28,7 +28,9 @@ import React, { useMemo, useState } from "react";
 import MaterialFilter from "./components/MaterialFilter";
 import MaterialForm, { useMaterialForm } from "./components/MaterialForm";
 import { CSVLink } from "react-csv";
-import { formatDateTime } from "@/lib/utils";
+import { capitalize, formatDateTime, formatFilterValue } from "@/lib/utils";
+import { useMaterialFilters } from "@/hooks/use-filters";
+import FilterBadge from "@/components/shared/filter/FilterBadge";
 
 type Props = {
   user: User;
@@ -39,6 +41,7 @@ type Props = {
 
 const MaterialsClient = ({ user, materials, materialTypes, brands }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
+  const [materialFilters, setMaterialFilters] = useMaterialFilters();
   const { form, onSubmit } = useMaterialForm({ mode: FormModeEnum.CREATE });
 
   const { table } = useDataTable({
@@ -141,6 +144,22 @@ const MaterialsClient = ({ user, materials, materialTypes, brands }: Props) => {
             <MaterialFilter
               classfications={{ brands: brands, types: materialTypes }}
             />
+          </div>
+
+          <div className="flex items-start gap-2 flex-wrap w-full flex-grow">
+            {Object.entries(materialFilters).map(
+              ([key, value]) =>
+                value && (
+                  <FilterBadge
+                    key={key}
+                    label={capitalize(key)}
+                    value={formatFilterValue(value.toString())}
+                    onRemove={() => {
+                      setMaterialFilters({ [key]: "" });
+                    }}
+                  />
+                ),
+            )}
           </div>
         </DataTable>
       </main>
