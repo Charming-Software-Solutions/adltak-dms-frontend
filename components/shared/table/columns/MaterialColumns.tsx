@@ -99,8 +99,6 @@ const MaterialIssueRow = ({
     },
   });
 
-  const maxAvailableForThisIssue = remainingStock; // adjust accordingly
-
   return (
     <Card key={issueType} className="flex items-center justify-between p-3">
       <dt className="flex items-center gap-2">
@@ -153,8 +151,7 @@ const MaterialIssueRow = ({
           }}
           stepButtons={{
             decrementDisabled: currentIssueQuantity <= 0 || isPending,
-            incrementDisabled:
-              currentIssueQuantity >= maxAvailableForThisIssue || isPending,
+            incrementDisabled: remainingStock === 0 || isPending,
             onDecrementClick: () => {
               mutate({
                 id: materialId,
