@@ -61,7 +61,7 @@ const ItemCard = ({
   });
 
   const currentUsedQuantity =
-    updatedProjectItem?.quantity ?? projectItem.used_quantity;
+    updatedProjectItem?.used_quantity ?? projectItem.used_quantity;
 
   return (
     <Card>

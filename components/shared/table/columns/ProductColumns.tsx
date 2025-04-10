@@ -3,6 +3,7 @@
 import ProductForm, {
   useProductForm,
 } from "@/app/(root)/products/components/ProductForm";
+import ProductRemainingCard from "@/app/(root)/products/components/ProductRemainingcard";
 import {
   Accordion,
   AccordionContent,
@@ -531,58 +532,11 @@ export const ProductColumns = (
                     <AccordionContent className="space-y-4">
                       <ScrollArea className="h-56 border bg-muted p-4 rounded-md">
                         <div className="space-y-2">
-                          {project.products.map((projectProduct, index) => (
-                            <Card key={index}>
-                              <CardContent className="flex flex-col bg-none border-none items-start justify-between p-4 space-y-2.5 md:space-y-0 md:flex-row md:items-center">
-                                <div className="flex items-center gap-3">
-                                  <Image
-                                    src={
-                                      projectProduct.product.thumbnail ??
-                                      imagePlaceholder
-                                    }
-                                    alt="product-thumbnail"
-                                    className="h-[3.5rem] w-auto object-contain rounded-sm"
-                                    priority
-                                    width={100}
-                                    height={100}
-                                  />
-                                  <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
-                                    <span className="font-semibold">
-                                      {projectProduct.product.name || "Unknown"}
-                                    </span>
-                                    <div className="flex space-x-2 items-center">
-                                      <span className="truncate text-xs">
-                                        {projectProduct.product.type.name ||
-                                          "Unknown Type"}
-                                      </span>
-                                      <Separator
-                                        className="h-2"
-                                        orientation="vertical"
-                                      />
-                                      <Badge
-                                        variant={"outline"}
-                                        className="justify-center"
-                                      >
-                                        <span className="font-medium">
-                                          {projectProduct.remaining_quantity}{" "}
-                                          QTY
-                                        </span>
-                                      </Badge>
-                                      <Separator
-                                        orientation="vertical"
-                                        className="h-2"
-                                      />
-                                      <span className="truncate text-xs">
-                                        <strong>EXP: </strong>
-                                        {formatExpiration(
-                                          projectProduct.expiration,
-                                        )}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
+                          {project.products.map((projectProduct, key) => (
+                            <ProductRemainingCard
+                              key={key}
+                              projectProduct={projectProduct}
+                            />
                           ))}
                         </div>
                       </ScrollArea>

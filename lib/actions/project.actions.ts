@@ -1,17 +1,17 @@
 "use server";
 
-import { ICreateProject } from "@/interfaces";
-import { ApiResponse } from "@/types/api";
-import { Project, ProjectMaterial, ProjectProduct } from "@/types/project";
-import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
 import {
   IncomingProductsStatus,
   ItemTypeEnum,
   ProjectStatusEnum,
 } from "@/enums";
+import { ICreateProject } from "@/interfaces";
+import { ApiResponse } from "@/types/api";
+import { Project, ProjectProduct } from "@/types/project";
 import { formatErrorResponse } from "../formatters";
 import { ProjectItem } from "../store";
+import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
 
 const PROJECT_URL = `${process.env.DOMAIN}/project/`;
 
@@ -187,18 +187,39 @@ async function getProjectProducts(): Promise<ProjectProduct[]> {
   return response.data ?? [];
 }
 
+async function handleRemainingProjectProducts({
+  id,
+  project,
+  operation,
+}: {
+  id: string;
+  project?: string;
+  operation: "allocate" | "pull_out";
+}): Promise<ApiResponse<ProjectProduct>> {
+  const method = operation === "allocate" ? "PATCH" : "DELETE";
+
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}product/handle-remaining-project-products/${id}/`,
+    contentType: "application/json",
+    method,
+    body: operation === "allocate" ? JSON.stringify({ project }) : undefined,
+  });
+}
+
 export {
   createProject,
-  getProjects,
-  getProjectsByProduct,
-  getProjectByMaterial,
-  getProjectById,
-  updateProject,
-  updateProjectIncomingProductsStatus,
-  updateProjectStatus,
   deleteProject,
+  getProjectById,
+  getProjectByMaterial,
+  getProjectItemById,
   // Project item actions
   getProjectProducts,
-  getProjectItemById,
+  getProjects,
+  getProjectsByProduct,
+  handleRemainingProjectProducts,
+  updateProject,
+  updateProjectIncomingProductsStatus,
   updateProjectItemQuantity,
+  updateProjectStatus,
 };
