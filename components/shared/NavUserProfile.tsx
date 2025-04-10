@@ -26,7 +26,9 @@ const NavUserProfile = ({
       </Avatar>
       <div className="grid flex-1 space-y-0.5 text-left text-sm leading-tight">
         <span className="truncate font-semibold">{`${firstName} ${lastName}`}</span>
-        <div className="w-full whitespace-normal">{subtitle}</div>
+        <span className="truncate text-xs text-muted-foreground">
+          {subtitle}
+        </span>
       </div>
     </div>
   );
