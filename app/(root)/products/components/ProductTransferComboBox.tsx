@@ -89,7 +89,10 @@ const ProductTransferComboBox = ({
               <CommandGroup>
                 <CommandItem
                   className="p-2"
-                  onClick={() => onTransfer(selectedProject)}
+                  onSelect={() => {
+                    onTransfer(selectedProject);
+                    setOpen(false);
+                  }}
                 >
                   Allocate Product
                 </CommandItem>
