@@ -37,7 +37,7 @@ import { Product, ProductSKU } from "@/types/product";
 import { ProjectProduct } from "@/types/project";
 import { User } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import React, { use, useMemo, useState } from "react";
 import { CSVLink } from "react-csv";
 import ProductFilter from "./components/ProductFilter";
 import ProductForm, { useProductForm } from "./components/ProductForm";
@@ -83,7 +83,10 @@ const ProductClient = ({
   const renderProjectProductTable = (
     condition: "all" | "near_expiration" | "expired",
   ) => {
-    const categorizedProducts = filterProductsByExpiration(projectProducts);
+    const categorizedProducts = useMemo(
+      () => filterProductsByExpiration(projectProducts),
+      [projectProducts],
+    );
 
     const commonTabsList = (
       <TabsList className="min-w-[20rem]">
@@ -99,7 +102,7 @@ const ProductClient = ({
       </TabsList>
     );
 
-    const getProjectProducts = () => {
+    const projectProductData = useMemo(() => {
       switch (condition) {
         case "near_expiration":
           return categorizedProducts.nearExpiration;
@@ -108,19 +111,22 @@ const ProductClient = ({
         default:
           return [];
       }
-    };
+    }, [categorizedProducts, condition]);
 
-    const isProductProject =
-      condition === "near_expiration" || condition === "expired";
+    const productTableData = useMemo(() => products, [products]);
 
     const { table: productTable } = useDataTable({
       columns: ProductColumns(user.roles),
-      data: products,
+      data: productTableData,
     });
+
     const { table: projectProductTable } = useDataTable({
       columns: ProjectProductColumns,
-      data: getProjectProducts(),
+      data: projectProductData,
     });
+
+    const isProductProject =
+      condition === "near_expiration" || condition === "expired";
 
     return (
       <React.Fragment>
