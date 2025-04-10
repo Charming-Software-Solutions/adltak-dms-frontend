@@ -261,10 +261,12 @@ export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      <TaskActionsCell
-        key={`actions-${row.original.id}`}
-        task={row.original}
-      />;
+      return (
+        <TaskActionsCell
+          key={`actions-${row.original.id}`}
+          task={row.original}
+        />
+      );
     },
   },
 ];
