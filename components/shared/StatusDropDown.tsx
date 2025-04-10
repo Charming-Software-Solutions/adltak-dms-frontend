@@ -49,7 +49,7 @@ const StatusDropdown = <T extends string, R>({
         <Button
           variant="outline"
           disabled={disabled || isPending}
-          className="w-[9rem] flex justify-between items-center"
+          className="w-full flex justify-between items-center"
         >
           {isPending ? (
             <LoaderIcon className="animate-spin" />
