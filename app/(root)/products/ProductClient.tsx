@@ -244,6 +244,7 @@ const ProductClient = ({
                           const productSKU =
                             generateProductSKU(productSKUFormat);
                           form.setValue("sku", productSKU);
+                          await form.trigger();
                         }
                       }}
                       disabled={
