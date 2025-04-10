@@ -22,7 +22,7 @@ import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { useDataTable } from "@/hooks/use-data-table";
 import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import EmployeeForm, { useEmployeeForm } from "./components/EmployeeForm";
 
 type Props = {
@@ -37,59 +37,58 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
 
   const { form, onSubmit } = useEmployeeForm({ mode: "create" });
 
-  const renderEmployeeTable = (tab: EmployeeTab) => {
-    let filteredEmployees: Employee[] = [];
+  const filteredEmployees = useMemo(() => {
+    return {
+      all: employees.filter(
+        (employee) => employee.user.id !== currentAdmin.user.id,
+      ),
+      logistics: employees.filter(
+        (employee) =>
+          employee.user.roles.includes(UserRoleEnum.LOGISTICS_TEAM_MEMBER) &&
+          employee.user.id !== currentAdmin.user.id,
+      ),
+      warehouse: employees.filter(
+        (employee) =>
+          employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
+          employee.user.id !== currentAdmin.user.id,
+      ),
+      project: employees.filter(
+        (employee) =>
+          employee.user.roles.includes(UserRoleEnum.PROJECT_MANAGER) &&
+          employee.user.id !== currentAdmin.user.id,
+      ),
+    };
+  }, [employees, currentAdmin.user.id]);
 
-    switch (tab) {
-      case "all":
-        filteredEmployees = employees;
-        break;
-      case "logistics":
-        filteredEmployees = employees.filter((employee) =>
-          employee.user.roles.includes(UserRoleEnum.LOGISTICS_TEAM_MEMBER),
-        );
-        break;
-      case "warehouse":
-        filteredEmployees = employees.filter((employee) =>
-          employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL),
-        );
-        break;
-      case "project":
-        filteredEmployees = employees.filter((employee) =>
-          employee.user.roles.includes(UserRoleEnum.PROJECT_MANAGER),
-        );
-        break;
-      default:
-        break;
-    }
+  const renderEmployeeTable = useMemo(
+    () => (tab: EmployeeTab) => {
+      const filtered = filteredEmployees[tab];
 
-    filteredEmployees = filteredEmployees.filter(
-      (employee) => employee.user.id !== currentAdmin.user.id,
-    );
+      const { table } = useDataTable({
+        columns: EmployeeColumns,
+        data: filtered,
+      });
 
-    const { table } = useDataTable({
-      columns: EmployeeColumns,
-      data: filteredEmployees,
-    });
-
-    return (
-      <DataTable table={table} visibleColumns={visibileEmployeeColumns}>
-        <div className="flex items-center justify-between">
-          <DataTableSearch
-            table={table}
-            column={"email"}
-            placeholder={"Search email..."}
-          />
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="logistics">Logistics Team Member</TabsTrigger>
-            <TabsTrigger value="project">Project Manager</TabsTrigger>
-            <TabsTrigger value="warehouse">Warehouse Personnel</TabsTrigger>
-          </TabsList>
-        </div>
-      </DataTable>
-    );
-  };
+      return (
+        <DataTable table={table} visibleColumns={visibileEmployeeColumns}>
+          <div className="flex items-center justify-between">
+            <DataTableSearch
+              table={table}
+              column={"email"}
+              placeholder={"Search email..."}
+            />
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="logistics">Logistics Team Member</TabsTrigger>
+              <TabsTrigger value="project">Project Manager</TabsTrigger>
+              <TabsTrigger value="warehouse">Warehouse Personnel</TabsTrigger>
+            </TabsList>
+          </div>
+        </DataTable>
+      );
+    },
+    [filteredEmployees],
+  );
 
   return (
     <React.Fragment>
