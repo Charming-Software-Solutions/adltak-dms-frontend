@@ -41,18 +41,17 @@ const ProjectFilter = () => {
             placeholder="Select start date"
             type="from"
             onSelect={(value) =>
-              setProjectFilters({ start_date: value as Date | undefined })
+              setProjectFilters({ start_date: value as Date })
             }
             onRemove={() => setProjectFilters({ start_date: null })}
             label="From:"
           />
 
           <CalendarPicker
+            minDate={start_date ?? undefined}
             date={end_date ?? undefined}
             placeholder="Select end date"
-            onSelect={(value) =>
-              setProjectFilters({ end_date: value as Date | undefined })
-            }
+            onSelect={(value) => setProjectFilters({ end_date: value as Date })}
             onRemove={() => setProjectFilters({ end_date: null })}
             type="to"
             label="To:"

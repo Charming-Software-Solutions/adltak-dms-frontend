@@ -41,19 +41,17 @@ const TaskFilter = () => {
             date={start_date ?? undefined}
             placeholder="Select start date"
             type="from"
-            onSelect={(value) =>
-              setTaskFilters({ start_date: value as Date | undefined })
-            }
+            onSelect={(value) => setTaskFilters({ start_date: value as Date })}
             onRemove={() => setTaskFilters({ start_date: null })}
             label="From:"
           />
-
           <CalendarPicker
+            minDate={start_date ?? undefined}
             date={end_date ?? undefined}
             placeholder="Select end date"
-            onSelect={(value) =>
-              setTaskFilters({ end_date: value as Date | undefined })
-            }
+            onSelect={(value) => {
+              setTaskFilters({ end_date: value as Date });
+            }}
             onRemove={() => setTaskFilters({ end_date: null })}
             type="to"
             label="To:"

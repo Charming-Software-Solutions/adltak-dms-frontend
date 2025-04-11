@@ -1,18 +1,17 @@
 "use server";
 
+import { getSession } from "@/auth/session";
+import { TaskStatusEnum } from "@/enums";
 import { ApiResponse } from "@/types/api";
 import { Task } from "@/types/task";
 import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
-import { TaskStatusEnum, UserRoleEnum } from "@/enums";
-import { getSession } from "@/auth/session";
-import { formatErrorResponse } from "../formatters";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
 
 type TaskFilter = {
   status: string;
-  start_date: Date | null;
-  end_date: Date | null;
+  start_date: Date | string;
+  end_date: Date | string;
 };
 
 async function createTask(body: FormData): Promise<ApiResponse<Task>> {
@@ -25,7 +24,16 @@ async function createTask(body: FormData): Promise<ApiResponse<Task>> {
 }
 
 async function getTasks(filters?: TaskFilter): Promise<Task[]> {
-  const url = createFilteredUrl(filters ?? {}, TASK_URL);
+  const normalizedFilters = { ...filters };
+
+  if (normalizedFilters.start_date instanceof Date) {
+    normalizedFilters.start_date = normalizedFilters.start_date.toISOString();
+  }
+  if (normalizedFilters.end_date instanceof Date) {
+    normalizedFilters.end_date = normalizedFilters.end_date.toISOString();
+  }
+
+  const url = createFilteredUrl(normalizedFilters, TASK_URL);
 
   const response = await fetchAndHandleResponse<Task[]>({
     jwt: (await getSession())?.access,

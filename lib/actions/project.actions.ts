@@ -9,7 +9,6 @@ import {
 import { ICreateProject } from "@/interfaces";
 import { ApiResponse } from "@/types/api";
 import { Project, ProjectProduct } from "@/types/project";
-import { formatErrorResponse } from "../formatters";
 import { ProjectItem } from "../store";
 import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
 
@@ -17,8 +16,8 @@ const PROJECT_URL = `${process.env.DOMAIN}/project/`;
 
 type ProjectFilters = {
   status: string;
-  start_date: Date | null;
-  end_date: Date | null;
+  start_date: Date | string;
+  end_date: Date | string;
 };
 
 async function createProject(
@@ -34,13 +33,23 @@ async function createProject(
 }
 
 async function getProjects(filters?: ProjectFilters): Promise<Project[]> {
-  const url = createFilteredUrl(filters ?? {}, PROJECT_URL);
+  const normalizedFilters = { ...filters };
+
+  if (normalizedFilters.start_date instanceof Date) {
+    normalizedFilters.start_date = normalizedFilters.start_date.toISOString();
+  }
+  if (normalizedFilters.end_date instanceof Date) {
+    normalizedFilters.end_date = normalizedFilters.end_date.toISOString();
+  }
+
+  const url = createFilteredUrl(normalizedFilters, PROJECT_URL);
 
   const response = await fetchAndHandleResponse<Project[]>({
     jwt: (await getSession())?.access,
     url: url,
     method: "GET",
   });
+
   return response.data ?? [];
 }
 

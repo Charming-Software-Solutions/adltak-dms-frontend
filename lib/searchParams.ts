@@ -1,4 +1,4 @@
-import { createLoader, parseAsIsoDate, parseAsString } from "nuqs/server";
+import { createLoader, parseAsIsoDateTime, parseAsString } from "nuqs/server";
 
 // Parsers
 
@@ -14,13 +14,13 @@ export const productParsers = {
 };
 export const projectParsers = {
   status: parseAsString.withDefault(""),
-  start_date: parseAsIsoDate,
-  end_date: parseAsIsoDate,
+  start_date: parseAsIsoDateTime,
+  end_date: parseAsIsoDateTime,
 };
 export const taskParsers = {
   status: parseAsString.withDefault(""),
-  start_date: parseAsIsoDate,
-  end_date: parseAsIsoDate,
+  start_date: parseAsIsoDateTime,
+  end_date: parseAsIsoDateTime,
 };
 
 export const materialParsers = {
