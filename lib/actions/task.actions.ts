@@ -4,14 +4,18 @@ import { getSession } from "@/auth/session";
 import { TaskStatusEnum } from "@/enums";
 import { ApiResponse } from "@/types/api";
 import { Task } from "@/types/task";
-import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
+import {
+  createFilteredUrl,
+  fetchAndHandleResponse,
+  toManilaISOString,
+} from "../utils";
 
 const TASK_URL = `${process.env.DOMAIN}/task/`;
 
 type TaskFilter = {
   status: string;
-  start_date: Date | string;
-  end_date: Date | string;
+  start_date: Date | string | null;
+  end_date: Date | string | null;
 };
 
 async function createTask(body: FormData): Promise<ApiResponse<Task>> {
@@ -27,10 +31,12 @@ async function getTasks(filters?: TaskFilter): Promise<Task[]> {
   const normalizedFilters = { ...filters };
 
   if (normalizedFilters.start_date instanceof Date) {
-    normalizedFilters.start_date = normalizedFilters.start_date.toISOString();
+    normalizedFilters.start_date = toManilaISOString(
+      normalizedFilters.start_date,
+    );
   }
   if (normalizedFilters.end_date instanceof Date) {
-    normalizedFilters.end_date = normalizedFilters.end_date.toISOString();
+    normalizedFilters.end_date = toManilaISOString(normalizedFilters.end_date);
   }
 
   const url = createFilteredUrl(normalizedFilters, TASK_URL);

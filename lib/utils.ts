@@ -256,3 +256,13 @@ export function createFilteredUrl<T extends Record<string, unknown>>(
   const queryString = queryParams.toString();
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 }
+
+export function toManilaISOString(date: Date): string {
+  const manilaOffsetMinutes = 8 * 60;
+  // Get the UTC timestamp of the date.
+  const utcTimestamp = date.getTime();
+  const manilaTimestamp = utcTimestamp + manilaOffsetMinutes * 60000;
+  // Generate an ISO string from the adjusted time.
+  // Replace the trailing 'Z' (which indicates UTC) with the proper timezone offset.
+  return new Date(manilaTimestamp).toISOString().replace("Z", "+08:00");
+}
