@@ -81,9 +81,11 @@ const MaterialsClient = ({ user, materials, materialTypes, brands }: Props) => {
           ]) && (
             <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
               <ResponsiveDialogTrigger>
-                <Button className="h-8">
-                  <PlusCircle className="mr-9 md:mr-2 size-4" />
-                  <span className="hidden sm:inline">Add Material</span>
+                <Button size={"default"} className="h-8 gap-1">
+                  <PlusCircle className="size-4" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add Material
+                  </span>
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>

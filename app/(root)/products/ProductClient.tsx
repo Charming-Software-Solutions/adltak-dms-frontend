@@ -37,7 +37,7 @@ import { Product, ProductSKU } from "@/types/product";
 import { ProjectProduct } from "@/types/project";
 import { User } from "@/types/user";
 import { File as FileIcon, PlusCircle } from "lucide-react";
-import React, { use, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { CSVLink } from "react-csv";
 import ProductFilter from "./components/ProductFilter";
 import ProductForm, { useProductForm } from "./components/ProductForm";
@@ -214,9 +214,11 @@ const ProductClient = ({
           ]) && (
             <ResponsiveDialog open={open} setOpen={setOpen}>
               <ResponsiveDialogTrigger>
-                <Button className="h-8">
-                  <PlusCircle className="mr-9 md:mr-2 size-4" />
-                  <span className="hidden sm:inline">Add Product</span>
+                <Button size={"default"} className="h-8 gap-1">
+                  <PlusCircle className="size-4" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add Product
+                  </span>
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>

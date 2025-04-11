@@ -176,9 +176,11 @@ const TasksClient = ({
           ]) && (
             <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
               <ResponsiveDialogTrigger>
-                <Button className="h-8">
-                  <PlusCircle className="mr-9 md:mr-2 size-4" />
-                  <span className="hidden sm:inline">Create Task</span>
+                <Button size={"default"} className="h-8 gap-1">
+                  <PlusCircle className="size-4" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Create Task
+                  </span>
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>

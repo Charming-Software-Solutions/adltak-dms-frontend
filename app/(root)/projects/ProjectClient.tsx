@@ -35,6 +35,7 @@ import React, { useState } from "react";
 import ProjectAddItem from "./components/ProjectAddItem";
 import ProjectFilter from "./components/ProjectFilter";
 import ProjectForm, { useProjectForm } from "./components/ProjectForm";
+import { useResponsive } from "@/hooks";
 
 type Props = {
   user: User;
@@ -47,6 +48,7 @@ const ProjectClient = ({ user, employee, projects }: Props) => {
   const [openDistributionDialog, setOpenDistributionDialog] = useState(false);
   const [projectFilters, setProjectFilters] = useProjectFilters();
   const { status, start_date, end_date } = projectFilters;
+  const isDesktop = useResponsive("desktop");
 
   const { form, onSubmit } = useProjectForm({
     mode: FormModeEnum.CREATE,
@@ -84,9 +86,11 @@ const ProjectClient = ({ user, employee, projects }: Props) => {
               }}
             >
               <ResponsiveDialogTrigger>
-                <Button className="h-8">
-                  <PlusCircle className="mr-9 md:mr-2 size-4" />
-                  <span className="hidden sm:inline">Create Project</span>
+                <Button size={"default"} className="h-8 gap-1">
+                  <PlusCircle className="size-4" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Create Project
+                  </span>
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent className="max-w-lg">

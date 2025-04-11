@@ -119,9 +119,11 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
 
           <ResponsiveDialog open={openUserDialog} setOpen={setOpenUserDialog}>
             <ResponsiveDialogTrigger>
-              <Button className="h-8">
-                <PlusCircle className="mr-9 md:mr-2 size-4" />
-                <span className="hidden sm:inline">Create Employee</span>
+              <Button size={"default"} className="h-8 gap-1">
+                <PlusCircle className="size-4" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Create Employee
+                </span>
               </Button>
             </ResponsiveDialogTrigger>
             <ResponsiveDialogContent className="max-w-xl">
