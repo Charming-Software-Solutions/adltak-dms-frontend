@@ -206,7 +206,11 @@ export const ProductColumns = (
               </ResponsiveDialogDescription>
             </ResponsiveDialogHeader>
             <div className="flex flex-col space-y-2">
-              <Accordion type="single" collapsible>
+              <Accordion
+                type="single"
+                collapsible
+                defaultValue={data && data.length > 0 ? data[0].id : ""}
+              >
                 {data && data.length > 0 ? (
                   data.map((project, index) => (
                     <AccordionItem value={project.id} key={index}>
@@ -333,7 +337,12 @@ export const ProductColumns = (
               </ResponsiveDialogDescription>
             </ResponsiveDialogHeader>
 
-            <Accordion type="single" collapsible className="mb-0">
+            <Accordion
+              type="single"
+              collapsible
+              className="mb-0"
+              defaultValue={data && data.length > 0 ? data[0].name : ""}
+            >
               {data?.length === 0 ? (
                 <span>No projects found</span>
               ) : (
@@ -515,7 +524,16 @@ export const ProductColumns = (
               </ResponsiveDialogDescription>
             </ResponsiveDialogHeader>
 
-            <Accordion type="single" collapsible className="mb-0">
+            <Accordion
+              type="single"
+              collapsible
+              className="mb-0"
+              defaultValue={
+                concludedProjects && concludedProjects.length > 0
+                  ? concludedProjects[0].name
+                  : ""
+              }
+            >
               {concludedProjects?.length === 0 ? (
                 <span>No locked projects found</span>
               ) : (
