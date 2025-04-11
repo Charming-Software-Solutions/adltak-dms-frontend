@@ -197,7 +197,7 @@ const EmployeeForm = ({
           name="status"
           label="Employee Active Status"
           description="Current active status of the selected employee."
-          disabled={form.formState.isSubmitting}
+          disabled={form.formState.isSubmitting || hasTasks}
         />
       </div>
     </Form>
