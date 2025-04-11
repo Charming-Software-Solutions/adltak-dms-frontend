@@ -78,10 +78,10 @@ async function deleteClassification(
   if (response.status === 500) {
     const errorMessage =
       "Failed to delete classification due to existing connections to a product or material.";
-    toast.error(errorMessage, {
-      position: "top-center",
-      duration: 2000,
-    });
+    return {
+      ...response,
+      errors: { non_field_error: [errorMessage] },
+    };
   }
 
   return response;

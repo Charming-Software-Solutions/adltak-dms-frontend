@@ -84,10 +84,13 @@ const ClassificationActionsCell = React.memo(
               );
               return response;
             } catch (error: any) {
-              toast.error(error.message, {
-                position: "top-center",
-                duration: 1500,
-              });
+              toast.error(
+                "Failed to delete classification due to existing connections to a product or material.",
+                {
+                  position: "top-center",
+                  duration: 1500,
+                },
+              );
               return {
                 status: 500,
                 data: null,
