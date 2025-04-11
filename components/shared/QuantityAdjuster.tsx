@@ -69,8 +69,8 @@ const QuantityAdjuster = ({
           <IconButton
             className="p-0 border-none rounded-r-none rounded-l-sm flex-grow text-xs"
             variant="secondary"
-            disabled={minMax.disabled}
-            onClick={minMax.onMinClick || minMax.minDisabled}
+            disabled={minMax.disabled || minMax.minDisabled}
+            onClick={minMax.onMinClick}
           >
             MIN
           </IconButton>
