@@ -4,6 +4,7 @@ import { ApiResponse } from "@/types/api";
 import { Classification, ClassificationType } from "@/types/generics";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
+import { toast } from "sonner";
 
 function getClassificationUrl(classificationType: ClassificationType): string {
   let url = `${process.env.DOMAIN}`;
@@ -75,9 +76,12 @@ async function deleteClassification(
   });
 
   if (response.status === 500) {
-    throw new Error(
-      "Failed to delete classification due to existing connections to a product or material.",
-    );
+    const errorMessage =
+      "Failed to delete classification due to existing connections to a product or material.";
+    toast.error(errorMessage, {
+      position: "top-center",
+      duration: 2000,
+    });
   }
 
   return response;
