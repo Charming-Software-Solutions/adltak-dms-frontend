@@ -27,7 +27,7 @@ export function DataTableSearch<TData>({
   }
 
   return (
-    <div className={cn("flex flex-grow items-center", className)}>
+    <div className={cn("flex p-1 flex-grow items-center", className)}>
       <Input
         placeholder={placeholder}
         value={queryParam ?? ""}
