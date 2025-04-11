@@ -24,7 +24,7 @@ export enum ProjectStatusEnum {
 export enum MaterialStatusEnum {
   AVAILABLE = "AVAILABLE",
   IN_USE = "IN_USE",
-  UNAVAILABLE = "UNAVAILABLE",
+  // UNAVAILABLE = "UNAVAILABLE",
 }
 
 export enum MaterialIssueEnum {

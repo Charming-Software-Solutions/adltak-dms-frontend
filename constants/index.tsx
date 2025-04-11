@@ -76,7 +76,7 @@ export const PROJECT_STATUSES: Record<ProjectStatusEnum, string> = {
 export const MATERIAL_STATUS: Record<MaterialStatusEnum, string> = {
   [MaterialStatusEnum.AVAILABLE]: "Available",
   [MaterialStatusEnum.IN_USE]: "In Use",
-  [MaterialStatusEnum.UNAVAILABLE]: "Unavailable",
+  // [MaterialStatusEnum.UNAVAILABLE]: "Unavailable",
 } as const;
 
 export const MATERIAL_ISSUE: Record<MaterialIssueEnum, string> = {
