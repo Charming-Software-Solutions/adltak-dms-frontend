@@ -38,7 +38,7 @@ type EmployeeTab = "all" | "logistics" | "warehouse" | "project";
 const EmployeeClient = ({ employees, currentAdmin }: Props) => {
   const [openUserDialog, setOpenUserDialog] = useState(false);
 
-  const { form, onSubmit } = useEmployeeForm({ mode: "create" });
+  const { form, onSubmit } = useEmployeeForm({ mode: FormModeEnum.CREATE });
 
   const filteredEmployees = useMemo(() => {
     return {

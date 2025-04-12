@@ -38,7 +38,7 @@ const EmployeeActionsCell = React.memo(
     const [openDialog, setOpenDialog] = useState(false);
     const { form, onSubmit } = useEmployeeForm({
       employee,
-      mode: "edit",
+      mode: FormModeEnum.EDIT,
     });
 
     return (

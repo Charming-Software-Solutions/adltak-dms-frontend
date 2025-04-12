@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -35,7 +36,7 @@ type EmployeeFormProps = {
 
 type UseEmployeeFormProps = {
   employee?: Employee | undefined;
-  mode: "create" | "edit";
+  mode: FormModeEnum;
 };
 
 export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
@@ -63,17 +64,14 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     formData.append("last_name", values.lastName);
 
     const userData: {
-      email?: string;
+      email: string;
       roles: UserRoleEnum[];
       is_active: boolean;
     } = {
+      email: values.email,
       roles: values.roles as UserRoleEnum[],
       is_active: values.status,
     };
-
-    if (mode === "create") {
-      userData.email = values.email;
-    }
 
     formData.append("user", JSON.stringify(userData));
 
@@ -82,7 +80,7 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     }
 
     const result: ApiResponse<Employee> =
-      mode === "create"
+      mode === FormModeEnum.CREATE
         ? await createEmployee(formData)
         : await updateEmployee(employee!.id, formData);
 
@@ -90,11 +88,12 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
+      return;
     }
 
-    showSuccessMessage(mode as FormModeEnum, "employee");
+    showSuccessMessage(mode, "employee");
     setOpen(false);
-    form.reset(mode === "create" ? undefined : values);
+    form.reset(mode === FormModeEnum.CREATE ? undefined : values);
     router.refresh();
   };
 
@@ -112,11 +111,13 @@ const EmployeeForm = ({
     queryFn: async () => await getTasks(),
   });
 
-  const hasTasks = tasks?.some(
-    (task) =>
-      task.warehouse_person.user.id === employee?.user.id &&
-      task.project.status === ProjectStatusEnum.LOCKED,
-  );
+  const hasTasks = useMemo(() => {
+    return tasks?.some(
+      (task) =>
+        task.warehouse_person.user.id === employee?.user.id &&
+        task.project.status !== ProjectStatusEnum.LOCKED,
+    );
+  }, [tasks, employee]);
 
   return (
     <Form {...form}>
@@ -170,7 +171,6 @@ const EmployeeForm = ({
             </AlertDescription>
           </Alert>
         )}
-
         <Card>
           <CardContent className="p-4 space-y-4">
             <div className="space-y-0.5">
@@ -192,13 +192,15 @@ const EmployeeForm = ({
             />
           </CardContent>
         </Card>
-        <SwitchFormField
-          control={form.control}
-          name="status"
-          label="Employee Active Status"
-          description="Current active status of the selected employee."
-          disabled={form.formState.isSubmitting || hasTasks}
-        />
+        {mode === FormModeEnum.EDIT && (
+          <SwitchFormField
+            control={form.control}
+            name="status"
+            label="Employee Active Status"
+            description="Current active status of the selected employee."
+            disabled={form.formState.isSubmitting || hasTasks}
+          />
+        )}
       </div>
     </Form>
   );
