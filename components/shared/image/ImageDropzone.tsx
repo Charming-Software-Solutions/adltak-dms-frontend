@@ -148,7 +148,7 @@ const ImageDropzone = (props: ImageDropzoneProps) => {
               <div onClick={() => fileInputRef.current?.click()}>
                 <DropZone
                   className={cn(
-                    "dropzone bg-neutral-50 border border-dashed w-[10rem] h-full rounded-md flex items-center justify-center cursor-pointer p-0",
+                    "dropzone bg-muted border border-dashed w-[10rem] h-full rounded-md flex items-center justify-center cursor-pointer p-0",
                     classname,
                   )}
                   getDropOperation={(types) => {
