@@ -88,7 +88,6 @@ const ClassificationActionsCell = React.memo(
                 "Failed to delete classification due to existing connections to a product or material.",
                 {
                   position: "top-center",
-                  duration: 1500,
                 },
               );
               return {

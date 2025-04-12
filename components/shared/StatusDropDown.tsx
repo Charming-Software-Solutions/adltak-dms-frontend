@@ -38,7 +38,6 @@ const StatusDropdown = <T extends string, R>({
       if (response.errors) {
         toast.error(formatErrorResponse(response.errors), {
           position: "top-center",
-          duration: 2000,
         });
       }
 
