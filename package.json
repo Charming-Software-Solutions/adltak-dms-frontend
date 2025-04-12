@@ -9,7 +9,7 @@
     "dev": "next dev --turbopack",
     "staging": "npm ci && bun run build",
     "build": "next build",
-    "start": "node .next/standalone/server.js",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
