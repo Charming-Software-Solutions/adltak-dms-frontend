@@ -378,7 +378,19 @@ export const MaterialColumns: ColumnDef<Material>[] = [
             <ResponsiveDialogHeader>
               <ResponsiveDialogTitle>Material Status</ResponsiveDialogTitle>
             </ResponsiveDialogHeader>
-            <div className="grid gap-3 text-sm">
+            <div className="-mx-6 max-h-[36rem] overflow-y-auto px-6 text-sm flex flex-col gap-2">
+              <Separator className="my-1" />
+              <span>Material Details</span>
+              <div className="space-y-2 bg-muted border p-4 rounded-md">
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Material Name</dt>
+                  <dd>{material.name}</dd>
+                </div>
+                <div className="flex items-center justify-between">
+                  <dt className="text-muted-foreground">Material Code</dt>
+                  <dd>{material.code}</dd>
+                </div>
+              </div>
               <Separator className="my-1" />
               <span>Material Inventory Status</span>
               <div className="space-y-2 bg-muted border p-4 rounded-md">

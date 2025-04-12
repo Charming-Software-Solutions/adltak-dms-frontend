@@ -45,6 +45,14 @@ const ViewItemsDialog = ({
         </ResponsiveDialogHeader>
         <div className="grid gap-3 text-sm">
           <div className="flex items-center justify-between">
+            <dt className="text-muted-foreground">Project Name</dt>
+            <div className="flex items-center">
+              {project.name}
+              <CopyButton className="ml-1" value={project.name} />
+            </div>
+          </div>
+          <Separator className="my-1" />
+          <div className="flex items-center justify-between">
             <dt className="text-muted-foreground">BA Reference Number</dt>
             <div className="flex items-center">
               {project.ba_reference_number}{" "}
