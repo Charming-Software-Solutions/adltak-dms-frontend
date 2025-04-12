@@ -39,8 +39,8 @@ const HomeClient = ({ user, projects, metrics }: Props) => {
   return (
     <React.Fragment>
       <Header>{null}</Header>
-      <main className="main-container">
-        <div className="grid auto-rows-min gap-6 md:grid-cols-4 pb-2">
+      <main className="flex flex-col flex-1 space-y-6 p-6">
+        <div className="grid auto-rows-min gap-6 md:grid-cols-4">
           <MetricCard
             title={"Monthly Projects"}
             value={metrics.monthlyProjects.toString()}
@@ -65,9 +65,8 @@ const HomeClient = ({ user, projects, metrics }: Props) => {
             subtitle={"Number of products expired"}
             icon={<TriangleAlert className="size-4" />}
           />
-          <div className="flex items-center gap-2"></div>
         </div>
-        <Card className="min-h-screen rounded-xl overflow-x-auto max-w-screen-xl md:min-h-min pb-10">
+        <Card className="in-h-[100vh] flex-1 rounded-xl overflow-auto">
           <CardHeader className="flex flex-row justify-between items-start">
             <div className="space-y-2">
               <CardTitle>Recent Projects</CardTitle>
