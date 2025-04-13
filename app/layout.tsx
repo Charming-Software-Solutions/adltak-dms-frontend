@@ -21,6 +21,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <Toaster
+          closeButton
           richColors
           theme="light"
           position="top-center"
