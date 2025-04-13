@@ -1,12 +1,12 @@
 "use client";
 
+import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import SwitchFormField from "@/components/shared/SwitchFormField";
 import { Form } from "@/components/ui/form";
-import { SelectItem } from "@/components/ui/select";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { createProduct, updateProduct } from "@/lib/actions/product.actions";
 import { hasPermission } from "@/lib/auth";
@@ -101,13 +101,19 @@ const ProductForm = ({
   mode,
   className,
 }: Props) => {
+  const router = useRouter();
   const formDisabled =
     form.formState.isSubmitting ||
     (userRoles.length > 0 && !hasPermission(userRoles, [UserRoleEnum.ADMIN]));
 
   return (
     <Form {...form}>
-      <div className={cn("flex flex-col gap-4 h-full mb-1", className)}>
+      <div
+        className={cn(
+          "-mx-6 max-h-[40rem] overflow-y-auto px-6 text-sm flex flex-col gap-4",
+          className,
+        )}
+      >
         <div className="flex flex-row gap-2 items-start">
           <ImageDropzone
             control={form.control}
@@ -141,48 +147,63 @@ const ProductForm = ({
           placeholder="Quezon City"
           disabled={form.formState.isSubmitting}
         />
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
+        <ComboBoxFormField
+          items={brands.map((brand) => ({
+            label: brand.name,
+            value: brand.id,
+          }))}
           control={form.control}
           name="brand"
-          label="Product Brand"
-          placeholder="Select brand"
-          disabled={formDisabled}
-        >
-          {brands.map((brand, key) => (
-            <SelectItem key={key} value={brand.id}>
-              {brand.name}
-            </SelectItem>
-          ))}
-        </CustomFormField>
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
+          placeholder={{
+            triggerPlaceholder: "Select brand...",
+            searchPlaceholder: "Search brand...",
+          }}
+          label="Brand"
+          popOverSize="md:min-w-[29rem]"
+          footer={{
+            onSelect: () => router.push("/classifications"),
+            label: "Add brand",
+          }}
+          disabled={form.formState.isSubmitting}
+        />
+        <ComboBoxFormField
+          items={(categories ?? []).map((category) => ({
+            label: category.name,
+            value: category.id,
+          }))}
           control={form.control}
           name="category"
-          label="Product Category"
-          placeholder="Select category"
-          disabled={formDisabled}
-        >
-          {categories.map((category, key) => (
-            <SelectItem key={key} value={category.id}>
-              {category.name}
-            </SelectItem>
-          ))}
-        </CustomFormField>
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
+          placeholder={{
+            triggerPlaceholder: "Select category...",
+            searchPlaceholder: "Search category...",
+          }}
+          label="Category"
+          popOverSize="md:min-w-[29rem]"
+          footer={{
+            onSelect: () => router.push("/classifications"),
+            label: "Add category",
+          }}
+          disabled={form.formState.isSubmitting}
+        />
+        <ComboBoxFormField
+          items={(types ?? []).map((type) => ({
+            label: type.name,
+            value: type.id,
+          }))}
           control={form.control}
           name="type"
-          label="Product Type"
-          placeholder="Select type"
-          disabled={formDisabled}
-        >
-          {types.map((brand, key) => (
-            <SelectItem key={key} value={brand.id}>
-              {brand.name}
-            </SelectItem>
-          ))}
-        </CustomFormField>
+          placeholder={{
+            triggerPlaceholder: "Select type...",
+            searchPlaceholder: "Search type...",
+          }}
+          label="Type"
+          popOverSize="md:min-w-[29rem]"
+          footer={{
+            onSelect: () => router.push("/classifications"),
+            label: "Add type",
+          }}
+          disabled={form.formState.isSubmitting}
+        />
         {mode === FormModeEnum.EDIT && (
           <SwitchFormField
             control={form.control}

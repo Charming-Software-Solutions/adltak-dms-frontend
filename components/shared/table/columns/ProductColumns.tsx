@@ -117,7 +117,6 @@ const ProductActionsCell = React.memo(
           <ProductForm
             form={form}
             userRoles={userRoles}
-            className="px-4 md:px-1 pb-4"
             brands={data?.brands ?? []}
             categories={data?.categories ?? []}
             types={data?.productTypes ?? []}

@@ -227,7 +227,6 @@ const ProductClient = ({
                 </ResponsiveDialogHeader>
                 <ProductForm
                   form={form}
-                  className="px-4 md:px-1 pb-2"
                   mode={FormModeEnum.CREATE}
                   brands={classifications.brands}
                   categories={classifications.categories}

@@ -103,11 +103,16 @@ const MaterialForm = ({
   brands,
   className,
 }: Props) => {
-  console.log(form.formState);
+  const router = useRouter();
 
   return (
     <Form {...form}>
-      <div className={cn("form-container", className)}>
+      <div
+        className={cn(
+          "-mx-6 max-h-[32rem] overflow-y-auto px-6 text-sm flex flex-col gap-4",
+          className,
+        )}
+      >
         <div className="flex flex-row gap-2 items-start">
           <ImageDropzone
             control={form.control}
@@ -133,57 +138,65 @@ const MaterialForm = ({
             />
           </div>
         </div>
-        <div className="flex items-center space-x-2 w-full">
-          <div className="flex-grow">
-            <CustomFormField
-              fieldType={FormFieldType.INPUT}
-              control={form.control}
-              name="agency"
-              label="Agency"
-              placeholder="AdTalk"
-              disabled={form.formState.isSubmitting}
-            />
-          </div>
-          <div className="flex-grow">
-            <CustomFormField
-              fieldType={FormFieldType.INPUT}
-              control={form.control}
-              name="area"
-              label="Area"
-              placeholder="Quezon City"
-              disabled={form.formState.isSubmitting}
-            />
-          </div>
+        <div className="grid grid-cols-2 gap-2">
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="agency"
+            label="Agency"
+            placeholder="AdTalk"
+            disabled={form.formState.isSubmitting}
+          />
+          <CustomFormField
+            fieldType={FormFieldType.INPUT}
+            control={form.control}
+            name="area"
+            label="Area"
+            placeholder="Quezon City"
+            disabled={form.formState.isSubmitting}
+          />
         </div>
-        <ComboBoxFormField
-          items={brands.map((brand) => ({
-            label: brand.name,
-            value: brand.id,
-          }))}
-          control={form.control}
-          name="brand"
-          placeholder={{
-            triggerPlaceholder: "Select brand...",
-            searchPlaceholder: "Search brand...",
-          }}
-          label="Brand"
-          popOverSize="md:min-w-[28.3rem]"
-          disabled={form.formState.isSubmitting}
-        />
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
-          control={form.control}
-          name="type"
-          label="Type"
-          placeholder="Select type"
-          disabled={form.formState.isSubmitting}
-        >
-          {materialTypes.map((type, key) => (
-            <SelectItem key={key} value={type.id}>
-              {type.name}
-            </SelectItem>
-          ))}
-        </CustomFormField>
+        <div className="grid grid-cols-2 gap-2">
+          <ComboBoxFormField
+            items={brands.map((brand) => ({
+              label: brand.name,
+              value: brand.id,
+            }))}
+            control={form.control}
+            name="brand"
+            placeholder={{
+              triggerPlaceholder: "Select brand...",
+              searchPlaceholder: "Search brand...",
+            }}
+            label="Brand"
+            popOverSize="w-full"
+            footer={{
+              onSelect: () => router.push("/classifications"),
+              label: "Add brand",
+            }}
+            disabled={form.formState.isSubmitting}
+          />
+          <ComboBoxFormField
+            items={(materialTypes ?? []).map((type) => ({
+              label: type.name,
+              value: type.id,
+            }))}
+            control={form.control}
+            name="type"
+            placeholder={{
+              triggerPlaceholder: "Select type...",
+              searchPlaceholder: "Search type...",
+            }}
+            label="Type"
+            popOverSize="w-full"
+            footer={{
+              onSelect: () => router.push("/classifications"),
+              label: "Add type",
+            }}
+            disabled={form.formState.isSubmitting}
+          />
+        </div>
+
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           inputType={InputType.NUMBER}
