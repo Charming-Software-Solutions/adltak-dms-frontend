@@ -87,64 +87,69 @@ export const visibleProductColumns = (userRoles: UserRoleEnum[]) => {
   };
 };
 
-const ProductActionsCell = React.memo(({ product }: { product: Product }) => {
-  const [openDialog, setOpenDialog] = useState(false);
-  const { form, onSubmit } = useProductForm({
-    product,
-    mode: FormModeEnum.EDIT,
-  });
+const ProductActionsCell = React.memo(
+  ({ product, userRoles }: { product: Product; userRoles: UserRoleEnum[] }) => {
+    const [openDialog, setOpenDialog] = useState(false);
+    const { form, onSubmit } = useProductForm({
+      product,
+      mode: FormModeEnum.EDIT,
+    });
 
-  const { data } = useQuery({
-    queryKey: ["edit-product"],
-    queryFn: async () => {
-      const [brands, categories, productTypes] = await Promise.all([
-        getBrands(),
-        getCategories(),
-        getTypes(),
-      ]);
-      return { brands, categories, productTypes };
-    },
-  });
+    const { data } = useQuery({
+      queryKey: ["edit-product"],
+      queryFn: async () => {
+        const [brands, categories, productTypes] = await Promise.all([
+          getBrands(),
+          getCategories(),
+          getTypes(),
+        ]);
+        return { brands, categories, productTypes };
+      },
+    });
 
-  return (
-    <div className="flex items-center gap-2">
-      <EditDialog
-        title="Edit Product"
-        open={openDialog}
-        setOpen={setOpenDialog}
-      >
-        <ProductForm
-          form={form}
-          className="px-4 md:px-1 pb-4"
-          brands={data?.brands ?? []}
-          categories={data?.categories ?? []}
-          types={data?.productTypes ?? []}
-          mode={FormModeEnum.EDIT}
-        />
-        <ResponsiveDialogFooter className="px-1">
-          <div className="flex flex-row w-full gap-2">
-            <Button
-              variant={"outline"}
-              className="flex-grow w-full"
-              onClick={() => form.reset()}
-            >
-              Reset
-            </Button>
-            <DialogFormButton
-              onClick={form.handleSubmit((values) =>
-                onSubmit(values, setOpenDialog),
-              )}
-              disabled={!form.formState.isValid || form.formState.isSubmitting}
-              loading={form.formState.isSubmitting}
-            >
-              Save Changes
-            </DialogFormButton>
-          </div>
-        </ResponsiveDialogFooter>
-      </EditDialog>
-    </div>
-  );
-});
+    return (
+      <div className="flex items-center gap-2">
+        <EditDialog
+          title="Edit Product"
+          open={openDialog}
+          setOpen={setOpenDialog}
+        >
+          <ProductForm
+            form={form}
+            userRoles={userRoles}
+            className="px-4 md:px-1 pb-4"
+            brands={data?.brands ?? []}
+            categories={data?.categories ?? []}
+            types={data?.productTypes ?? []}
+            mode={FormModeEnum.EDIT}
+          />
+          <ResponsiveDialogFooter className="px-1">
+            <div className="flex flex-row w-full gap-2">
+              <Button
+                variant={"outline"}
+                className="flex-grow w-full"
+                onClick={() => form.reset()}
+              >
+                Reset
+              </Button>
+              <DialogFormButton
+                onClick={form.handleSubmit((values) =>
+                  onSubmit(values, setOpenDialog),
+                )}
+                disabled={
+                  !form.formState.isValid || form.formState.isSubmitting
+                }
+                loading={form.formState.isSubmitting}
+              >
+                Save Changes
+              </DialogFormButton>
+            </div>
+          </ResponsiveDialogFooter>
+        </EditDialog>
+      </div>
+    );
+  },
+);
 
 export const ProductColumns = (
   userRoles: UserRoleEnum[],
@@ -577,6 +582,7 @@ export const ProductColumns = (
     header: "Actions",
     cell: ({ row }) => (
       <ProductActionsCell
+        userRoles={userRoles}
         key={`actions-${row.original.id}`}
         product={row.original}
       />

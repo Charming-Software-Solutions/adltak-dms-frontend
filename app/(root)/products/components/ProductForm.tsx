@@ -7,8 +7,9 @@ import ImageDropzone from "@/components/shared/image/ImageDropzone";
 import SwitchFormField from "@/components/shared/SwitchFormField";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
-import { FormModeEnum } from "@/enums";
+import { FormModeEnum, UserRoleEnum } from "@/enums";
 import { createProduct, updateProduct } from "@/lib/actions/product.actions";
+import { hasPermission } from "@/lib/auth";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
 import { ProductFormData, productFormSchema } from "@/schemas";
@@ -22,6 +23,7 @@ import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<ProductFormData>;
+  userRoles?: UserRoleEnum[];
   brands: Brand[];
   categories: Category[];
   types: Type[];
@@ -92,6 +94,7 @@ export const useProductForm = ({
 
 const ProductForm = ({
   form,
+  userRoles = [],
   brands,
   categories,
   types,
@@ -99,7 +102,8 @@ const ProductForm = ({
   className,
 }: Props) => {
   const formDisabled =
-    form.formState.isSubmitting || mode === FormModeEnum.EDIT;
+    form.formState.isSubmitting ||
+    (userRoles.length > 0 && !hasPermission(userRoles, [UserRoleEnum.ADMIN]));
 
   return (
     <Form {...form}>
