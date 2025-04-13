@@ -31,7 +31,7 @@ export const useTaskForm = ({
   mode,
 }: {
   task?: Task;
-  mode: "create" | "edit";
+  mode: FormModeEnum;
 }) => {
   const router = useRouter();
 
@@ -53,7 +53,7 @@ export const useTaskForm = ({
     formData.append("project", values.project);
 
     const result: ApiResponse<Task> =
-      mode === "create"
+      mode === FormModeEnum.CREATE
         ? await createTask(formData)
         : await updateTask(task!.id, formData);
 
@@ -64,9 +64,9 @@ export const useTaskForm = ({
       return;
     }
 
-    showSuccessMessage(mode as FormModeEnum, "task");
+    showSuccessMessage(mode, "task");
     setOpen(false);
-    form.reset(mode === "create" ? undefined : values);
+    form.reset(mode === FormModeEnum.CREATE ? undefined : values);
     router.refresh();
   };
   return { form, onSubmit };

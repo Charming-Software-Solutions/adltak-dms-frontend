@@ -48,7 +48,7 @@ const TasksClient = ({
   warehousePersons,
 }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const { form, onSubmit } = useTaskForm({ mode: "create" });
+  const { form, onSubmit } = useTaskForm({ mode: FormModeEnum.CREATE });
   const [taskFilters, setTaskFilters] = useTaskFilters();
   const { status, start_date, end_date } = taskFilters;
 
