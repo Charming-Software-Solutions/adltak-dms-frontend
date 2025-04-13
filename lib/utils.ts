@@ -89,6 +89,10 @@ export async function fetchAndHandleResponse<T>({
       return { status, data: null, errors: errorData };
     }
 
+    if (status === 204) {
+      return { status, data: null, errors: null };
+    }
+
     const data: T = await response.json();
     return { status, data, errors: null };
   } catch (error: any) {

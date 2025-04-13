@@ -82,6 +82,7 @@ const ProjectActionsCell = React.memo(({ project }: { project: Project }) => {
       </EditDialog>
       <DeleteDialog
         title="Delete Project"
+        model="project"
         deleteAction={async () => await deleteProject(project.id)}
         placeholder="Are you sure you want to delete the project?"
       />

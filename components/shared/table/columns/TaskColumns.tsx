@@ -60,7 +60,7 @@ export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
 
 const TaskActionsCell = React.memo(({ task }: { task: Task }) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const { form, onSubmit } = useTaskForm({ task, mode: "edit" });
+  const { form, onSubmit } = useTaskForm({ task, mode: FormModeEnum.EDIT });
 
   const { data } = useQuery({
     queryKey: ["edit-task"],
@@ -109,6 +109,7 @@ const TaskActionsCell = React.memo(({ task }: { task: Task }) => {
       </EditDialog>
       <DeleteDialog
         title="Delete Task"
+        model="task"
         deleteAction={async () => await deleteTask(task.id)}
         placeholder="Are you sure you want to delete the task?"
       />

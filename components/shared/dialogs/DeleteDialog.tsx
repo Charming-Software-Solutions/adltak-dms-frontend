@@ -19,11 +19,12 @@ import { formatErrorResponse } from "@/lib/formatters";
 
 type Props = {
   title: string;
+  model: string;
   deleteAction: () => Promise<ApiResponse<string>>;
   placeholder: string;
 };
 
-const DeleteDialog = ({ title, deleteAction, placeholder }: Props) => {
+const DeleteDialog = ({ title, model, deleteAction, placeholder }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const router = useRouter();
 
@@ -55,9 +56,13 @@ const DeleteDialog = ({ title, deleteAction, placeholder }: Props) => {
               variant={"destructive"}
               onClick={async () => {
                 const response = await deleteAction();
+
                 if (response.errors) {
                   toast.error(formatErrorResponse(response.errors));
+                  return;
                 }
+
+                toast.success(`Successfully deleted ${model}.`);
                 setOpenDialog(false);
                 router.refresh();
               }}

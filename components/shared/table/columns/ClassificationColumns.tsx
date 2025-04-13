@@ -74,6 +74,7 @@ const ClassificationActionsCell = React.memo(
         </EditDialog>
         <DeleteDialog
           title="Delete Classification"
+          model={classificationType}
           deleteAction={async () =>
             await deleteClassification(classification.id, classificationType)
           }
