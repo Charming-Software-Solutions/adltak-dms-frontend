@@ -14,6 +14,8 @@ import {
   ResponsiveDialogTrigger,
 } from "../ResponsiveDialog";
 import IconButton from "../buttons/IconButton";
+import { toast } from "sonner";
+import { formatErrorResponse } from "@/lib/formatters";
 
 type Props = {
   title: string;
@@ -52,7 +54,10 @@ const DeleteDialog = ({ title, deleteAction, placeholder }: Props) => {
               className="flex-grow w-full"
               variant={"destructive"}
               onClick={async () => {
-                await deleteAction();
+                const response = await deleteAction();
+                if (response.errors) {
+                  toast.error(formatErrorResponse(response.errors));
+                }
                 setOpenDialog(false);
                 router.refresh();
               }}
