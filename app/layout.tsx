@@ -20,7 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <Toaster richColors theme="light" toastOptions={{ duration: 5000 }} />
+        <Toaster
+          richColors
+          theme="light"
+          position="top-center"
+          toastOptions={{ duration: 5000 }}
+        />
         {children}
       </body>
     </html>
