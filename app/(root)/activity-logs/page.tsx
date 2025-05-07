@@ -1,16 +1,32 @@
-import React from "react";
-import ActivityLogsClient from "./ActivityLogClient";
+import { getCurrentUser } from "@/auth/currentUser";
+import LoadingSpinnerIcon from "@/components/ui/loading-spinner";
 import { getActivityLogs } from "@/lib/actions/activity.logs.actions";
-import type { SearchParams } from "nuqs/server";
 import { loadActivityLogSearchPrams } from "@/lib/searchParams";
+import { redirect } from "next/navigation";
+import type { SearchParams } from "nuqs/server";
+import { Suspense } from "react";
+import ActivityLogsClient from "./ActivityLogClient";
 
 type Props = {
   searchParams: Promise<SearchParams>;
 };
 
-export default async function ActivityLogPage({ searchParams }: Props) {
+async function ActivityServer({ searchParams }: Props) {
   const filters = await loadActivityLogSearchPrams(searchParams);
   const activityLogs = await getActivityLogs(filters);
+  const user = await getCurrentUser();
 
-  return <ActivityLogsClient activityLogs={activityLogs} />;
+  if (!user) {
+    redirect("/login");
+  }
+
+  return <ActivityLogsClient activityLogs={activityLogs} user={user} />;
+}
+
+export default function ActivityLogsPage({ searchParams }: Props) {
+  return (
+    <Suspense fallback={<LoadingSpinnerIcon />}>
+      <ActivityServer searchParams={searchParams} />
+    </Suspense>
+  );
 }

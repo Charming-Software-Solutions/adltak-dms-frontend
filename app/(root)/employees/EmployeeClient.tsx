@@ -14,15 +14,19 @@ import {
   EmployeeColumns,
   visibileEmployeeColumns,
 } from "@/components/shared/table/columns/EmployeeColumns";
+import { DataTable } from "@/components/shared/table/data-table";
+import { DataTableSearch } from "@/components/shared/table/data-table-search";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormModeEnum, UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
-import { useDataTable } from "@/hooks/use-datatable";
+import { useDataTable } from "@/hooks/use-data-table";
 import { Employee } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import EmployeeForm, { useEmployeeForm } from "./components/EmployeeForm";
+import { CSVLink } from "react-csv";
+import { formatDateTime } from "@/lib/utils";
+import { USER_ROLES } from "@/constants";
 
 type Props = {
   employees: Employee[];
@@ -34,85 +38,92 @@ type EmployeeTab = "all" | "logistics" | "warehouse" | "project";
 const EmployeeClient = ({ employees, currentAdmin }: Props) => {
   const [openUserDialog, setOpenUserDialog] = useState(false);
 
-  const { form, onSubmit } = useEmployeeForm({ mode: "create" });
+  const { form, onSubmit } = useEmployeeForm({ mode: FormModeEnum.CREATE });
 
-  const renderEmployeeTable = (tab: EmployeeTab) => {
-    let filteredEmployees: Employee[] = [];
-
-    switch (tab) {
-      case "all":
-        filteredEmployees = employees;
-        break;
-      case "logistics":
-        filteredEmployees = employees.filter(
-          (employee) =>
-            employee.user.role === UserRoleEnum.LOGISTICS_SPECIALIST,
-        );
-        break;
-      case "warehouse":
-        filteredEmployees = employees.filter(
-          (employee) => employee.user.role === UserRoleEnum.WAREHOUSE_WORKER,
-        );
-        break;
-      case "project":
-        filteredEmployees = employees.filter(
-          (employee) => employee.user.role === UserRoleEnum.PROJECT_HANDLER,
-        );
-        break;
-      default:
-        break;
-    }
-
-    filteredEmployees = filteredEmployees.filter(
-      (employee) => employee.user.id !== currentAdmin.user.id,
-    );
-
-    const dataTable = useDataTable({
-      columns: EmployeeColumns,
-      data: filteredEmployees,
-      visibleColumns: isDesktop
-        ? visibileEmployeeColumns.desktop
-        : visibileEmployeeColumns.mobile,
-      searchField: {
-        column: "email",
-        placeholder: "Search email...",
-        className: "w-[100rem]",
-      },
-      tabsList: (
-        <div>
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="logistics">Logistics Team Member</TabsTrigger>
-            <TabsTrigger value="project">Project Manager</TabsTrigger>
-            <TabsTrigger value="warehouse">Warehouse Personnel</TabsTrigger>
-          </TabsList>
-        </div>
+  const filteredEmployees = useMemo(() => {
+    return {
+      all: employees.filter(
+        (employee) => employee.user.id !== currentAdmin.user.id,
       ),
-    });
+      logistics: employees.filter(
+        (employee) =>
+          employee.user.roles.includes(UserRoleEnum.LOGISTICS_TEAM_MEMBER) &&
+          employee.user.id !== currentAdmin.user.id,
+      ),
+      warehouse: employees.filter(
+        (employee) =>
+          employee.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
+          employee.user.id !== currentAdmin.user.id,
+      ),
+      project: employees.filter(
+        (employee) =>
+          employee.user.roles.includes(UserRoleEnum.PROJECT_MANAGER) &&
+          employee.user.id !== currentAdmin.user.id,
+      ),
+    };
+  }, [employees, currentAdmin.user.id]);
 
-    return dataTable;
-  };
+  const renderEmployeeTable = useMemo(
+    () => (tab: EmployeeTab) => {
+      const filtered = filteredEmployees[tab];
 
-  const isDesktop = useResponsive("desktop");
+      const { table } = useDataTable({
+        columns: EmployeeColumns,
+        data: filtered,
+      });
+
+      return (
+        <DataTable table={table} visibleColumns={visibileEmployeeColumns}>
+          <div className="flex items-center justify-between">
+            <DataTableSearch
+              table={table}
+              column={"email"}
+              placeholder={"Search email..."}
+            />
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="logistics">Logistics Team Member</TabsTrigger>
+              <TabsTrigger value="project">Project Manager</TabsTrigger>
+              <TabsTrigger value="warehouse">Warehouse Personnel</TabsTrigger>
+            </TabsList>
+          </div>
+        </DataTable>
+      );
+    },
+    [filteredEmployees],
+  );
+
+  const employeesToExport = useMemo(() => {
+    return filteredEmployees.all.map((employee) => ({
+      email: employee.user.email,
+      status: employee.user.is_active ? "Active" : "Deactivated",
+      roles: employee.user.roles.map((role) => USER_ROLES[role]).join(", "),
+      created_at: formatDateTime(employee.created_at, true),
+    }));
+  }, [employees]);
 
   return (
     <React.Fragment>
       <Header>
         <div className="flex items-center justify-end gap-2">
           <div className="flex space-x-2">
-            <Button size="sm" variant="outline" className="h-8 gap-1">
-              <FileIcon className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Export
-              </span>
-            </Button>
+            <CSVLink data={employeesToExport}>
+              <Button size="sm" variant="outline" className="h-8 gap-1">
+                <FileIcon className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Export
+                </span>
+              </Button>
+            </CSVLink>
           </div>
 
           <ResponsiveDialog open={openUserDialog} setOpen={setOpenUserDialog}>
             <ResponsiveDialogTrigger>
-              <Button className="h-8">
-                <PlusCircle className="mr-9 md:mr-2 size-4" />
-                <span className="hidden sm:inline">Create Employee</span>
+              <Button size={"default"} className="h-8 gap-1">
+                <PlusCircle className="size-4" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Create Employee
+                </span>
               </Button>
             </ResponsiveDialogTrigger>
             <ResponsiveDialogContent className="max-w-xl">
@@ -148,17 +159,15 @@ const EmployeeClient = ({ employees, currentAdmin }: Props) => {
       </Header>
       <main className="grid flex-1 items-start px-4 pt-2 lg:px-6 h-[200px]">
         <Tabs defaultValue="all">
-          <TabsContent value="all">
-            {renderEmployeeTable("all").render()}
-          </TabsContent>
+          <TabsContent value="all">{renderEmployeeTable("all")}</TabsContent>
           <TabsContent value="logistics">
-            {renderEmployeeTable("logistics").render()}
+            {renderEmployeeTable("logistics")}
           </TabsContent>
           <TabsContent value="project">
-            {renderEmployeeTable("project").render()}
+            {renderEmployeeTable("project")}
           </TabsContent>
           <TabsContent value="warehouse">
-            {renderEmployeeTable("warehouse").render()}
+            {renderEmployeeTable("warehouse")}
           </TabsContent>
         </Tabs>
       </main>

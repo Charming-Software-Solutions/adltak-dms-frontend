@@ -1,8 +1,8 @@
 export enum UserRoleEnum {
-  ADMIN = "ADMIN",
-  LOGISTICS_SPECIALIST = "LOGISTICS_SPECIALIST",
-  WAREHOUSE_WORKER = "WAREHOUSE_WORKER",
-  PROJECT_HANDLER = "PROJECT_HANDLER",
+  ADMIN = "admin",
+  WAREHOUSE_PERSONNEL = "warehouse_personnel",
+  LOGISTICS_TEAM_MEMBER = "logistics_team_member",
+  PROJECT_MANAGER = "project_manager",
 }
 
 export enum ProductStockStatusesEnum {
@@ -11,48 +11,26 @@ export enum ProductStockStatusesEnum {
   IN_STOCK = "IN_STOCK",
 }
 
-export enum DistributionStatusesEnum {
-  PENDING = "PENDING",
-  IN_TRANSIT = "IN_TRANSIT",
-  DELIVERED = "DELIVERED",
+export enum ProjectStatusEnum {
+  AWAITING_PWP = "AWAITING_PWP",
+  CONCLUDED = "CONCLUDED",
+  LOCKED = "LOCKED",
+  DISCUSSED = "DISCUSSED",
+  FOR_IMPLEMENTATION = "FOR_IMPLEMENTATION",
+  ONGOING = "ONGOING",
   CANCELLED = "CANCELLED",
-  RETURNED = "RETURNED",
-  ON_HOLD = "ON_HOLD",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED",
-  SCHEDULED = "SCHEDULED",
 }
 
-export enum TaskStatusImportEnum {
-  PENDING = "PENDING",
-  RECEIVED = "RECEIVED",
-  CHECKED_IN = "CHECKED_IN",
-  STOCKED = "STOCKED",
-  SHELVED = "SHELVED",
-}
-
-export enum TaskStatusExportEnum {
-  PENDING = "PENDING",
-  PICKED = "PICKED",
-  PACKED = "PACKED",
-  LOADED = "LOADED",
-  SHIPPED = "SHIPPED",
-  DELIVERED = "DELIVERED",
-}
-
-export enum AssetStatusEnum {
+export enum MaterialStatusEnum {
   AVAILABLE = "AVAILABLE",
   IN_USE = "IN_USE",
-  MAINTENANCE = "MAINTENANCE",
-  LOST = "LOST",
+  // UNAVAILABLE = "UNAVAILABLE",
 }
 
-export enum AssetConditionEnum {
-  NEW = "NEW",
-  GOOD = "GOOD",
-  FAIR = "FAIR",
-  POOR = "POOR",
+export enum MaterialIssueEnum {
   DAMAGED = "DAMAGED",
+  FOR_REPAIR = "FOR_REPAIR",
+  LOST = "LOST",
 }
 
 export enum FormModeEnum {
@@ -63,4 +41,19 @@ export enum FormModeEnum {
 export enum DistributionTypeEnum {
   IMPORT = "IMPORT",
   EXPORT = "EXPORT",
+}
+
+export enum TaskStatusEnum {
+  PENDING = "PENDING",
+  DELIVERED = "DELIVERED",
+}
+
+export enum IncomingProductsStatus {
+  PENDING = "PENDING",
+  RECEIVED = "RECEIVED",
+}
+
+export enum ItemTypeEnum {
+  PRODUCT = "PRODUCT",
+  MATERIAL = "MATERIAL",
 }

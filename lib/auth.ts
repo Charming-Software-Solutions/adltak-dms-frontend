@@ -1,8 +1,8 @@
 import { UserRoleEnum } from "@/enums";
 
 export const hasPermission = (
-  role: UserRoleEnum,
+  userRoles: UserRoleEnum[],
   allowedRoles: UserRoleEnum[],
 ) => {
-  return allowedRoles.includes(role);
+  return userRoles.some((role) => allowedRoles.includes(role));
 };

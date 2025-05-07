@@ -4,23 +4,31 @@ import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/CustomFormField";
 import ImageDropzone from "@/components/shared/image/ImageDropzone";
+import MultiCheckboxFormField from "@/components/shared/MultiCheckboxFormField";
+import SwitchFormField from "@/components/shared/SwitchFormField";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormDescription, FormLabel } from "@/components/ui/form";
-import { SelectItem } from "@/components/ui/select";
 import { USER_ROLES } from "@/constants";
-import { FormModeEnum, UserRoleEnum } from "@/enums";
+import { FormModeEnum, ProjectStatusEnum, UserRoleEnum } from "@/enums";
 import { createEmployee, updateEmployee } from "@/lib/actions/employee.actions";
+import { getTasks } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
 import { EmployeeFormData, employeeFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
 import { Employee } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
+import { AlertCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 type EmployeeFormProps = {
+  employee?: Employee;
   form: UseFormReturn<EmployeeFormData>;
   mode: FormModeEnum;
   className?: string;
@@ -28,7 +36,7 @@ type EmployeeFormProps = {
 
 type UseEmployeeFormProps = {
   employee?: Employee | undefined;
-  mode: "create" | "edit";
+  mode: FormModeEnum;
 };
 
 export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
@@ -40,7 +48,7 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       email: employee?.user.email ?? "",
       firstName: employee?.first_name ?? "",
       lastName: employee?.last_name ?? "",
-      role: employee?.user.role ?? "",
+      roles: employee?.user.roles ?? [],
       profile_image: employee?.profile_image ?? undefined,
       status: employee?.user.is_active ?? true,
     },
@@ -55,14 +63,15 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     formData.append("first_name", values.firstName);
     formData.append("last_name", values.lastName);
 
-    const userData: { email?: string; role: string; is_active: boolean } = {
-      role: values.role,
+    const userData: {
+      email: string;
+      roles: UserRoleEnum[];
+      is_active: boolean;
+    } = {
+      email: values.email,
+      roles: values.roles as UserRoleEnum[],
       is_active: values.status,
     };
-
-    if (mode === "create") {
-      userData.email = values.email;
-    }
 
     formData.append("user", JSON.stringify(userData));
 
@@ -71,7 +80,7 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
     }
 
     const result: ApiResponse<Employee> =
-      mode === "create"
+      mode === FormModeEnum.CREATE
         ? await createEmployee(formData)
         : await updateEmployee(employee!.id, formData);
 
@@ -79,18 +88,37 @@ export const useEmployeeForm = ({ employee, mode }: UseEmployeeFormProps) => {
       toast.error(formatErrorResponse(result.errors), {
         position: "top-center",
       });
+      return;
     }
 
-    showSuccessMessage(mode as FormModeEnum, "employee");
+    showSuccessMessage(mode, "employee");
     setOpen(false);
-    form.reset(mode === "create" ? undefined : values);
+    form.reset(mode === FormModeEnum.CREATE ? undefined : values);
     router.refresh();
   };
 
   return { form, onSubmit };
 };
 
-const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
+const EmployeeForm = ({
+  employee = undefined,
+  form,
+  mode,
+  className,
+}: EmployeeFormProps) => {
+  const { data: tasks } = useQuery({
+    queryKey: ["fetch-tasks", form],
+    queryFn: async () => await getTasks(),
+  });
+
+  const hasTasks = useMemo(() => {
+    return tasks?.some(
+      (task) =>
+        task.warehouse_person.user.id === employee?.user.id &&
+        task.project.status !== ProjectStatusEnum.LOCKED,
+    );
+  }, [tasks, employee]);
+
   return (
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 h-full", className)}>
@@ -135,36 +163,44 @@ const EmployeeForm = ({ form, mode, className }: EmployeeFormProps) => {
             </div>
           </div>
         </div>
-        <CustomFormField
-          fieldType={FormFieldType.SELECT}
-          control={form.control}
-          name="role"
-          label="Role"
-          placeholder="Select role"
-          disabled={form.formState.isSubmitting}
-        >
-          {Object.keys(USER_ROLES)
-            .filter((role) => role !== UserRoleEnum.ADMIN)
-            .map((role, key) => (
-              <SelectItem key={key} value={role}>
-                {USER_ROLES[role as keyof typeof USER_ROLES]}
-              </SelectItem>
-            ))}
-        </CustomFormField>
-        <div className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <FormLabel className="text-base">Employee Active Status</FormLabel>
-            <FormDescription className="text-xs">
-              Current active status of the selected employee.
-            </FormDescription>
-          </div>
-          <CustomFormField
-            fieldType={FormFieldType.SWITCH}
+        {hasTasks && (
+          <Alert>
+            <AlertCircleIcon className="size-4" />
+            <AlertDescription>
+              Assigned tasks should be finished first before updating roles.
+            </AlertDescription>
+          </Alert>
+        )}
+        <Card>
+          <CardContent className="p-4 space-y-4">
+            <div className="space-y-0.5">
+              <FormLabel className="text-base">Employee Roles</FormLabel>
+              <FormDescription className="text-xs">
+                An employee can have mutilple roles assigned to them.
+              </FormDescription>
+            </div>
+            <MultiCheckboxFormField
+              items={Object.entries(USER_ROLES)
+                .filter(([key]) => key !== UserRoleEnum.ADMIN)
+                .map(([value, label]) => ({
+                  value,
+                  label,
+                }))}
+              control={form.control}
+              name="roles"
+              disabled={hasTasks}
+            />
+          </CardContent>
+        </Card>
+        {mode === FormModeEnum.EDIT && (
+          <SwitchFormField
             control={form.control}
             name="status"
-            disabled={form.formState.isSubmitting}
+            label="Employee Active Status"
+            description="Current active status of the selected employee."
+            disabled={form.formState.isSubmitting || hasTasks}
           />
-        </div>
+        )}
       </div>
     </Form>
   );

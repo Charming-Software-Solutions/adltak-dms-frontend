@@ -1,9 +1,9 @@
 "use server";
 
+import { getSession } from "@/auth/session";
 import { ApiResponse } from "@/types/api";
 import { Classification, ClassificationType } from "@/types/generics";
 import { fetchAndHandleResponse } from "../utils";
-import { getSession } from "@/auth/session";
 
 function getClassificationUrl(classificationType: ClassificationType): string {
   let url = `${process.env.DOMAIN}`;
@@ -18,8 +18,8 @@ function getClassificationUrl(classificationType: ClassificationType): string {
     case "product_type":
       url = `${url}/product/type/`;
       break;
-    case "asset_type":
-      url = `${url}/asset/type/`;
+    case "material_type":
+      url = `${url}/material/type/`;
     default:
       break;
   }
@@ -68,24 +68,16 @@ async function deleteClassification(
   id: string,
   classificationType: ClassificationType,
 ): Promise<ApiResponse<string>> {
-  const response = await fetchAndHandleResponse<string>({
+  return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
     url: `${getClassificationUrl(classificationType)}${id}/`,
     method: "DELETE",
   });
-
-  if (response.status === 500) {
-    throw new Error(
-      "Failed to delete classification due to existing connections to a product or asset.",
-    );
-  }
-
-  return response;
 }
 
 export {
   createClassification,
+  deleteClassification,
   getClassifications,
   updateClassification,
-  deleteClassification,
 };

@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 type NavUserProfileProps = {
   firstName: string;
   lastName: string;
-  subtitle: string;
+  subtitle: React.ReactNode;
   alt: string;
   avatarImage?: string;
 };
@@ -24,9 +24,11 @@ const NavUserProfile = ({
         <AvatarImage src={avatarImage} alt={alt} />
         <AvatarFallback className="rounded-lg">{`${firstName[0].toUpperCase()}${lastName[0].toUpperCase()}`}</AvatarFallback>
       </Avatar>
-      <div className="grid flex-1 text-left text-sm leading-tight">
+      <div className="grid flex-1 space-y-0.5 text-left text-sm leading-tight">
         <span className="truncate font-semibold">{`${firstName} ${lastName}`}</span>
-        <span className="truncate text-xs">{subtitle}</span>
+        <span className="truncate text-xs text-muted-foreground">
+          {subtitle}
+        </span>
       </div>
     </div>
   );

@@ -4,10 +4,10 @@ import { getSession } from "./auth/session";
 
 const protectedRoutes = [
   "/",
-  "/distributions",
+  "/projects",
   "/products",
   "/tasks",
-  "/assets",
+  "/materials",
   "/employee",
   "/classifications",
 ];
@@ -31,7 +31,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
-  if (isAdminRoute && user?.role !== UserRoleEnum.ADMIN) {
+  if (isAdminRoute && !user?.roles.includes(UserRoleEnum.ADMIN)) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 

@@ -4,7 +4,8 @@ export interface ICreateProduct {
   brand: string;
   category: string;
   type: string;
-  stock: number;
+  area: string;
+  discontinued: boolean;
 }
 
 export interface ICreateEmployee {
@@ -16,24 +17,24 @@ export interface ICreateEmployee {
   profile_image: string | undefined;
 }
 
-export interface ICreateDistributionProduct {
+export interface ICreateProjectProduct {
   product: string;
   quantity: number;
 }
 
-export interface ICreateDistribution {
+export interface ICreateProject {
+  name: string;
   employee: string;
   products: {
     product: string;
     quantity: number;
     expiration: string;
   }[];
-  assets?: {
-    asset: string;
+  materials?: {
+    material: string;
     quantity: number;
   }[];
   ba_reference_number: string;
-  type: string;
   client: string;
 }
 
@@ -42,7 +43,7 @@ export interface ICreateTask {
   distribution: string;
 }
 
-export interface ICreateAsset {
+export interface ICreateMaterial {
   name: string;
   code: string;
   type: string;

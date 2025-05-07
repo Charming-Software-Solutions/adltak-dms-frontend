@@ -27,7 +27,7 @@ export function DataTableSearch<TData>({
   }
 
   return (
-    <div className="flex items-center">
+    <div className={cn("flex p-1 w-[12rem] items-center", className)}>
       <Input
         placeholder={placeholder}
         value={queryParam ?? ""}
@@ -36,7 +36,7 @@ export function DataTableSearch<TData>({
           table.getColumn(column)?.setFilterValue(value);
           setQueryParam(value);
         }}
-        className="max-w-xs"
+        className="max-w-sm"
       />
     </div>
   );

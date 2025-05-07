@@ -2,14 +2,13 @@
 
 import ComboBoxFormField from "@/components/shared/ComboBoxFormField";
 import { Form } from "@/components/ui/form";
-import { DISTRIBUTION_TYPES } from "@/constants";
-import { FormModeEnum } from "@/enums";
+import { FormModeEnum, ProjectStatusEnum, TaskStatusEnum } from "@/enums";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { formatErrorResponse } from "@/lib/formatters";
 import { cn, showSuccessMessage } from "@/lib/utils";
 import { TaskFormData, taskFormSchema } from "@/schemas";
 import { ApiResponse } from "@/types/api";
-import { Distribution } from "@/types/distribution";
+import { Project } from "@/types/project";
 import { Task } from "@/types/task";
 import { Employee } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,8 +19,10 @@ import { z } from "zod";
 
 type Props = {
   form: UseFormReturn<TaskFormData>;
-  distributions: Distribution[];
+  mode: FormModeEnum;
+  projects: Project[];
   warehousePersons: Employee[];
+  task?: Task;
   className?: string;
 };
 
@@ -30,7 +31,7 @@ export const useTaskForm = ({
   mode,
 }: {
   task?: Task;
-  mode: "create" | "edit";
+  mode: FormModeEnum;
 }) => {
   const router = useRouter();
 
@@ -38,7 +39,7 @@ export const useTaskForm = ({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
       warehousePerson: task?.warehouse_person.id ?? "",
-      distribution: task?.distribution.id ?? "",
+      project: task?.project.id ?? "",
     },
   });
 
@@ -46,12 +47,13 @@ export const useTaskForm = ({
     values: z.infer<typeof taskFormSchema>,
     setOpen: (value: boolean) => void,
   ) => {
+    console.log(values);
     const formData = new FormData();
     formData.append("warehouse_person", values.warehousePerson);
-    formData.append("distribution", values.distribution);
+    formData.append("project", values.project);
 
     const result: ApiResponse<Task> =
-      mode === "create"
+      mode === FormModeEnum.CREATE
         ? await createTask(formData)
         : await updateTask(task!.id, formData);
 
@@ -62,9 +64,9 @@ export const useTaskForm = ({
       return;
     }
 
-    showSuccessMessage(mode as FormModeEnum, "task");
+    showSuccessMessage(mode, "task");
     setOpen(false);
-    form.reset(mode === "create" ? undefined : values);
+    form.reset(mode === FormModeEnum.CREATE ? undefined : values);
     router.refresh();
   };
   return { form, onSubmit };
@@ -72,10 +74,27 @@ export const useTaskForm = ({
 
 const TaskForm = ({
   form,
-  distributions,
+  mode,
+  projects,
   className,
   warehousePersons,
+  task,
 }: Props) => {
+  const isDisabled =
+    form.formState.isSubmitting ||
+    (mode === FormModeEnum.EDIT &&
+      task &&
+      task.status === TaskStatusEnum.DELIVERED);
+
+  const projectList =
+    mode === FormModeEnum.CREATE
+      ? projects.filter(
+          (project) =>
+            project.status !== ProjectStatusEnum.CONCLUDED &&
+            project.status !== ProjectStatusEnum.LOCKED,
+        )
+      : projects;
+
   return (
     <Form {...form}>
       <div className={cn("flex flex-col gap-4 px-1", className)}>
@@ -92,22 +111,22 @@ const TaskForm = ({
           }}
           label="Warehouse Person"
           popOverSize="md:min-w-[28.5rem]"
-          disabled={form.formState.isSubmitting}
+          disabled={isDisabled}
         />
         <ComboBoxFormField
-          items={distributions.map((distribution) => ({
-            label: `ID: ${distribution.ba_reference_number} | Client: ${distribution.client} | Type: ${DISTRIBUTION_TYPES[distribution.type]}`,
-            value: distribution.id,
+          items={projectList.map((project) => ({
+            label: project.name,
+            value: project.id,
           }))}
           control={form.control}
-          name="distribution"
+          name="project"
           placeholder={{
-            triggerPlaceholder: "Select allocation...",
-            searchPlaceholder: "Search allocation...",
+            triggerPlaceholder: "Select project...",
+            searchPlaceholder: "Search project...",
           }}
-          label="Allocation"
+          label="Project"
           popOverSize="md:min-w-[28.5rem]"
-          disabled={form.formState.isSubmitting}
+          disabled={isDisabled}
         />
       </div>
     </Form>

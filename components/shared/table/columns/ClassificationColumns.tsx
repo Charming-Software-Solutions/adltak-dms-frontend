@@ -1,35 +1,26 @@
 "use client";
 
-import { Classification, ClassificationType } from "@/types/generics";
-import { ColumnDef } from "@tanstack/react-table";
-import { createColumnConfig } from "../column.config";
-import React, { useState } from "react";
 import ClassificationForm, {
   useClassificationForm,
 } from "@/app/(root)/classifications/components/ClassificationForm";
+import { Button } from "@/components/ui/button";
+import { UserRoleEnum } from "@/enums";
+import { deleteClassification } from "@/lib/actions/classification.actions";
+import { hasPermission } from "@/lib/auth";
+import { Classification, ClassificationType } from "@/types/generics";
+import { ColumnDef } from "@tanstack/react-table";
+import React, { useState } from "react";
+import DialogFormButton from "../../buttons/DialogFormButton";
+import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
-import { Button } from "@/components/ui/button";
-import DeleteDialog from "../../dialogs/DeleteDialog";
-import { deleteClassification } from "@/lib/actions/classification.actions";
-import { UserRoleEnum } from "@/enums";
-import { hasPermission } from "@/lib/auth";
-import DialogFormButton from "../../buttons/DialogFormButton";
-import { toast } from "sonner";
 
-export const visibleClassificationColumns = (userRole: UserRoleEnum) => {
-  return createColumnConfig({
-    desktop: {
-      name: true,
-      description: true,
-      actions: hasPermission(userRole, [UserRoleEnum.ADMIN]),
-    },
-    mobile: {
-      name: true,
-      description: true,
-      actions: hasPermission(userRole, [UserRoleEnum.ADMIN]),
-    },
-  });
+export const visibleClassificationColumns = (userRoles: UserRoleEnum[]) => {
+  return {
+    name: true,
+    description: true,
+    actions: hasPermission(userRoles, [UserRoleEnum.ADMIN]),
+  };
 };
 
 const ClassificationActionsCell = React.memo(
@@ -83,25 +74,10 @@ const ClassificationActionsCell = React.memo(
         </EditDialog>
         <DeleteDialog
           title="Delete Classification"
-          deleteAction={async () => {
-            try {
-              const response = await deleteClassification(
-                classification.id,
-                classificationType,
-              );
-              return response;
-            } catch (error: any) {
-              toast.error(error.message, {
-                position: "top-center",
-                duration: 1500,
-              });
-              return {
-                status: 500,
-                data: null,
-                errors: { general: [error.message] },
-              };
-            }
-          }}
+          model={classificationType}
+          deleteAction={async () =>
+            await deleteClassification(classification.id, classificationType)
+          }
           placeholder="Are you sure you want to delete the classification?"
         />
       </div>

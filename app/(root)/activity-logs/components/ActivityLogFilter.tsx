@@ -13,6 +13,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { UserRoleEnum } from "@/enums";
+import { useActivityLogFilters } from "@/hooks/use-filters";
 import { RadioGroupFilter } from "@/types/primitives";
 import { ListFilter } from "lucide-react";
 
@@ -22,31 +24,32 @@ type ActivityLogFilter = {
   module: string;
 };
 
-type ActivityLogFilterProps = {
-  filters: ActivityLogFilter;
-  setFilters: (filters: ActivityLogFilter) => void;
-};
+export const ActivityLogFilter = () => {
+  const [filters, setFilters] = useActivityLogFilters();
+  const { role, type, module } = filters;
 
-export const ActivityLogFilter = ({
-  filters,
-  setFilters,
-}: ActivityLogFilterProps) => {
   const radioFilters: RadioGroupFilter = {
     group: [
       {
         title: "Role",
-        defaultValue: filters.role ?? "",
+        defaultValue: role ?? "",
         items: [
           { label: "All", value: "" },
-          { label: "Admin", value: "ADMIN" },
-          { label: "Warehouse Personnel", value: "WAREHOUSE_WORKER" },
-          { label: "Logistics Team Member", value: "LOGISTICS_SPECIALIST" },
-          { label: "Project Manager", value: "PROJECT_HANDLER" },
+          { label: "Admin", value: UserRoleEnum.ADMIN },
+          {
+            label: "Warehouse Personnel",
+            value: UserRoleEnum.WAREHOUSE_PERSONNEL,
+          },
+          {
+            label: "Logistics Team Member",
+            value: UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+          },
+          { label: "Project Manager", value: UserRoleEnum.PROJECT_MANAGER },
         ],
       },
       {
         title: "Type",
-        defaultValue: filters.type ?? "",
+        defaultValue: type ?? "",
         items: [
           { label: "All", value: "" },
           {
@@ -65,7 +68,7 @@ export const ActivityLogFilter = ({
       },
       {
         title: "Module",
-        defaultValue: filters.module ?? "",
+        defaultValue: module ?? "",
         items: [
           { label: "All", value: "" },
           {
@@ -85,16 +88,20 @@ export const ActivityLogFilter = ({
             value: "producttype",
           },
           {
-            label: "Asset",
-            value: "asset",
+            label: "Material",
+            value: "material",
           },
           {
-            label: "Asset Type",
-            value: "assettype",
+            label: "Material Type",
+            value: "materialtype",
           },
           {
-            label: "Allocation",
-            value: "distribution", // will be changed to allocation in the future
+            label: "Project",
+            value: "project",
+          },
+          {
+            label: "Project Product",
+            value: "projectproduct",
           },
           {
             label: "Task",

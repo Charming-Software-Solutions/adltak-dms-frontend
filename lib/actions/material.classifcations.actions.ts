@@ -4,15 +4,15 @@ import { Classification } from "@/types/generics";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
 
-const ASSET_TYPES_URL = `${process.env.DOMAIN}/asset/type/`;
+const MATERIAL_TYPES_URL = `${process.env.DOMAIN}/material/type/`;
 
-async function getAssetTypes(): Promise<Classification[]> {
+async function getMaterialTypes(): Promise<Classification[]> {
   const response = await fetchAndHandleResponse<Classification[]>({
     jwt: (await getSession())?.access,
-    url: ASSET_TYPES_URL,
+    url: MATERIAL_TYPES_URL,
     method: "GET",
   });
   return response.data ?? [];
 }
 
-export { getAssetTypes };
+export { getMaterialTypes };

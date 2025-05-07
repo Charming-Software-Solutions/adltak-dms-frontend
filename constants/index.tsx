@@ -1,10 +1,10 @@
 import {
-  AssetStatusEnum,
-  DistributionStatusesEnum,
+  MaterialStatusEnum,
+  ProjectStatusEnum,
   UserRoleEnum,
-  TaskStatusExportEnum,
-  TaskStatusImportEnum,
-  DistributionTypeEnum,
+  TaskStatusEnum,
+  IncomingProductsStatus,
+  MaterialIssueEnum,
 } from "@/enums";
 import { SelectItemType } from "@/types/primitives";
 
@@ -63,70 +63,42 @@ export const productMonthExpirationFreq: SelectItemType[] = [
   },
 ];
 
-export const DISTRIBUTION_STATUSES: Record<DistributionStatusesEnum, string> = {
-  [DistributionStatusesEnum.PENDING]: "Pending",
-  [DistributionStatusesEnum.IN_TRANSIT]: "In Transit",
-  [DistributionStatusesEnum.DELIVERED]: "Delivered",
-  [DistributionStatusesEnum.CANCELLED]: "Cancelled",
-  [DistributionStatusesEnum.RETURNED]: "Returned",
-  [DistributionStatusesEnum.ON_HOLD]: "On Hold",
-  [DistributionStatusesEnum.COMPLETED]: "Completed",
-  [DistributionStatusesEnum.FAILED]: "Failed",
-  [DistributionStatusesEnum.SCHEDULED]: "Scheduled",
+export const PROJECT_STATUSES: Record<ProjectStatusEnum, string> = {
+  [ProjectStatusEnum.AWAITING_PWP]: "Awaiting PWP",
+  [ProjectStatusEnum.CONCLUDED]: "Concluded",
+  [ProjectStatusEnum.LOCKED]: "Locked",
+  [ProjectStatusEnum.DISCUSSED]: "Discussed",
+  [ProjectStatusEnum.FOR_IMPLEMENTATION]: "For Implementation",
+  [ProjectStatusEnum.ONGOING]: "Ongoing",
+  [ProjectStatusEnum.CANCELLED]: "Cancelled",
 } as const;
 
-export const TASK_STATUS_IMPORT: Record<TaskStatusImportEnum, string> = {
-  [TaskStatusImportEnum.PENDING]: "Pending",
-  [TaskStatusImportEnum.RECEIVED]: "Received",
-  [TaskStatusImportEnum.CHECKED_IN]: "Checked In",
-  [TaskStatusImportEnum.STOCKED]: "Stocked",
-  [TaskStatusImportEnum.SHELVED]: "Shelved",
-};
+export const MATERIAL_STATUS: Record<MaterialStatusEnum, string> = {
+  [MaterialStatusEnum.AVAILABLE]: "Available",
+  [MaterialStatusEnum.IN_USE]: "In Use",
+  // [MaterialStatusEnum.UNAVAILABLE]: "Unavailable",
+} as const;
 
-// TaskStatusExportEnum labels
-export const TASK_STATUS_EXPORT: Record<TaskStatusExportEnum, string> = {
-  [TaskStatusImportEnum.PENDING]: "Pending",
-  [TaskStatusExportEnum.PICKED]: "Picked",
-  [TaskStatusExportEnum.PACKED]: "Packed",
-  [TaskStatusExportEnum.LOADED]: "Loaded",
-  [TaskStatusExportEnum.SHIPPED]: "Shipped",
-  [TaskStatusExportEnum.DELIVERED]: "Delivered",
-};
-
-export const TASK_STATUS: Record<string, string> = {
-  ...TASK_STATUS_IMPORT,
-  ...TASK_STATUS_EXPORT,
-};
-
-export const COMBINED_TASK_STATUS: SelectItemType[] = [
-  ...Object.entries(TASK_STATUS_IMPORT).map(([key, label]) => ({
-    label,
-    value: key,
-  })),
-  ...Object.entries(TASK_STATUS_EXPORT).map(([key, label]) => ({
-    label,
-    value: key,
-  })),
-].filter(
-  (item, index, self) =>
-    index === self.findIndex((t) => t.value === item.value),
-);
-
-export const ASSET_STATUS: Record<AssetStatusEnum, string> = {
-  [AssetStatusEnum.AVAILABLE]: "Available",
-  [AssetStatusEnum.IN_USE]: "In Use",
-  [AssetStatusEnum.MAINTENANCE]: "Maintenance",
-  [AssetStatusEnum.LOST]: "Lost",
+export const MATERIAL_ISSUE: Record<MaterialIssueEnum, string> = {
+  [MaterialIssueEnum.DAMAGED]: "Damaged",
+  [MaterialIssueEnum.FOR_REPAIR]: "For Repair",
+  [MaterialIssueEnum.LOST]: "Lost",
 } as const;
 
 export const USER_ROLES: Record<UserRoleEnum, string> = {
   [UserRoleEnum.ADMIN]: "Admin",
-  [UserRoleEnum.LOGISTICS_SPECIALIST]: "Logistics Team Member",
-  [UserRoleEnum.WAREHOUSE_WORKER]: "Warehouse Personnel",
-  [UserRoleEnum.PROJECT_HANDLER]: "Project Manager",
+  [UserRoleEnum.WAREHOUSE_PERSONNEL]: "Warehouse Personnel",
+  [UserRoleEnum.LOGISTICS_TEAM_MEMBER]: "Logistics Team Member",
+  [UserRoleEnum.PROJECT_MANAGER]: "Project Manager",
 } as const;
 
-export const DISTRIBUTION_TYPES: Record<DistributionTypeEnum, string> = {
-  [DistributionTypeEnum.IMPORT]: "Incoming",
-  [DistributionTypeEnum.EXPORT]: "Outgoing",
+export const TASK_STATUS: Record<TaskStatusEnum, string> = {
+  [TaskStatusEnum.PENDING]: "Pending",
+  [TaskStatusEnum.DELIVERED]: "Delivered",
 } as const;
+
+export const INCOMING_PRODUCTS_STATUS: Record<IncomingProductsStatus, string> =
+  {
+    [IncomingProductsStatus.PENDING]: "Pending",
+    [IncomingProductsStatus.RECEIVED]: "Received",
+  } as const;

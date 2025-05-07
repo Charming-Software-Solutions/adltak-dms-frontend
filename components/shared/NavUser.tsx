@@ -1,14 +1,19 @@
 "use client";
 
-import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, IdCard, LogOut } from "lucide-react";
 
+import { logout } from "@/auth/actions";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -21,7 +26,6 @@ import { USER_ROLES } from "@/constants";
 import { Employee, User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import NavUserProfile from "./NavUserProfile";
-import { logout } from "@/auth/actions";
 
 export function NavUser({
   user,
@@ -45,8 +49,16 @@ export function NavUser({
               <NavUserProfile
                 firstName={employee.first_name}
                 lastName={employee.last_name}
-                subtitle={USER_ROLES[user.role]}
-                alt={"profile-image"}
+                subtitle={
+                  user.roles.length > 1 ? (
+                    <span className="text-xs">
+                      {USER_ROLES[user.roles[0]]} +{user.roles.length - 1}{" "}
+                    </span>
+                  ) : (
+                    <span className="text-xs">{USER_ROLES[user.roles[0]]}</span>
+                  )
+                }
+                alt="profile-image"
                 avatarImage={employee.profile_image}
               />
               <ChevronsUpDown className="ml-auto size-4" />
@@ -68,6 +80,26 @@ export function NavUser({
               />
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <IdCard className="size-4 mr-2" />
+                  Roles
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    {user.roles.map((role) => (
+                      <DropdownMenuItem
+                        key={role}
+                        className="pointer-events-none"
+                      >
+                        {USER_ROLES[role]}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+            </DropdownMenuGroup>
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push("/account/")}>
                 <BadgeCheck className="size-4 mr-2" />

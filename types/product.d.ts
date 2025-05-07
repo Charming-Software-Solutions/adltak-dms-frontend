@@ -7,11 +7,9 @@ export type Product = {
   type: Type;
   description: string | null;
   thumbnail: string;
-  status: string;
   stock: number;
-  expiration: string;
   area?: string;
-  ba_reference_number?: string;
+  discontinued: boolean;
 };
 
 export type Category = {

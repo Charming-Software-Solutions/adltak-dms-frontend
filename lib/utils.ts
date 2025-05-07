@@ -1,6 +1,6 @@
 import { FormModeEnum } from "@/enums";
 import { ApiResponse, ErrorResponse } from "@/types/api";
-import { DistributionProduct } from "@/types/distribution";
+import { ProjectProduct } from "@/types/project";
 import { SelectItemType } from "@/types/primitives";
 import { ProductSKU } from "@/types/product";
 import { clsx, type ClassValue } from "clsx";
@@ -15,7 +15,7 @@ export function cn(...inputs: ClassValue[]) {
 export function capitalize(str: string) {
   return str
     .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
 
@@ -87,6 +87,10 @@ export async function fetchAndHandleResponse<T>({
         errorData = await response.json();
       } catch (e) {}
       return { status, data: null, errors: errorData };
+    }
+
+    if (status === 204) {
+      return { status, data: null, errors: null };
     }
 
     const data: T = await response.json();
@@ -188,17 +192,17 @@ export const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export function filterProductsByExpiration(products: DistributionProduct[]): {
-  nearExpiration: DistributionProduct[];
-  expired: DistributionProduct[];
+export function filterProductsByExpiration(products: ProjectProduct[]): {
+  nearExpiration: ProjectProduct[];
+  expired: ProjectProduct[];
 } {
   const currentDate = new Date();
 
   const nextMonthDate = new Date(currentDate);
   nextMonthDate.setMonth(currentDate.getMonth() + 1);
 
-  const nearExpiration: DistributionProduct[] = [];
-  const expired: DistributionProduct[] = [];
+  const nearExpiration: ProjectProduct[] = [];
+  const expired: ProjectProduct[] = [];
 
   products.forEach((product) => {
     const productExpiration = new Date(product.expiration);
@@ -239,4 +243,30 @@ export function showSuccessMessage(mode: FormModeEnum, object: string) {
 
 export function formatExpiration(expiration: string): string {
   return format(new Date(expiration), "ddMMMyyyy").toUpperCase();
+}
+
+export function createFilteredUrl<T extends Record<string, unknown>>(
+  filters: T,
+  baseUrl: string,
+): string {
+  const queryParams = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && String(value).trim() !== "") {
+      queryParams.append(key, String(value));
+    }
+  });
+
+  const queryString = queryParams.toString();
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl;
+}
+
+export function toManilaISOString(date: Date): string {
+  const manilaOffsetMinutes = 8 * 60;
+  // Get the UTC timestamp of the date.
+  const utcTimestamp = date.getTime();
+  const manilaTimestamp = utcTimestamp + manilaOffsetMinutes * 60000;
+  // Generate an ISO string from the adjusted time.
+  // Replace the trailing 'Z' (which indicates UTC) with the proper timezone offset.
+  return new Date(manilaTimestamp).toISOString().replace("Z", "+08:00");
 }

@@ -2,10 +2,16 @@
 
 import { ApiResponse } from "@/types/api";
 import { Product } from "@/types/product";
-import { fetchAndHandleResponse } from "../utils";
+import { createFilteredUrl, fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
 
 const PRODUCT_URL = `${process.env.DOMAIN}/product/`;
+
+type ProductFilters = {
+  brand: string;
+  category: string;
+  product_type: string;
+};
 
 async function createProduct(body: FormData): Promise<ApiResponse<Product>> {
   return fetchAndHandleResponse({
@@ -16,10 +22,12 @@ async function createProduct(body: FormData): Promise<ApiResponse<Product>> {
   });
 }
 
-async function getProducts(): Promise<Product[]> {
+async function getProducts(filters?: ProductFilters): Promise<Product[]> {
+  const url = createFilteredUrl(filters ?? {}, PRODUCT_URL);
+
   const response = await fetchAndHandleResponse<Product[]>({
     jwt: (await getSession())?.access,
-    url: PRODUCT_URL,
+    url: url,
     method: "GET",
   });
   return response.data ?? [];

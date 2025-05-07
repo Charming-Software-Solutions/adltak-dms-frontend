@@ -1,5 +1,7 @@
 "use client";
 
+import React, { useState, useMemo } from "react";
+import { CSVLink } from "react-csv";
 import Header from "@/components/shared/Header";
 import {
   ResponsiveDialog,
@@ -13,20 +15,20 @@ import {
   getClassificationColumns,
   visibleClassificationColumns,
 } from "@/components/shared/table/columns/ClassificationColumns";
+import { DataTable } from "@/components/shared/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
-import { useDataTable } from "@/hooks/use-datatable";
+import { useDataTable } from "@/hooks/use-data-table";
 import { hasPermission } from "@/lib/auth";
-import { Classification, ClassificationType } from "@/types/generics";
+import { Classification } from "@/types/generics";
+import { User } from "@/types/user";
 import { FileIcon, PlusCircle } from "lucide-react";
-import React, { useState } from "react";
 import ClassificationForm, {
   useClassificationForm,
 } from "./components/ClassificationForm";
+import { formatDateTime } from "@/lib/utils";
 import DialogFormButton from "@/components/shared/buttons/DialogFormButton";
-import { User } from "@/types/user";
 
 type Props = {
   user: User;
@@ -34,73 +36,98 @@ type Props = {
     productBrands: Classification[];
     productCategories: Classification[];
     productTypes: Classification[];
-    assetTypes: Classification[];
+    materialTypes: Classification[];
   };
 };
 
 const ClassificationsClient = ({ user, classifications }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
+  const [activeTab, setActiveTab] = useState<
+    "product_brand" | "product_category" | "product_type" | "material_type"
+  >("product_brand");
 
-  const renderClassificationTable = (
-    classificationType: ClassificationType,
-  ) => {
-    let filteredClassifcations: Classification[] = [];
+  // Compute the filtered classifications based on the active tab.
+  const classificationsToExport = useMemo(() => {
+    switch (activeTab) {
+      case "product_brand":
+        return classifications.productBrands;
+      case "product_category":
+        return classifications.productCategories;
+      case "product_type":
+        return classifications.productTypes;
+      case "material_type":
+        return classifications.materialTypes;
+      default:
+        return [];
+    }
+  }, [activeTab, classifications]);
+
+  const renderClassificationTable = (classificationType: typeof activeTab) => {
+    let filteredClassifications: Classification[] = [];
 
     switch (classificationType) {
-      case "all":
-        filteredClassifcations = [
-          ...classifications.productBrands,
-          ...classifications.productCategories,
-          ...classifications.productTypes,
-          ...classifications.assetTypes,
-        ];
-        break;
       case "product_brand":
-        filteredClassifcations = classifications.productBrands;
+        filteredClassifications = classifications.productBrands;
         break;
       case "product_category":
-        filteredClassifcations = classifications.productCategories;
+        filteredClassifications = classifications.productCategories;
         break;
       case "product_type":
-        filteredClassifcations = classifications.productTypes;
+        filteredClassifications = classifications.productTypes;
         break;
-      case "asset_type":
-        filteredClassifcations = classifications.assetTypes;
+      case "material_type":
+        filteredClassifications = classifications.materialTypes;
+        break;
       default:
         break;
     }
-    const dataTable = useDataTable({
+
+    const { table } = useDataTable({
       columns: getClassificationColumns(classificationType),
-      data: filteredClassifcations,
-      visibleColumns: isDesktop
-        ? visibleClassificationColumns(user.role).desktop
-        : visibleClassificationColumns(user.role).mobile,
+      data: filteredClassifications,
     });
-    return dataTable;
+
+    return (
+      <DataTable
+        table={table}
+        showPagination={true}
+        visibleColumns={visibleClassificationColumns(user.roles)}
+      />
+    );
   };
 
-  const isDesktop = useResponsive("desktop");
   const { form, onSubmit } = useClassificationForm({ mode: "create" });
 
   return (
-    <React.Fragment>
+    <>
       <Header>
         <div className="flex items-center justify-end gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
-            <FileIcon className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Export
-            </span>
-          </Button>
-          {hasPermission(user.role, [
+          <CSVLink
+            data={classificationsToExport.map((classification) => ({
+              name: classification.name,
+              description: classification.description,
+              created_at: formatDateTime(classification.created_at, true),
+            }))}
+          >
+            <Button size="sm" variant="outline" className="h-8 gap-1">
+              <FileIcon className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Export
+              </span>
+            </Button>
+          </CSVLink>
+
+          {hasPermission(user.roles, [
             UserRoleEnum.ADMIN,
-            UserRoleEnum.LOGISTICS_SPECIALIST,
+            UserRoleEnum.LOGISTICS_TEAM_MEMBER,
           ]) && (
             <ResponsiveDialog open={openDialog} setOpen={setOpenDialog}>
               <ResponsiveDialogTrigger>
-                <Button className="h-8">
-                  <PlusCircle className="mr-9 md:mr-2 size-4" />
-                  <span className="hidden sm:inline">Add Classification</span>
+                <Button size={"default"} className="h-8 gap-1">
+                  <PlusCircle className="size-4" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add Classification
+                  </span>
                 </Button>
               </ResponsiveDialogTrigger>
               <ResponsiveDialogContent>
@@ -113,7 +140,7 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
                 <ResponsiveDialogFooter className="px-1">
                   <div className="flex flex-row w-full gap-2">
                     <Button
-                      variant={"outline"}
+                      variant="outline"
                       className="flex-grow w-full"
                       onClick={() => form.reset()}
                     >
@@ -138,30 +165,48 @@ const ClassificationsClient = ({ user, classifications }: Props) => {
         </div>
       </Header>
       <main className="main-container">
-        <Tabs defaultValue="product_brand">
+        <Tabs defaultValue={activeTab}>
           <TabsList>
-            <TabsTrigger value="product_brand">Product Brands</TabsTrigger>
-            <TabsTrigger value="product_category">
+            <TabsTrigger
+              value="product_brand"
+              onClick={() => setActiveTab("product_brand")}
+            >
+              Product Brands
+            </TabsTrigger>
+            <TabsTrigger
+              value="product_category"
+              onClick={() => setActiveTab("product_category")}
+            >
               Product Categories
             </TabsTrigger>
-            <TabsTrigger value="product_type">Product Types</TabsTrigger>
-            <TabsTrigger value="asset_type">Asset Types</TabsTrigger>
+            <TabsTrigger
+              value="product_type"
+              onClick={() => setActiveTab("product_type")}
+            >
+              Product Types
+            </TabsTrigger>
+            <TabsTrigger
+              value="material_type"
+              onClick={() => setActiveTab("material_type")}
+            >
+              Material Types
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="product_brand">
-            {renderClassificationTable("product_brand").render()}
+            {renderClassificationTable("product_brand")}
           </TabsContent>
           <TabsContent value="product_category">
-            {renderClassificationTable("product_category").render()}
+            {renderClassificationTable("product_category")}
           </TabsContent>
           <TabsContent value="product_type">
-            {renderClassificationTable("product_type").render()}
+            {renderClassificationTable("product_type")}
           </TabsContent>
-          <TabsContent value="asset_type">
-            {renderClassificationTable("asset_type").render()}
+          <TabsContent value="material_type">
+            {renderClassificationTable("material_type")}
           </TabsContent>
         </Tabs>
       </main>
-    </React.Fragment>
+    </>
   );
 };
 

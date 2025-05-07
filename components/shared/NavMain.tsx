@@ -4,8 +4,8 @@ import { UserRoleEnum } from "@/enums";
 import { User } from "@/types/user";
 import {
   Archive,
-  ArrowDownUp,
   ClipboardCheck,
+  FolderKanban,
   LayoutDashboard,
   NotepadText,
   Package,
@@ -37,9 +37,9 @@ const NAV_LINKS: NavLink[] = [
     isActive: true,
   },
   {
-    label: "Allocations",
-    icon: <ArrowDownUp className="size-4" />,
-    route: "/distributions",
+    label: "Projects",
+    icon: <FolderKanban className="size-4" />,
+    route: "/projects",
   },
   {
     label: "Products",
@@ -52,9 +52,9 @@ const NAV_LINKS: NavLink[] = [
     route: "/tasks",
   },
   {
-    label: "Assets",
+    label: "Materials",
     icon: <Archive className="size-4" />,
-    route: "/assets",
+    route: "/materials",
   },
   {
     label: "Classifications",
@@ -76,12 +76,12 @@ const NAV_LINKS: NavLink[] = [
 
 const NavMain = ({ user }: NavMainProps) => {
   const pathname = usePathname();
-  const authorizedLinks = NAV_LINKS.filter(
-    (link) =>
-      !link.allowedRoles ||
-      link.allowedRoles.includes(user.role.toUpperCase() as UserRoleEnum),
-  );
-  1;
+  const authorizedLinks = NAV_LINKS.filter((link) => {
+    if (!link.allowedRoles) return true;
+    return user.roles.some((role: string) =>
+      link.allowedRoles!.includes(role as UserRoleEnum),
+    );
+  });
   return (
     <SidebarMenu>
       {authorizedLinks.map((link, index) => (

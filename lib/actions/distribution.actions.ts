@@ -1,16 +1,16 @@
 "use server";
 
-import { ICreateDistribution } from "@/interfaces";
+import { ICreateProject } from "@/interfaces";
 import { ApiResponse } from "@/types/api";
-import { Distribution, DistributionProduct } from "@/types/distribution";
+import { Project, ProjectProduct } from "@/types/project";
 import { fetchAndHandleResponse } from "../utils";
 import { getSession } from "@/auth/session";
 
 const DISTRIBUTION_URL = `${process.env.DOMAIN}/distribution/`;
 
 async function createDistribution(
-  body: ICreateDistribution,
-): Promise<ApiResponse<Distribution>> {
+  body: ICreateProject,
+): Promise<ApiResponse<Project>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
     url: DISTRIBUTION_URL,
@@ -20,8 +20,8 @@ async function createDistribution(
   });
 }
 
-async function getDistributions(): Promise<Distribution[]> {
-  const response = await fetchAndHandleResponse<Distribution[]>({
+async function getDistributions(): Promise<Project[]> {
+  const response = await fetchAndHandleResponse<Project[]>({
     jwt: (await getSession())?.access,
     url: DISTRIBUTION_URL,
     method: "GET",
@@ -29,8 +29,8 @@ async function getDistributions(): Promise<Distribution[]> {
   return response.data ?? [];
 }
 
-async function getDistributionProducts(): Promise<DistributionProduct[]> {
-  const response = await fetchAndHandleResponse<DistributionProduct[]>({
+async function getDistributionProducts(): Promise<ProjectProduct[]> {
+  const response = await fetchAndHandleResponse<ProjectProduct[]>({
     jwt: (await getSession())?.access,
     url: `${DISTRIBUTION_URL}get-distribution-products/`,
     method: "GET",
@@ -41,7 +41,7 @@ async function getDistributionProducts(): Promise<DistributionProduct[]> {
 async function updateDistribution(
   id: string,
   body: FormData,
-): Promise<ApiResponse<Distribution>> {
+): Promise<ApiResponse<Project>> {
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
     url: `${DISTRIBUTION_URL}${id}/`,

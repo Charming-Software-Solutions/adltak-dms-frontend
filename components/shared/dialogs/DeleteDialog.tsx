@@ -14,14 +14,17 @@ import {
   ResponsiveDialogTrigger,
 } from "../ResponsiveDialog";
 import IconButton from "../buttons/IconButton";
+import { toast } from "sonner";
+import { formatErrorResponse } from "@/lib/formatters";
 
 type Props = {
   title: string;
+  model: string;
   deleteAction: () => Promise<ApiResponse<string>>;
   placeholder: string;
 };
 
-const DeleteDialog = ({ title, deleteAction, placeholder }: Props) => {
+const DeleteDialog = ({ title, model, deleteAction, placeholder }: Props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const router = useRouter();
 
@@ -52,7 +55,14 @@ const DeleteDialog = ({ title, deleteAction, placeholder }: Props) => {
               className="flex-grow w-full"
               variant={"destructive"}
               onClick={async () => {
-                await deleteAction();
+                const response = await deleteAction();
+
+                if (response.errors) {
+                  toast.error(formatErrorResponse(response.errors));
+                  return;
+                }
+
+                toast.success(`Successfully deleted ${model}.`);
                 setOpenDialog(false);
                 router.refresh();
               }}

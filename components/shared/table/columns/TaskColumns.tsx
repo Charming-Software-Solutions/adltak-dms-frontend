@@ -3,23 +3,28 @@
 import TaskForm, { useTaskForm } from "@/app/(root)/tasks/components/TaskForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { UserRoleEnum } from "@/enums";
-import { useResponsive } from "@/hooks";
-import { getDistributions } from "@/lib/actions/distribution.actions";
-import { getEmployees } from "@/lib/actions/employee.actions";
-import { deleteTask } from "@/lib/actions/task.actions";
-import { hasPermission } from "@/lib/auth";
-import { cn, formatDateTime } from "@/lib/utils";
-import { DistributionType } from "@/types/distribution";
-import { Task } from "@/types/task";
 import {
-  BackpackIcon,
-  DownloadIcon,
-  PersonIcon,
-  UploadIcon,
-} from "@radix-ui/react-icons";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TASK_STATUS } from "@/constants";
+import { FormModeEnum, ProjectStatusEnum, UserRoleEnum } from "@/enums";
+import { useResponsive } from "@/hooks";
+import {
+  getEmployees,
+  getWarehousePersonnelByProject,
+} from "@/lib/actions/employee.actions";
+import { getProjects } from "@/lib/actions/project.actions";
+import { deleteTask, updateTaskStatus } from "@/lib/actions/task.actions";
+import { hasPermission } from "@/lib/auth";
+import { formatDateTime } from "@/lib/utils";
+import { Task } from "@/types/task";
+import { BackpackIcon, PersonIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import DialogFormButton from "../../buttons/DialogFormButton";
@@ -27,69 +32,151 @@ import DeleteDialog from "../../dialogs/DeleteDialog";
 import EditDialog from "../../dialogs/EditDialog";
 import ViewItemsDialog from "../../dialogs/ViewItemsDialog";
 import { ResponsiveDialogFooter } from "../../ResponsiveDialog";
-import TaskStatusDropdown from "../../TaskStatusDropdown";
-import { createColumnConfig } from "../column.config";
+import StatusDropdown from "../../StatusDropDown";
 import { DataTableColumnHeader } from "../data-table-column-header";
-import { DISTRIBUTION_TYPES } from "@/constants";
+import React from "react";
 
-export const visibleTaskColumns = (userRole: UserRoleEnum) => {
-  return createColumnConfig({
-    desktop: {
-      warehouse_person: true,
-      distribution_client: true,
-      allocation: true,
-      distribution_type: true,
-      distribution_items: true,
-      status_dropdown: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
-        UserRoleEnum.WAREHOUSE_WORKER,
-      ]),
-      status_badge: hasPermission(userRole, [
-        UserRoleEnum.LOGISTICS_SPECIALIST,
-      ]),
-      created_at: true,
-      actions: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
-      ]),
-    },
-    mobile: {
-      distribution_client: true,
-      allocation: true,
-      distribution_type: true,
-      distribution_items: true,
-      status_dropdown: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.LOGISTICS_SPECIALIST,
-        UserRoleEnum.WAREHOUSE_WORKER,
-      ]),
-      status_badge: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
-      ]),
-      created_at: false,
-      actions: hasPermission(userRole, [
-        UserRoleEnum.ADMIN,
-        UserRoleEnum.PROJECT_HANDLER,
-      ]),
-    },
-  });
+export const visibleTaskColumns = (userRoles: UserRoleEnum[]) => {
+  return {
+    warehouse_person: true,
+    project_client: true,
+    project: true,
+    project_products: true,
+    status_dropdown: hasPermission(userRoles, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.PROJECT_MANAGER,
+      UserRoleEnum.WAREHOUSE_PERSONNEL,
+    ]),
+    status_badge: hasPermission(userRoles, [
+      UserRoleEnum.LOGISTICS_TEAM_MEMBER,
+    ]),
+    created_at: true,
+    actions: hasPermission(userRoles, [
+      UserRoleEnum.ADMIN,
+      UserRoleEnum.PROJECT_MANAGER,
+    ]),
+  };
 };
 
-export const TaskColumns: ColumnDef<Task>[] = [
+const TaskActionsCell = React.memo(({ task }: { task: Task }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const { form, onSubmit } = useTaskForm({ task, mode: FormModeEnum.EDIT });
+
+  const { data } = useQuery({
+    queryKey: ["edit-task"],
+    queryFn: async () => {
+      const projects = await getProjects();
+      const warehousePersons = await getEmployees();
+      const filteredWarehousePersons = warehousePersons.filter(
+        (person) =>
+          person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
+          person.user.is_active,
+      );
+      return { projects, filteredWarehousePersons };
+    },
+  });
+
+  return (
+    <div className="flex items-center gap-2">
+      <EditDialog title="Edit Task" open={openDialog} setOpen={setOpenDialog}>
+        <TaskForm
+          mode={FormModeEnum.EDIT}
+          task={task}
+          form={form}
+          projects={data?.projects ?? []}
+          warehousePersons={data?.filteredWarehousePersons ?? []}
+        />
+        <ResponsiveDialogFooter className="px-1">
+          <div className="dialog-footer">
+            <Button
+              variant={"outline"}
+              className="flex-grow w-full"
+              onClick={() => form.reset()}
+            >
+              Reset
+            </Button>
+            <DialogFormButton
+              onClick={form.handleSubmit((values) =>
+                onSubmit(values, setOpenDialog),
+              )}
+              disabled={form.formState.isSubmitting}
+              loading={form.formState.isSubmitting}
+            >
+              Save Changes
+            </DialogFormButton>
+          </div>
+        </ResponsiveDialogFooter>
+      </EditDialog>
+      <DeleteDialog
+        title="Delete Task"
+        model="task"
+        deleteAction={async () => await deleteTask(task.id)}
+        placeholder="Are you sure you want to delete the task?"
+      />
+    </div>
+  );
+});
+
+export const TaskColumns = (userRoles: UserRoleEnum[]): ColumnDef<Task>[] => [
   {
     accessorKey: "warehouse_person",
     header: "Warehouse Personnel",
     cell: ({ row }) => {
-      const warehousePerson = row.original.warehouse_person;
+      const task = row.original;
+      const warehousePerson = task.warehouse_person;
       const isDesktop = useResponsive("desktop");
+
+      const { data, isLoading } = useQuery({
+        queryKey: ["warehouse-personnel-by-project", task.project.name],
+        queryFn: async () =>
+          task.project.name
+            ? await getWarehousePersonnelByProject(task.project.name)
+            : [],
+        enabled: !!task.project.name,
+      });
+
+      // Show dialog only if there are 2 or more warehouse personnel
+      const multiplePersonnel = data && data.length >= 2;
+
+      if (isLoading) {
+        return <Skeleton className="h-4 w-auto" />;
+      }
+
+      if (multiplePersonnel) {
+        return (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                <PersonIcon className="size-4 mr-2" /> View
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-4" align="start">
+              <div className="flex flex-col space-y-2">
+                <span className="text-sm font-semibold">
+                  Assigned Warehouse Personnel
+                </span>
+                {data.map((warehousePerson) => (
+                  <Badge
+                    key={warehousePerson.id}
+                    variant="outline"
+                    className="rounded-md p-2 text-sm"
+                  >
+                    {warehousePerson.first_name} {warehousePerson.last_name}
+                  </Badge>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        );
+      }
 
       return (
         <div className="flex items-center space-x-2">
           {isDesktop && <PersonIcon className="size-4" />}
           <span>
-            {warehousePerson.user.role != UserRoleEnum.WAREHOUSE_WORKER
+            {!warehousePerson.user.roles.includes(
+              UserRoleEnum.WAREHOUSE_PERSONNEL,
+            )
               ? "Unassigned"
               : `${warehousePerson.first_name} ${warehousePerson.last_name}`}
           </span>
@@ -98,8 +185,8 @@ export const TaskColumns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "distribution_client",
-    accessorFn: (row) => row.distribution.client,
+    accessorKey: "project_client",
+    accessorFn: (row) => row.project.client,
     header: "Client",
     cell: ({ row }) => {
       const isDesktop = useMediaQuery({ query: "(min-width: 1224px)" });
@@ -107,75 +194,45 @@ export const TaskColumns: ColumnDef<Task>[] = [
       return (
         <div className="flex items-center space-x-2">
           {isDesktop && <BackpackIcon className="size-4" />}
-          <span>{row.original.distribution.client}</span>
+          <span>{row.original.project.client}</span>
         </div>
       );
     },
   },
   {
-    accessorKey: "allocation",
-    accessorFn: (row) => row.distribution.ba_reference_number,
-    header: "Allocation",
+    accessorKey: "project",
+    accessorFn: (row) => row.project.name,
+    header: "Project",
   },
   {
-    accessorKey: "distribution_type",
-    accessorFn: (row) => row.distribution.type,
-    header: "Type",
-    cell: ({ row }) => {
-      const distributionType = row.original.distribution.type;
-
-      const TypeIcon = ({
-        type,
-        className,
-      }: {
-        type: DistributionType;
-        className?: string;
-      }) => {
-        return type === "IMPORT" ? (
-          <DownloadIcon className={cn("size-4", className)} />
-        ) : (
-          <UploadIcon className={cn("size-4", className)} />
-        );
-      };
-      return (
-        <div className="flex items-center space-x-1">
-          <TypeIcon type={distributionType} className="mr-1" />
-          <span className="font-semibold">
-            {DISTRIBUTION_TYPES[distributionType]}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "distribution_items",
+    accessorKey: "project_products",
     header: "Items",
     cell: ({ row }) => {
-      const distribution = row.original.distribution;
+      const project = row.original.project;
 
-      return (
-        <ViewItemsDialog
-          items={{
-            products: distribution.products,
-            assets: distribution.assets ?? [],
-          }}
-        />
-      );
+      return <ViewItemsDialog userRoles={userRoles} project={project} />;
     },
   },
   {
     accessorKey: "status_dropdown",
     header: "Status",
     cell: ({ row }) => {
-      const type = row.original.distribution.type;
-      const status = row.original.status;
+      const task = row.original;
+      const status = task.status;
+      const router = useRouter();
 
       return (
-        <TaskStatusDropdown
-          key={`task-status-${row.original.id}`}
+        <StatusDropdown
           id={row.original.id}
+          mutationKey="update-status"
           currentStatus={status}
-          type={type}
+          statuses={TASK_STATUS}
+          mutationFn={updateTaskStatus}
+          onSuccess={() => router.refresh()}
+          disabled={
+            task.project.status === ProjectStatusEnum.CONCLUDED ||
+            task.project.status === ProjectStatusEnum.LOCKED
+          }
         />
       );
     },
@@ -205,61 +262,11 @@ export const TaskColumns: ColumnDef<Task>[] = [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const task = row.original;
-      const [openDialog, setOpenDialog] = useState(false);
-      const { form, onSubmit } = useTaskForm({ task, mode: "edit" });
-
-      const { data } = useQuery({
-        queryKey: ["edit-task"],
-        queryFn: async () => {
-          const distributions = await getDistributions();
-          const warehousePersons = await getEmployees();
-          const filteredWarehousePersons = warehousePersons.filter(
-            (person) => person.user.role === UserRoleEnum.WAREHOUSE_WORKER,
-          );
-          return { distributions, filteredWarehousePersons };
-        },
-      });
-
       return (
-        <div className="flex items-center gap-2">
-          <EditDialog
-            title="Edit Task"
-            open={openDialog}
-            setOpen={setOpenDialog}
-          >
-            <TaskForm
-              form={form}
-              distributions={data?.distributions ?? []}
-              warehousePersons={data?.filteredWarehousePersons ?? []}
-            />
-            <ResponsiveDialogFooter className="px-1">
-              <div className="dialog-footer">
-                <Button
-                  variant={"outline"}
-                  className="flex-grow w-full"
-                  onClick={() => form.reset()}
-                >
-                  Reset
-                </Button>
-                <DialogFormButton
-                  onClick={form.handleSubmit((values) =>
-                    onSubmit(values, setOpenDialog),
-                  )}
-                  disabled={form.formState.isSubmitting}
-                  loading={form.formState.isSubmitting}
-                >
-                  Save Changes
-                </DialogFormButton>
-              </div>
-            </ResponsiveDialogFooter>
-          </EditDialog>
-          <DeleteDialog
-            title="Delete Task"
-            deleteAction={async () => await deleteTask(task.id)}
-            placeholder="Are you sure you want to delete the task?"
-          />
-        </div>
+        <TaskActionsCell
+          key={`actions-${row.original.id}`}
+          task={row.original}
+        />
       );
     },
   },

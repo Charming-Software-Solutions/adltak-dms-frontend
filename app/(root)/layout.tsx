@@ -2,10 +2,9 @@ import Providers from "@/components/Providers";
 import AppSidebar from "@/components/shared/AppSidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { LoaderIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import React, { Suspense } from "react";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "AdTalk DMS",
@@ -30,15 +29,7 @@ export default async function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <SidebarInset>
-                <Suspense
-                  fallback={
-                    <div className="flex flex-1 items-center justify-center">
-                      <LoaderIcon className="animate-spin" />
-                    </div>
-                  }
-                >
-                  <main className="flex flex-1 flex-col">{children}</main>
-                </Suspense>
+                <main className="flex flex-1 flex-col">{children}</main>
               </SidebarInset>
             </SidebarProvider>
           </div>

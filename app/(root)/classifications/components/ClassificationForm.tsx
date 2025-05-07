@@ -41,8 +41,8 @@ const classificationTypes: SelectItemType[] = [
     value: "product_type",
   },
   {
-    label: "Asset Type",
-    value: "asset_type",
+    label: "Material Type",
+    value: "material_type",
   },
 ];
 

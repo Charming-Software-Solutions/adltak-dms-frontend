@@ -1,0 +1,233 @@
+"use server";
+
+import { getSession } from "@/auth/session";
+import {
+  IncomingProductsStatus,
+  ItemTypeEnum,
+  ProjectStatusEnum,
+} from "@/enums";
+import { ICreateProject } from "@/interfaces";
+import { ApiResponse } from "@/types/api";
+import { Project, ProjectProduct } from "@/types/project";
+import { ProjectItem } from "../store";
+import {
+  createFilteredUrl,
+  fetchAndHandleResponse,
+  toManilaISOString,
+} from "../utils";
+
+const PROJECT_URL = `${process.env.DOMAIN}/project/`;
+
+type ProjectFilters = {
+  status: string;
+  start_date: Date | string | null;
+  end_date: Date | string | null;
+};
+
+async function createProject(
+  body: ICreateProject,
+): Promise<ApiResponse<Project>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: PROJECT_URL,
+    method: "POST",
+    contentType: "application/json",
+    body: JSON.stringify(body),
+  });
+}
+
+async function getProjects(filters?: ProjectFilters): Promise<Project[]> {
+  const normalizedFilters = { ...filters };
+
+  if (normalizedFilters.start_date instanceof Date) {
+    normalizedFilters.start_date = toManilaISOString(
+      normalizedFilters.start_date,
+    );
+  }
+  if (normalizedFilters.end_date instanceof Date) {
+    normalizedFilters.end_date = toManilaISOString(normalizedFilters.end_date);
+  }
+
+  const url = createFilteredUrl(normalizedFilters, PROJECT_URL);
+
+  const response = await fetchAndHandleResponse<Project[]>({
+    jwt: (await getSession())?.access,
+    url: url,
+    method: "GET",
+  });
+
+  return response.data ?? [];
+}
+
+async function getProjectById(id: string): Promise<ApiResponse<Project>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}${id}/`,
+    method: "GET",
+  });
+}
+
+async function getProjectsByProduct(productName: string): Promise<Project[]> {
+  const response = await fetchAndHandleResponse<Project[]>({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}projects-by-product/?product=${productName}`,
+    method: "GET",
+  });
+  return response.data ?? [];
+}
+
+async function getProjectByMaterial(
+  materialName: string,
+): Promise<ApiResponse<Project>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}project-by-material/?material=${materialName}`,
+    method: "GET",
+  });
+}
+
+async function updateProject(
+  id: string,
+  body: FormData,
+): Promise<ApiResponse<Project>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}${id}/`,
+    method: "PATCH",
+    body: body,
+  });
+}
+
+async function updateProjectIncomingProductsStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: IncomingProductsStatus;
+}): Promise<ApiResponse<Project>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}${id}/update-incoming-status/`,
+    contentType: "application/json",
+    method: "PATCH",
+    body: JSON.stringify({
+      incoming_products_status: status,
+    }),
+  });
+}
+
+async function updateProjectStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: ProjectStatusEnum;
+}): Promise<ApiResponse<Project>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}${id}/update-status/`,
+    contentType: "application/json",
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+}
+
+async function deleteProject(id: string): Promise<ApiResponse<string>> {
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}${id}/`,
+    method: "DELETE",
+  });
+}
+
+// Project item related actions
+
+async function updateProjectItemQuantity({
+  id,
+  itemType,
+  quantity,
+  isUsedQuantity = false,
+}: {
+  id: string;
+  itemType: ItemTypeEnum;
+  quantity: number;
+  isUsedQuantity?: boolean;
+}): Promise<ApiResponse<ProjectItem>> {
+  const fieldToUpdate = isUsedQuantity ? "used_quantity" : "quantity";
+  const url =
+    itemType === ItemTypeEnum.PRODUCT
+      ? `${PROJECT_URL}product/${id}/`
+      : `${PROJECT_URL}material/${id}/`;
+
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: url,
+    contentType: "application/json",
+    method: "PATCH",
+    body: JSON.stringify({
+      [fieldToUpdate]: quantity,
+    }),
+  });
+}
+
+async function getProjectItemById(
+  id: string,
+  itemType: ItemTypeEnum,
+): Promise<ApiResponse<ProjectItem>> {
+  const url =
+    itemType === ItemTypeEnum.PRODUCT
+      ? `${PROJECT_URL}product/${id}/`
+      : `${PROJECT_URL}material/${id}/`;
+
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: url,
+    method: "GET",
+  });
+}
+
+async function getProjectProducts(): Promise<ProjectProduct[]> {
+  const response = await fetchAndHandleResponse<ProjectProduct[]>({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}get-project-products/`,
+    method: "GET",
+  });
+  return response.data ?? [];
+}
+
+async function handleRemainingProjectProducts({
+  id,
+  project,
+  operation,
+}: {
+  id: string;
+  project?: string;
+  operation: "allocate" | "pull_out";
+}): Promise<ApiResponse<ProjectProduct>> {
+  const method = operation === "allocate" ? "PATCH" : "DELETE";
+
+  return fetchAndHandleResponse({
+    jwt: (await getSession())?.access,
+    url: `${PROJECT_URL}product/handle-remaining-project-products/${id}/`,
+    contentType: "application/json",
+    method,
+    body: operation === "allocate" ? JSON.stringify({ project }) : undefined,
+  });
+}
+
+export {
+  createProject,
+  deleteProject,
+  getProjectById,
+  getProjectByMaterial,
+  getProjectItemById,
+  // Project item actions
+  getProjectProducts,
+  getProjects,
+  getProjectsByProduct,
+  handleRemainingProjectProducts,
+  updateProject,
+  updateProjectIncomingProductsStatus,
+  updateProjectItemQuantity,
+  updateProjectStatus,
+};

@@ -72,6 +72,17 @@ async function updateEmployeeProfile(
   });
 }
 
+async function getWarehousePersonnelByProject(
+  projectName: string,
+): Promise<Employee[]> {
+  const response = await fetchAndHandleResponse<Employee[]>({
+    url: `${EMPLOYEE_URL}warehouse-personnel-by-project/?project=${projectName}`,
+    method: "GET",
+    jwt: (await getSession())?.access,
+  });
+  return response.data ?? [];
+}
+
 export {
   createEmployee,
   deleteEmployee,
@@ -80,4 +91,5 @@ export {
   getEmployeeById,
   updateEmployee,
   updateEmployeeProfile,
+  getWarehousePersonnelByProject,
 };

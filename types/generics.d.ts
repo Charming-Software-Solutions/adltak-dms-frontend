@@ -14,4 +14,4 @@ export type ClassificationType =
   | "product_brand"
   | "product_category"
   | "product_type"
-  | "asset_type";
+  | "material_type";

@@ -31,7 +31,7 @@ import { formatDateTime } from "@/lib/utils";
 import { ActivityLog } from "@/types/activityLog";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, IdCard } from "lucide-react";
 import { useState } from "react";
 import {
   ResponsiveDialog,
@@ -42,24 +42,19 @@ import {
   ResponsiveDialogTrigger,
 } from "../../ResponsiveDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export const visibileActivityLogColumns = {
-  desktop: {
-    employee: true,
-    role: true,
-    type: true,
-    module: true,
-    details: true,
-    datetime: true,
-  },
-  mobile: {
-    employee: true,
-    role: true,
-    type: true,
-    module: true,
-    details: true,
-    datetime: true,
-  },
+  employee: true,
+  roles: true,
+  type: true,
+  module: true,
+  details: true,
+  datetime: true,
 };
 
 const typeBadgeColors: Record<string, string> = {
@@ -75,12 +70,34 @@ export const ActivityLogColumns: ColumnDef<ActivityLog>[] = [
     header: "Employee",
   },
   {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "roles",
+    header: "Roles",
     cell: ({ row }) => {
-      const role = row.original.user.role;
+      const roles = row.original.user.roles;
 
-      return <Badge variant={"secondary"}>{USER_ROLES[role]}</Badge>;
+      return (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline">
+              <IdCard className="size-4 mr-2" /> Roles
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-4">
+            <div className="flex flex-col space-y-2">
+              <span className="text-sm font-semibold">Assigned Roles</span>
+              {roles.map((role) => (
+                <Badge
+                  key={role}
+                  variant="outline"
+                  className="rounded-md p-2 text-sm"
+                >
+                  {USER_ROLES[role]}
+                </Badge>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      );
     },
   },
   {

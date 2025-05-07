@@ -1,26 +1,52 @@
+import { getCurrentUser } from "@/auth/currentUser";
 import { UserRoleEnum } from "@/enums";
-import { getDistributions } from "@/lib/actions/distribution.actions";
 import { getEmployees } from "@/lib/actions/employee.actions";
+import { getProjects } from "@/lib/actions/project.actions";
 import { getTasks } from "@/lib/actions/task.actions";
 import TasksClient from "./TasksClient";
-import { getCurrentUser } from "@/auth/currentUser";
+import type { SearchParams } from "nuqs/server";
+import { loadTaskSearchParams } from "@/lib/searchParams";
+import { Suspense } from "react";
+import LoadingSpinnerIcon from "@/components/ui/loading-spinner";
 
-export default async function TasksPage() {
-  const distributions = await getDistributions();
+type Props = {
+  searchParams: Promise<SearchParams>;
+};
+
+async function TasksServer({ searchParams }: Props) {
+  const projects = await getProjects();
   const employee = await getCurrentUser({ withEmployeeProfile: true });
-  const warehousePersons =
-    employee.user.role === UserRoleEnum.ADMIN ||
-    employee.user.role === UserRoleEnum.PROJECT_HANDLER
-      ? await getEmployees()
-      : [];
-  const tasks = await getTasks(employee.user.id, employee.user.role);
+  const allowedRoles = [
+    UserRoleEnum.ADMIN,
+    UserRoleEnum.PROJECT_MANAGER,
+    UserRoleEnum.WAREHOUSE_PERSONNEL,
+  ];
+
+  const warehousePersons = employee.user.roles.some((role) =>
+    allowedRoles.includes(role),
+  )
+    ? await getEmployees()
+    : [];
+  const tasks = await getTasks(await loadTaskSearchParams(searchParams));
 
   return (
     <TasksClient
       employee={employee}
       tasks={tasks}
-      distributions={distributions}
-      warehousePersons={warehousePersons}
+      projects={projects}
+      warehousePersons={warehousePersons.filter(
+        (person) =>
+          person.user.roles.includes(UserRoleEnum.WAREHOUSE_PERSONNEL) &&
+          person.user.is_active,
+      )}
     />
+  );
+}
+
+export default function TasksPage({ searchParams }: Props) {
+  return (
+    <Suspense fallback={<LoadingSpinnerIcon />}>
+      <TasksServer searchParams={searchParams} />
+    </Suspense>
   );
 }
