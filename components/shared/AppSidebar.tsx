@@ -33,7 +33,7 @@ const AppSidebar = async () => {
               height={30}
               className="rounded-sm border"
             />
-            <span>AdTalk Dashboard</span>
+            <span>AdTalk Inventory</span>
           </Link>
           <ThemeToggle />
         </div>

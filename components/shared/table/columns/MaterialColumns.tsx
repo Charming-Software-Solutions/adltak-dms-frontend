@@ -378,7 +378,7 @@ export const MaterialColumns: ColumnDef<Material>[] = [
             <ResponsiveDialogHeader>
               <ResponsiveDialogTitle>Material Status</ResponsiveDialogTitle>
             </ResponsiveDialogHeader>
-            <div className="-mx-6 max-h-[36rem] overflow-y-auto px-6 text-sm flex flex-col gap-2">
+            <div className="-mx-6 max-h-[37rem] overflow-y-auto px-6 text-sm flex flex-col gap-2">
               <Separator className="my-1" />
               <span>Material Details</span>
               <div className="space-y-2 bg-muted border p-4 rounded-md">
