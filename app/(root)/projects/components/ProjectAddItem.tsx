@@ -185,7 +185,7 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
               control={form.control}
               name="unit_value"
               label="Unit Value"
-              placeholder="130"
+              placeholder="130g"
               disabled={form.formState.isSubmitting}
               minInputNumber={1.0}
             />
