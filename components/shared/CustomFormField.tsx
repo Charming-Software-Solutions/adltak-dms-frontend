@@ -108,7 +108,7 @@ const RenderInput = ({
             disabled={props.disabled}
           >
             <FormControl>
-              <SelectTrigger>
+              <SelectTrigger className="w-full h-11">
                 <SelectValue placeholder={props.placeholder} />
               </SelectTrigger>
             </FormControl>
