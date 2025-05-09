@@ -26,7 +26,7 @@ type ComboBoxFormFieldProps = {
     searchPlaceholder: string;
   };
   name: string;
-  popOverSize: string;
+  popOverSize?: string;
   label?: string;
   disabled?: boolean;
   footer?: {

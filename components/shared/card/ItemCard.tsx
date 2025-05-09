@@ -15,8 +15,8 @@ import { formatExpiration } from "@/lib/utils";
 import { ProjectMaterial, ProjectProduct } from "@/types/project";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import QuantityAdjuster from "../QuantityAdjuster";
 import React from "react";
+import QuantityAdjuster from "../QuantityAdjuster";
 
 type Props = {
   itemType: ItemTypeEnum;
@@ -43,6 +43,7 @@ const ItemCard = ({
     itemType === ItemTypeEnum.PRODUCT
       ? (projectItemData as ProjectProduct).product
       : (projectItemData as ProjectMaterial).material;
+  const projectProduct = projectItem as ProjectProduct;
 
   const { data: updatedProjectItem } = useQuery({
     queryKey: ["get-updated-project-item", projectItem.id],
@@ -84,17 +85,17 @@ const ItemCard = ({
                   : itemDetails.type.name}
               </span>
               <Separator className="h-2" orientation="vertical" />
-              <Badge variant={"outline"} className="justify-center">
-                <span className="font-medium">{projectItem.quantity} QTY</span>
+              <Badge variant={"outline"} className="justify-center rounded-md">
+                <span className="font-medium">
+                  {`${projectProduct.unit_value}${projectProduct.unit} x ${projectProduct.quantity}pcs`}
+                </span>
               </Badge>
               {itemType === ItemTypeEnum.PRODUCT && (
                 <React.Fragment>
                   <Separator className="h-2" orientation="vertical" />
                   <span className="font-medium">
                     <strong>EXP: </strong>
-                    {formatExpiration(
-                      (projectItem as ProjectProduct).expiration,
-                    )}
+                    {formatExpiration(projectProduct.expiration)}
                   </span>
                 </React.Fragment>
               )}

@@ -5,6 +5,7 @@ import {
   TaskStatusEnum,
   IncomingProductsStatus,
   MaterialIssueEnum,
+  ProjectProductUnit,
 } from "@/enums";
 import { SelectItemType } from "@/types/primitives";
 
@@ -102,3 +103,10 @@ export const INCOMING_PRODUCTS_STATUS: Record<IncomingProductsStatus, string> =
     [IncomingProductsStatus.PENDING]: "Pending",
     [IncomingProductsStatus.RECEIVED]: "Received",
   } as const;
+
+export const PROJECT_PRODUCT_UNIT: Record<ProjectProductUnit, string> = {
+  [ProjectProductUnit.GRAM]: "grams",
+  [ProjectProductUnit.KILOGRAM]: "kilogram",
+  [ProjectProductUnit.LITER]: "liters",
+  [ProjectProductUnit.MILLILITER]: "milliters",
+} as const;
