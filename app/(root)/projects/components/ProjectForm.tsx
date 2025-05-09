@@ -63,6 +63,8 @@ export const useProjectForm = ({
           product: object.product.id,
           quantity: object.quantity,
           expiration: object.expiration,
+          unit: object.unit,
+          unit_value: object.unit_value,
         })),
         materials: materialItems.map((object) => ({
           material: object.material.id,

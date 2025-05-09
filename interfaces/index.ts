@@ -29,6 +29,8 @@ export interface ICreateProject {
     product: string;
     quantity: number;
     expiration: string;
+    unit: string;
+    unit_value: number;
   }[];
   materials?: {
     material: string;

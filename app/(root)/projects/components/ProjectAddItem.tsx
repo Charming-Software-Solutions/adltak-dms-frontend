@@ -12,9 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
+import { SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { imagePlaceholder } from "@/constants";
-import { ItemTypeEnum, MaterialStatusEnum } from "@/enums";
+import { imagePlaceholder, PROJECT_PRODUCT_UNIT } from "@/constants";
+import { MaterialStatusEnum, ProjectProductUnit } from "@/enums";
 import { getMaterials } from "@/lib/actions/material.actions";
 import { getProducts } from "@/lib/actions/product.actions";
 import { useProjectItemStore } from "@/lib/store";
@@ -27,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, Trash } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -105,7 +106,10 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
       expiration: values.expiration ? values.expiration.toISOString() : "",
       used_quantity: 0,
       remaining_quantity: 0,
+      unit: values.unit ?? ProjectProductUnit.GRAM,
+      unit_value: values.unit_value ?? 1.0,
     };
+
     const projectMaterial = {
       id: item.id,
       material: item as Material,
@@ -149,19 +153,59 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
                 : "Search material...",
           }}
           label={itemType === "product" ? "Product" : "Material"}
-          popOverSize="md:min-w-[26rem]"
           disabled={form.formState.isSubmitting}
+          popOverSize="md:min-w-[27rem]"
         />
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          inputType={InputType.NUMBER}
-          control={form.control}
-          name="quantity"
-          label="Quantity"
-          placeholder="10"
-          disabled={form.formState.isSubmitting}
-          minInputNumber={1}
-        />
+
+        <div className="flex items-center space-x-2 w-full">
+          {itemType === "product" && (
+            <div className="flex-grow w-full">
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={form.control}
+                name="unit"
+                label="Unit"
+                placeholder="Select unit"
+                disabled={form.formState.isSubmitting}
+              >
+                {Object.keys(PROJECT_PRODUCT_UNIT).map((unit) => (
+                  <SelectItem key={unit} value={unit}>
+                    {`${PROJECT_PRODUCT_UNIT[unit as ProjectProductUnit]} (${unit})`}
+                  </SelectItem>
+                ))}
+              </CustomFormField>
+            </div>
+          )}
+
+          {/* unit_value: fixed small width */}
+          <div className="flex-none w-28">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              inputType={InputType.NUMBER}
+              control={form.control}
+              name="unit_value"
+              label="Unit Value"
+              placeholder="130"
+              disabled={form.formState.isSubmitting}
+              minInputNumber={1.0}
+            />
+          </div>
+
+          {/* quantity: fixed small width */}
+          <div className="flex-none w-28">
+            <CustomFormField
+              fieldType={FormFieldType.INPUT}
+              inputType={InputType.NUMBER}
+              control={form.control}
+              name="quantity"
+              label="Quantity"
+              placeholder="1"
+              disabled={form.formState.isSubmitting}
+              minInputNumber={1}
+            />
+          </div>
+        </div>
+
         {itemType === "product" && (
           <CustomFormField
             fieldType={FormFieldType.DATE}
@@ -230,6 +274,7 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
                     itemType === "material"
                       ? object.quantity >= projectItem.stock
                       : false;
+                  const projectProduct = object as ProjectProduct;
 
                   return (
                     <Card key={index}>
@@ -251,20 +296,28 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
                               <span className="truncate text-xs">
                                 {projectItem.type.name}
                               </span>
-                              {(object as ProjectProduct).expiration && (
-                                <>
-                                  <Separator
-                                    orientation="vertical"
-                                    className="h-2"
-                                  />
-                                  <span className="truncate text-xs">
-                                    <strong>EXP: </strong>
-                                    {formatExpiration(
-                                      (object as ProjectProduct).expiration,
-                                    )}
-                                  </span>
-                                </>
-                              )}
+                              {projectProduct.expiration &&
+                                projectProduct.unit && (
+                                  <React.Fragment>
+                                    <Separator
+                                      orientation="vertical"
+                                      className="h-2"
+                                    />
+                                    <span className="truncate text-xs">
+                                      {`${projectProduct.unit_value} ${projectProduct.unit}`}
+                                    </span>
+                                    <Separator
+                                      orientation="vertical"
+                                      className="h-2"
+                                    />
+                                    <span className="truncate text-xs">
+                                      <strong>EXP: </strong>
+                                      {formatExpiration(
+                                        projectProduct.expiration,
+                                      )}
+                                    </span>
+                                  </React.Fragment>
+                                )}
                             </div>
                           </div>
                         </div>

@@ -1,3 +1,4 @@
+import { ProjectProductUnit } from "@/enums";
 import { z } from "zod";
 
 export const productFormSchema = z.object({
@@ -52,18 +53,29 @@ export const employeeFormSchema = z.object({
 
 export const projectItemSchema = z
   .object({
-    item: z.string().uuid({
-      message: "Item is required.",
-    }),
+    item: z.string().uuid({ message: "Item is required." }),
     quantity: z.coerce.number().positive({
       message: "Quantity must be a positive number.",
     }),
     expiration: z.coerce.date().optional(),
+    unit: z.nativeEnum(ProjectProductUnit).optional(),
+    unit_value: z.coerce
+      .number()
+      .positive({ message: "Unit value must be a positive number." })
+      .optional(),
     type: z.enum(["product", "material"]),
   })
   .refine((data) => data.type !== "product" || !!data.expiration, {
     message: "Expiration date is required for products.",
     path: ["expiration"],
+  })
+  .refine((data) => data.type !== "product" || !!data.unit, {
+    message: "Unit is required for products.",
+    path: ["unit"],
+  })
+  .refine((data) => data.type !== "product" || !!data.unit_value, {
+    message: "Unit value is required for products.",
+    path: ["unit_value"],
   });
 
 export const projectFormSchema = z.object({

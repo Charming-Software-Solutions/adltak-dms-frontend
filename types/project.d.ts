@@ -2,6 +2,7 @@ import {
   TaskStatusEnum,
   ProjectStatusEnum,
   IncomingProductsStatus,
+  ProjectProductUnit,
 } from "@/enums";
 import { Product } from "./product";
 import { Employee } from "./user";
@@ -16,6 +17,8 @@ export type ProjectProduct = BaseModel & {
   used_quantity: number;
   remaining_quantity: number;
   ba_reference_number?: string;
+  unit: ProjectProductUnit;
+  unit_value: number;
 };
 
 export type ProjectMaterial = BaseModel & {

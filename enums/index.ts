@@ -57,3 +57,10 @@ export enum ItemTypeEnum {
   PRODUCT = "PRODUCT",
   MATERIAL = "MATERIAL",
 }
+
+export enum ProjectProductUnit {
+  GRAM = "g",
+  KILOGRAM = "kg",
+  LITER = "L",
+  MILLILITER = "mL",
+}
