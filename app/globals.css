@@ -109,6 +109,17 @@ body {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--border)) transparent;
   }
+  /* hide spinner in WebKit browsers */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* hide spinner in Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
 }
 
 @layer utilities {
