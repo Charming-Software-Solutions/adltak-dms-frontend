@@ -159,40 +159,38 @@ const ProjectAddItem = ({ itemType, className }: ProjectAddItemProps) => {
 
         <div className="flex items-center space-x-2 w-full">
           {itemType === "product" && (
-            <div className="flex-grow w-full">
-              <CustomFormField
-                fieldType={FormFieldType.SELECT}
-                control={form.control}
-                name="unit"
-                label="Unit"
-                placeholder="Select unit"
-                disabled={form.formState.isSubmitting}
-              >
-                {Object.keys(PROJECT_PRODUCT_UNIT).map((unit) => (
-                  <SelectItem key={unit} value={unit}>
-                    {`${PROJECT_PRODUCT_UNIT[unit as ProjectProductUnit]} (${unit})`}
-                  </SelectItem>
-                ))}
-              </CustomFormField>
-            </div>
+            <React.Fragment>
+              <div className="flex-grow w-full">
+                <CustomFormField
+                  fieldType={FormFieldType.SELECT}
+                  control={form.control}
+                  name="unit"
+                  label="Unit"
+                  placeholder="Select unit"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {Object.keys(PROJECT_PRODUCT_UNIT).map((unit) => (
+                    <SelectItem key={unit} value={unit}>
+                      {`${PROJECT_PRODUCT_UNIT[unit as ProjectProductUnit]} (${unit})`}
+                    </SelectItem>
+                  ))}
+                </CustomFormField>
+              </div>
+              <div className="flex-none w-28">
+                <CustomFormField
+                  fieldType={FormFieldType.INPUT}
+                  inputType={InputType.NUMBER}
+                  control={form.control}
+                  name="unit_value"
+                  label="Unit Value"
+                  placeholder="130g"
+                  disabled={form.formState.isSubmitting}
+                  minInputNumber={1.0}
+                />
+              </div>
+            </React.Fragment>
           )}
-
-          {/* unit_value: fixed small width */}
-          <div className="flex-none w-28">
-            <CustomFormField
-              fieldType={FormFieldType.INPUT}
-              inputType={InputType.NUMBER}
-              control={form.control}
-              name="unit_value"
-              label="Unit Value"
-              placeholder="130g"
-              disabled={form.formState.isSubmitting}
-              minInputNumber={1.0}
-            />
-          </div>
-
-          {/* quantity: fixed small width */}
-          <div className="flex-none w-28">
+          <div className={itemType === "product" ? "flex-none w-28" : "w-full"}>
             <CustomFormField
               fieldType={FormFieldType.INPUT}
               inputType={InputType.NUMBER}
