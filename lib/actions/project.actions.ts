@@ -202,16 +202,16 @@ async function handleRemainingProjectProducts({
 }: {
   id: string;
   project?: string;
-  operation: "allocate" | "pull_out";
+  operation: "recirculate" | "pull_out";
 }): Promise<ApiResponse<ProjectProduct>> {
-  const method = operation === "allocate" ? "PATCH" : "DELETE";
+  const method = operation === "recirculate" ? "PATCH" : "DELETE";
 
   return fetchAndHandleResponse({
     jwt: (await getSession())?.access,
     url: `${PROJECT_URL}product/handle-remaining-project-products/${id}/`,
     contentType: "application/json",
     method,
-    body: operation === "allocate" ? JSON.stringify({ project }) : undefined,
+    body: operation === "recirculate" ? JSON.stringify({ project }) : undefined,
   });
 }
 
