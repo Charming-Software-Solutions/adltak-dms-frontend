@@ -49,6 +49,7 @@ import {
 import DialogFormButton from "../../buttons/DialogFormButton";
 import EditDialog from "../../dialogs/EditDialog";
 import { DataTableColumnHeader } from "../data-table-column-header";
+import { useRouter } from "next/navigation";
 
 export const visibleMaterialColumns = (userRole: UserRoleEnum[]) => {
   return {
@@ -88,6 +89,7 @@ const MaterialIssueRow = ({
   IconComponent,
 }: MaterialIssueRowProps) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["update-material-issue", issueType],
@@ -96,6 +98,7 @@ const MaterialIssueRow = ({
       queryClient.invalidateQueries({
         queryKey: ["get-updated-material", materialId],
       });
+      router.refresh();
     },
   });
 
@@ -354,13 +357,8 @@ export const MaterialColumns: ColumnDef<Material>[] = [
         ).values(),
       ];
 
-      const totalIssuesQuantity = Object.values(
-        updatedMaterial?.issues || {},
-      ).reduce((sum, issue) => sum + (issue.quantity || 0), 0);
+      const remainingStock = material.stock;
 
-      const remainingStock = material.stock - totalIssuesQuantity;
-
-      // Define your icon mapping as before
       const MATERIAL_ISSUE_ICONS = {
         [MaterialIssueEnum.DAMAGED]: Ban,
         [MaterialIssueEnum.FOR_REPAIR]: Wrench,
